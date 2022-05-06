@@ -8,6 +8,14 @@ public class OneStarPrison : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
+		//NEW
+		//PrivatePCHHeaderFile = "MaulProtoPrecompiled.h";
+		MinFilesUsingPrecompiledHeaderOverride = 1;
+		bUseUnity = false;
+
+		bEnforceIWYU = true;
+
+		//NEW ^
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay" });
 	}
 }
