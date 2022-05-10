@@ -15,6 +15,7 @@ public class OneStarPrison : ModuleRules
 
 		bEnforceIWYU = true;
 
+		MinFilesUsingPrecompiledHeaderOverride = 1;
 		//NEW ^
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay" });
 	}

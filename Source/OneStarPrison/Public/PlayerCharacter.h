@@ -66,4 +66,11 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	//Grab Pickupable items
+	void PickUp();
+
+	//Current Pickedup Item
+	UPROPERTY(VisibleAnywhere)
+		class APickupable* PickedUpItem;
 };

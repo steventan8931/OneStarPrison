@@ -8,6 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+//New Ones
+#include "Pickupable.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -51,6 +53,9 @@ APlayerCharacter::APlayerCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	//Defaults
+	PickedUpItem = nullptr;
 }
 
 // Called when the game starts or when spawned
@@ -90,6 +95,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// handle touch devices
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &APlayerCharacter::TouchStarted);
 	PlayerInputComponent->BindTouch(IE_Released, this, &APlayerCharacter::TouchStopped);
+
+	//Picking up Items
+	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &APlayerCharacter::PickUp);
 }
 
 void APlayerCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
@@ -141,4 +149,57 @@ void APlayerCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void APlayerCharacter::PickUp()
+{
+	if (PickedUpItem)
+	{
+		PickedUpItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		PickedUpItem->Mesh->SetCollisionProfileName("BlockAllDynamic");
+		PickedUpItem->Mesh->SetSimulatePhysics(true);
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("DROPPED"));
+		PickedUpItem = nullptr;
+		return;
+	}
+
+	TArray<FHitResult> OutHits;
+
+	FVector SweepStart = GetMesh()->GetSocketLocation("hand_r");
+
+	FVector SweepEnd = GetMesh()->GetSocketLocation("hand_r");
+
+	//Create a collision sphere
+	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(50.0f);
+
+	//Draw debug sphere
+	DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 50, FColor::White, false, 3);
+
+	//Check if something is hit
+	bool isHit = GetWorld()->SweepMultiByChannel(OutHits, SweepStart, SweepEnd, FQuat::Identity, ECC_WorldStatic, MyColSphere);
+
+	if (isHit)
+	{
+		//Loop through TArray
+		for (auto& Hit : OutHits)
+		{
+			APickupable* pickup = Cast<APickupable>(Hit.GetActor());
+
+			if (pickup)
+			{
+				 pickup->Player = this;
+				 pickup->Mesh->SetSimulatePhysics(false);
+				 pickup->Mesh->SetCollisionProfileName("Trigger");
+				 pickup->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("hand_r"));
+				PickedUpItem = pickup;
+
+				if (GEngine)
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, *Hit.GetActor()->GetName());
+				}
+			}
+
+		}
+	}
+
 }
