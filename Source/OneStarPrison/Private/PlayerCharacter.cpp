@@ -158,6 +158,7 @@ void APlayerCharacter::PickUp()
 		PickedUpItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		PickedUpItem->Mesh->SetCollisionProfileName("BlockAllDynamic");
 		PickedUpItem->Mesh->SetSimulatePhysics(true);
+		PickedUpItem->Player = nullptr;
 		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("DROPPED"));
 		PickedUpItem = nullptr;
 		return;
@@ -187,6 +188,12 @@ void APlayerCharacter::PickUp()
 
 			if (pickup)
 			{
+				//If item is already picked up go to next actor
+				if (pickup->Player)
+				{
+					continue;
+				}
+
 				pickup->Player = this;
 				pickup->Mesh->SetSimulatePhysics(false);
 				pickup->Mesh->SetCollisionProfileName("Trigger");
@@ -197,6 +204,9 @@ void APlayerCharacter::PickUp()
 				{
 					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, *Hit.GetActor()->GetName());
 				}
+
+				//Stop after picking up an item
+				break;
 			}
 
 		}
