@@ -27,8 +27,5 @@ public:
 		class UStaticMeshComponent* Mesh;
 
 	UPROPERTY(VisibleAnywhere)
-		class UBoxComponent* BoxCollision;
-
-	UPROPERTY(VisibleAnywhere)
 		class APlayerCharacter* Player;
 };

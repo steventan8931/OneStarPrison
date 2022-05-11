@@ -187,10 +187,10 @@ void APlayerCharacter::PickUp()
 
 			if (pickup)
 			{
-				 pickup->Player = this;
-				 pickup->Mesh->SetSimulatePhysics(false);
-				 pickup->Mesh->SetCollisionProfileName("Trigger");
-				 pickup->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("hand_r"));
+				pickup->Player = this;
+				pickup->Mesh->SetSimulatePhysics(false);
+				pickup->Mesh->SetCollisionProfileName("Trigger");
+				pickup->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("hand_r"));
 				PickedUpItem = pickup;
 
 				if (GEngine)
