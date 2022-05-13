@@ -70,6 +70,33 @@ public:
 	//Grab Pickupable items
 	void PickUp();
 
+	//Throw Picked up item
+	void Throw();
+	//Throw button is released
+	void EndThrow();
+
+	//Check if Throw Key is being held down
+	bool IsHoldingDownThrow = false;
+
+	//Current Throw Power
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float ThrowPowerScale = 0;
+	//Maximum Throw Power
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MaxThrowPower = 150.0f;
+	//Current Player Index
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int PlayerIndex = 0;
+
+
+	//HUD Class to add to viewport
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> HUDWidgetClass;
+
+	UPROPERTY(VisibleAnywhere)
+		class UUserWidget* CurrentWidget;
+
+
 	//Current Pickedup Item
 	UPROPERTY(VisibleAnywhere)
 		class APickupable* PickedUpItem;

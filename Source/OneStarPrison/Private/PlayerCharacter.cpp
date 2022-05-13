@@ -10,6 +10,8 @@
 #include "GameFramework/SpringArmComponent.h"
 //New Ones
 #include "Pickupable.h"
+#include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -62,13 +64,25 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (IsHoldingDownThrow)
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, FString::Printf(TEXT("Throw power = %f"), ThrowPowerScale));
+		if (ThrowPowerScale < MaxThrowPower)
+		{
+			ThrowPowerScale += (DeltaTime * MaxThrowPower);
+		}
+		else
+		{
+			EndThrow();              
+		}
+	}
 
 }
 
@@ -98,6 +112,12 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	//Picking up Items
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &APlayerCharacter::PickUp);
+
+	//Start the charging of throwing picked up item
+	PlayerInputComponent->BindAction("Throw", IE_Pressed, this, &APlayerCharacter::Throw);
+
+	//Throw picked up item
+	PlayerInputComponent->BindAction("Throw", IE_Released, this, &APlayerCharacter::EndThrow);
 }
 
 void APlayerCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
@@ -155,12 +175,6 @@ void APlayerCharacter::PickUp()
 {
 	if (PickedUpItem)
 	{
-		PickedUpItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		PickedUpItem->Mesh->SetCollisionProfileName("BlockAllDynamic");
-		PickedUpItem->Mesh->SetSimulatePhysics(true);
-		PickedUpItem->Player = nullptr;
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("DROPPED"));
-		PickedUpItem = nullptr;
 		return;
 	}
 
@@ -181,6 +195,7 @@ void APlayerCharacter::PickUp()
 
 	if (isHit)
 	{
+
 		//Loop through TArray
 		for (auto& Hit : OutHits)
 		{
@@ -212,4 +227,51 @@ void APlayerCharacter::PickUp()
 		}
 	}
 
+}
+
+void APlayerCharacter::Throw()
+{
+	if (PickedUpItem)
+	{
+		IsHoldingDownThrow = true;
+
+		if (HUDWidgetClass != nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
+
+			CurrentWidget = CreateWidget<UUserWidget>(UGameplayStatics::GetPlayerController(GetWorld(), PlayerIndex), HUDWidgetClass);
+
+			if (CurrentWidget)
+			{
+				CurrentWidget->AddToPlayerScreen();
+			}
+		}
+
+		return;
+	}
+}
+
+void APlayerCharacter::EndThrow()
+{
+	if (PickedUpItem)
+	{
+		IsHoldingDownThrow = false;
+		PickedUpItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		PickedUpItem->Mesh->SetCollisionProfileName("BlockAllDynamic");
+		PickedUpItem->Mesh->SetSimulatePhysics(true);
+		FVector throwPower = GetActorForwardVector() * ThrowPowerScale;
+		//PickedUpItem->Mesh->AddForce(throwPower);
+		PickedUpItem->Mesh->AddForceAtLocation(throwPower * 150 * PickedUpItem->Mesh->GetMass(), GetMesh()->GetSocketLocation("hand_r"));
+		PickedUpItem->Player = nullptr;
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, FString::Printf(TEXT("Throw power = %s"), *PickedUpItem->Mesh->GetComponentVelocity().ToString()));
+		
+		if (CurrentWidget)
+		{
+			CurrentWidget->RemoveFromParent();
+		}
+		ThrowPowerScale = 0;
+		
+		PickedUpItem = nullptr;
+		return;
+	}
 }
