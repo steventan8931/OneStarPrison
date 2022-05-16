@@ -10,12 +10,12 @@ public class OneStarPrison : ModuleRules
 
 		//NEW
 		//PrivatePCHHeaderFile = "MaulProtoPrecompiled.h";
-		MinFilesUsingPrecompiledHeaderOverride = 1;
-		bUseUnity = false;
+		//MinFilesUsingPrecompiledHeaderOverride = 1;
+		//bUseUnity = false;
 
-		bEnforceIWYU = true;
+		//bEnforceIWYU = true;
 
-		MinFilesUsingPrecompiledHeaderOverride = 1;
+		//MinFilesUsingPrecompiledHeaderOverride = 1;
 		//NEW ^
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay" });
 	}
