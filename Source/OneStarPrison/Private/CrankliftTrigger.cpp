@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "PlayerCharacter.h"
 #include "CrankliftPlatform.h"
+#include "Blueprint/UserWidget.h"
 
 // Sets default values
 ACrankliftTrigger::ACrankliftTrigger()
@@ -22,6 +23,8 @@ ACrankliftTrigger::ACrankliftTrigger()
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ACrankliftTrigger::OnOverlapBegin);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ACrankliftTrigger::OnOverlapEnd);
+
+	//CurrentWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget"));
 }
 
 // Called when the game starts or when spawned
@@ -68,6 +71,19 @@ void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("PLAYER IS OVERLAPPING"));
 			IsMovingUp = true;
+
+			if (HUDWidgetClass != nullptr)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
+
+
+
+
+				if (CurrentWidget)
+				{
+					
+				}
+			}
 		}
 	}
 }
@@ -83,6 +99,11 @@ void ACrankliftTrigger::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, 
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("NO LONGER OVERLAPPING"));
 			IsMovingUp = false;
+
+			if (CurrentWidget)
+			{
+				//CurrentWidget->RemoveFromParent();
+			}
 		}
 	}
 }

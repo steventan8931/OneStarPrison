@@ -44,6 +44,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MoveSpeed = 20.0f;
 
+	//HUD Class to add to viewport
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> HUDWidgetClass;
+
+	UPROPERTY(VisibleAnywhere)
+		class UWidgetComponent* CurrentWidget;
+
 	//Overlap Functions
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
