@@ -80,7 +80,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		}
 		else
 		{
-			EndThrow();              
+			Throw();              
 		}
 	}
 
@@ -110,14 +110,15 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &APlayerCharacter::TouchStarted);
 	PlayerInputComponent->BindTouch(IE_Released, this, &APlayerCharacter::TouchStopped);
 
-	//Picking up Items
-	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &APlayerCharacter::PickUp);
+	//Interacting/Hold Interacting of object
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::Interact);
+	PlayerInputComponent->BindAction("Interact", IE_Released, this, &APlayerCharacter::StopInteract);
 
-	//Start the charging of throwing picked up item
-	PlayerInputComponent->BindAction("Throw", IE_Pressed, this, &APlayerCharacter::Throw);
+	//Picking up and Dropping Items
+	PlayerInputComponent->BindAction("Pickup / Throw", IE_Pressed, this, &APlayerCharacter::PickupAndDrop);
 
 	//Throw picked up item
-	PlayerInputComponent->BindAction("Throw", IE_Released, this, &APlayerCharacter::EndThrow);
+	PlayerInputComponent->BindAction("Pickup / Throw", IE_Released, this, &APlayerCharacter::Throw);
 }
 
 void APlayerCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
@@ -171,10 +172,38 @@ void APlayerCharacter::MoveRight(float Value)
 	}
 }
 
-void APlayerCharacter::PickUp()
+void APlayerCharacter::Interact()
+{
+	//If the player is near an interactable
+	if (CanInteract)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("INTERACTING"));
+		IsInteracting = true;
+	}
+}
+void APlayerCharacter::StopInteract()
+{
+	IsInteracting = false;
+}
+
+void APlayerCharacter::PickupAndDrop()
 {
 	if (PickedUpItem)
 	{
+		IsHoldingDownThrow = true;
+
+		if (HUDWidgetClass != nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
+
+			CurrentWidget = CreateWidget<UUserWidget>(UGameplayStatics::GetPlayerController(GetWorld(), PlayerIndex), HUDWidgetClass);
+
+			if (CurrentWidget)
+			{
+				CurrentWidget->AddToPlayerScreen();
+			}
+		}
+
 		return;
 	}
 
@@ -231,29 +260,7 @@ void APlayerCharacter::PickUp()
 
 void APlayerCharacter::Throw()
 {
-	if (PickedUpItem)
-	{
-		IsHoldingDownThrow = true;
-
-		if (HUDWidgetClass != nullptr)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
-
-			CurrentWidget = CreateWidget<UUserWidget>(UGameplayStatics::GetPlayerController(GetWorld(), PlayerIndex), HUDWidgetClass);
-
-			if (CurrentWidget)
-			{
-				CurrentWidget->AddToPlayerScreen();
-			}
-		}
-
-		return;
-	}
-}
-
-void APlayerCharacter::EndThrow()
-{
-	if (PickedUpItem)
+	if (PickedUpItem && IsHoldingDownThrow)
 	{
 		IsHoldingDownThrow = false;
 		PickedUpItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
