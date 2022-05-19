@@ -214,10 +214,10 @@ void APlayerCharacter::PickupAndDrop()
 	FVector SweepEnd = GetMesh()->GetSocketLocation("hand_r");
 
 	//Create a collision sphere
-	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(50.0f);
+	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(100.0f);
 
 	//Draw debug sphere
-	DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 50, FColor::White, false, 3);
+	DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 100, FColor::White, false, 1);
 
 	//Check if something is hit
 	bool isHit = GetWorld()->SweepMultiByChannel(OutHits, SweepStart, SweepEnd, FQuat::Identity, ECC_WorldStatic, MyColSphere);

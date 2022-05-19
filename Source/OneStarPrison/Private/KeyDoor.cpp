@@ -12,12 +12,12 @@ AKeyDoor::AKeyDoor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	RootComponent = Mesh;
-
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	BoxCollision->SetBoxExtent(FVector(200, 200, 200));
-	BoxCollision->SetupAttachment(RootComponent);
+	RootComponent = BoxCollision;
+
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	Mesh->SetupAttachment(RootComponent);
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AKeyDoor::OnOverlapBegin);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AKeyDoor::OnOverlapEnd);
@@ -37,25 +37,58 @@ void AKeyDoor::Tick(float DeltaTime)
 
 	if (IsOpen)
 	{
-		Destroy();
+		OpenDoor(DeltaTime);
+		return;
 	}
+
+	if (OverlappingPlayer)
+	{
+		if (OverlappingPlayer->IsInteracting)
+		{
+			APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
+			if (key)
+			{
+				OverlappingPlayer->PickedUpItem->Destroy();
+				OverlappingPlayer->PickedUpItem = nullptr;
+				IsOpen = true;
+				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
+			}
+		}
+	}
+
+	//if (IsOpen)
+	//{
+	//	Destroy();
+	//}
+}
+
+void AKeyDoor::OpenDoor(float _DeltaTime)
+{
+	if (GetActorLocation() != OpenPosition)
+	{
+		FVector newPos = FMath::Lerp(GetActorLocation(), OpenPosition, _DeltaTime);
+		SetActorLocation(newPos);
+	}
+	else
+	{
+		IsOpen = true;
+	}
+
 }
 
 void AKeyDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
-
-		if (playerActor)
+		if (OverlappingPlayer == nullptr)
 		{
-			APickupableKey* key = Cast<APickupableKey>(playerActor->PickedUpItem);
-			if (key)
+			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+
+			if (playerActor)
 			{
-				playerActor->PickedUpItem->Destroy();
-				playerActor->PickedUpItem = nullptr;
-				IsOpen = true;
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
+				OverlappingPlayer = playerActor;
+				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
+				OverlappingPlayer->CanInteract = true;
 			}
 		}
 	}
@@ -69,7 +102,7 @@ void AKeyDoor::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AAc
 
 		if (playerActor)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Player left"));
 		}
 
 
