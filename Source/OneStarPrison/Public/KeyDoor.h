@@ -33,6 +33,9 @@ public:
 		bool IsOpen = false;
 
 	UPROPERTY(EditAnywhere)
+		bool IsKeyOneTimeUse = false;
+
+	UPROPERTY(EditAnywhere)
 		FVector OpenPosition = FVector(0, 0, 0);
 
 	UPROPERTY(EditAnywhere)
@@ -40,6 +43,15 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
+
+	//HUD Class to add to viewport
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> HUDWidgetClass;
+
+	UPROPERTY(VisibleAnywhere)
+		class UUserWidget* CurrentWidget;
+
+	void InteractPopUp();
 
 	//Overlap Functions
 	UFUNCTION()
