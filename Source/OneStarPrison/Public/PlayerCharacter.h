@@ -100,7 +100,6 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class UUserWidget* CurrentWidget;
 
-
 	//Current Pickedup Item
 	UPROPERTY(VisibleAnywhere)
 		class APickupable* PickedUpItem;

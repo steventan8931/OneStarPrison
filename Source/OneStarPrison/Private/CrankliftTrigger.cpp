@@ -5,7 +5,9 @@
 #include "Components/BoxComponent.h"
 #include "PlayerCharacter.h"
 #include "CrankliftPlatform.h"
+
 #include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACrankliftTrigger::ACrankliftTrigger()
@@ -68,10 +70,6 @@ void ACrankliftTrigger::Tick(float DeltaTime)
 			}
 		}
 	}
-
-
-
-
 }
 
 void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -87,7 +85,12 @@ void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 				OverlappingPlayer = playerActor;
 				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
 				OverlappingPlayer->CanInteract = true;
+				InteractPopUp();
 			}
+		}
+		else
+		{
+			InteractPopUp();
 		}
 
 
@@ -100,9 +103,29 @@ void ACrankliftTrigger::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, 
 	{
 		if (OverlappingPlayer != nullptr)
 		{
+			if (CurrentWidget)
+			{
+				CurrentWidget->RemoveFromParent();
+			}
+
 			IsMovingUp = false;
 			OverlappingPlayer = nullptr;
 		}
 
+	}
+}
+
+void ACrankliftTrigger::InteractPopUp()
+{
+	if (HUDWidgetClass != nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
+
+		CurrentWidget = CreateWidget<UUserWidget>(UGameplayStatics::GetPlayerController(GetWorld(), OverlappingPlayer->PlayerIndex), HUDWidgetClass);
+
+		if (CurrentWidget)
+		{
+			CurrentWidget->AddToPlayerScreen();
+		}
 	}
 }
