@@ -104,17 +104,6 @@ void AKeyDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class A
 				}
 			}
 		}
-		else
-		{
-			APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
-			if (key)
-			{
-				if (!IsOpen)
-				{
-					InteractPopUp();
-				}
-			}
-		}
 	}
 }
 

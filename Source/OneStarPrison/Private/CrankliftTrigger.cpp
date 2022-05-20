@@ -88,12 +88,6 @@ void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 				InteractPopUp();
 			}
 		}
-		else
-		{
-			InteractPopUp();
-		}
-
-
 	}
 }
 
