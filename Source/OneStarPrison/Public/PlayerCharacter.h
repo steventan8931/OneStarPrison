@@ -67,13 +67,17 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	//Grab Pickupable items
-	void PickUp();
+	//Interact with object/button press/hold
+	void Interact();
+	void StopInteract();
+	bool CanInteract = false;
+	bool IsInteracting = false;
+
+	//Grab Pickupable items and drop
+	void PickupAndDrop();
 
 	//Throw Picked up item
 	void Throw();
-	//Throw button is released
-	void EndThrow();
 
 	//Check if Throw Key is being held down
 	bool IsHoldingDownThrow = false;
@@ -95,7 +99,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 		class UUserWidget* CurrentWidget;
-
 
 	//Current Pickedup Item
 	UPROPERTY(VisibleAnywhere)

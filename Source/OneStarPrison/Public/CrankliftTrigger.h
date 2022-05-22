@@ -44,12 +44,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MoveSpeed = 20.0f;
 
+
+	UPROPERTY(VisibleAnywhere)
+		class APlayerCharacter* OverlappingPlayer = nullptr;
+
 	//HUD Class to add to viewport
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> HUDWidgetClass;
 
 	UPROPERTY(VisibleAnywhere)
-		class UWidgetComponent* CurrentWidget;
+		class UUserWidget* CurrentWidget;
+
+	void InteractPopUp();
 
 	//Overlap Functions
 	UFUNCTION()
@@ -58,4 +64,6 @@ public:
 	//Overlap Functions
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+
 };

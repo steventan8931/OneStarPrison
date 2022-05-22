@@ -5,7 +5,9 @@
 #include "Components/BoxComponent.h"
 #include "PlayerCharacter.h"
 #include "CrankliftPlatform.h"
+
 #include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACrankliftTrigger::ACrankliftTrigger()
@@ -41,6 +43,18 @@ void ACrankliftTrigger::Tick(float DeltaTime)
 
 	if (Platform)
 	{
+		if (OverlappingPlayer != nullptr)
+		{
+			if (OverlappingPlayer->IsInteracting)
+			{
+				IsMovingUp = true;
+			}
+			else
+			{
+				IsMovingUp = false;
+			}
+		}
+
 		if (IsMovingUp)
 		{
 			if (Platform->GetActorLocation().Z <= MaxHeight)
@@ -56,33 +70,22 @@ void ACrankliftTrigger::Tick(float DeltaTime)
 			}
 		}
 	}
-
-
 }
 
 void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("PLAYER IS OVERLAPPING"));
-		//Overlapping Actor is a player
-		if (playerActor)
+		if (OverlappingPlayer == nullptr)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("PLAYER IS OVERLAPPING"));
-			IsMovingUp = true;
+			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
-			if (HUDWidgetClass != nullptr)
+			if (playerActor)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
-
-
-
-
-				if (CurrentWidget)
-				{
-					
-				}
+				OverlappingPlayer = playerActor;
+				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
+				OverlappingPlayer->CanInteract = true;
+				InteractPopUp();
 			}
 		}
 	}
@@ -92,18 +95,31 @@ void ACrankliftTrigger::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, 
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("PLAYER IS OVERLAPPING"));
-		//Overlapping Actor is a player
-		if (playerActor)
+		if (OverlappingPlayer != nullptr)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("NO LONGER OVERLAPPING"));
-			IsMovingUp = false;
-
 			if (CurrentWidget)
 			{
-				//CurrentWidget->RemoveFromParent();
+				CurrentWidget->RemoveFromParent();
 			}
+
+			IsMovingUp = false;
+			OverlappingPlayer = nullptr;
+		}
+
+	}
+}
+
+void ACrankliftTrigger::InteractPopUp()
+{
+	if (HUDWidgetClass != nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
+
+		CurrentWidget = CreateWidget<UUserWidget>(UGameplayStatics::GetPlayerController(GetWorld(), OverlappingPlayer->PlayerIndex), HUDWidgetClass);
+
+		if (CurrentWidget)
+		{
+			CurrentWidget->AddToPlayerScreen();
 		}
 	}
 }
