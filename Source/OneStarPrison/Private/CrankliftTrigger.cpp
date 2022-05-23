@@ -8,12 +8,15 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 ACrankliftTrigger::ACrankliftTrigger()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
@@ -26,7 +29,13 @@ ACrankliftTrigger::ACrankliftTrigger()
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ACrankliftTrigger::OnOverlapBegin);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ACrankliftTrigger::OnOverlapEnd);
 
-	//CurrentWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget"));
+	//Actor Replication
+	bReplicates = true;
+	if (HasAuthority())
+	{
+		IsMovingUp = true;
+		
+	}
 }
 
 // Called when the game starts or when spawned
@@ -34,6 +43,19 @@ void ACrankliftTrigger::BeginPlay()
 {
 	Super::BeginPlay();
 	DrawDebugBox(GetWorld(), GetActorLocation(), FVector(200, 200, 200), FColor::Purple, true);
+}
+
+void ACrankliftTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const 
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACrankliftTrigger, IsMovingUp);
+	DOREPLIFETIME(ACrankliftTrigger, OverlappingPlayer);
+}
+
+void ACrankliftTrigger::OnRep_IsMovingUp()
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnRep_Repped Called"));
 }
 
 // Called every frame
@@ -55,18 +77,21 @@ void ACrankliftTrigger::Tick(float DeltaTime)
 			}
 		}
 
-		if (IsMovingUp)
+		//if (HasAuthority())
 		{
-			if (Platform->GetActorLocation().Z <= MaxHeight)
+			if (IsMovingUp)
 			{
-				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z + DeltaTime * MoveSpeed));
+				if (Platform->GetActorLocation().Z <= MaxHeight)
+				{
+					Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z + DeltaTime * MoveSpeed));
+				}
 			}
-		}
-		else
-		{
-			if (Platform->GetActorLocation().Z >= MinHeight)
+			else
 			{
-				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z - DeltaTime * MoveSpeed));
+				if (Platform->GetActorLocation().Z >= MinHeight)
+				{
+					Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z - DeltaTime * MoveSpeed));
+				}
 			}
 		}
 	}
