@@ -12,6 +12,7 @@
 #include "Pickupable.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -64,6 +65,18 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	if (!HasAuthority())
+	{
+		PlayerIndex = 1;
+	}
+}
+
+void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APlayerCharacter, IsInteracting);
+	DOREPLIFETIME(APlayerCharacter, CanInteract);
 }
 
 // Called every frame
@@ -175,15 +188,27 @@ void APlayerCharacter::MoveRight(float Value)
 void APlayerCharacter::Interact()
 {
 	//If the player is near an interactable
-	if (CanInteract)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("INTERACTING"));
-		IsInteracting = true;
-	}
+	//OnRep_IsInteracting();
+	RPCInteract_Implementation();
 }
 void APlayerCharacter::StopInteract()
 {
 	IsInteracting = false;
+}
+
+void APlayerCharacter::OnRep_IsInteracting()
+{
+
+}
+
+void APlayerCharacter::RPCInteract_Implementation()
+{
+	if (CanInteract)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("IM CLICKING INTERACTING"));
+		IsInteracting = true;
+	}
+
 }
 
 void APlayerCharacter::PickupAndDrop()
@@ -224,7 +249,6 @@ void APlayerCharacter::PickupAndDrop()
 
 	if (isHit)
 	{
-
 		//Loop through TArray
 		for (auto& Hit : OutHits)
 		{

@@ -55,6 +55,9 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
+	//Replication
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -70,8 +73,18 @@ public:
 	//Interact with object/button press/hold
 	void Interact();
 	void StopInteract();
+	UPROPERTY(VisibleAnywhere, Replicated)
 	bool CanInteract = false;
+	UPROPERTY(VisibleAnywhere, Replicated)
 	bool IsInteracting = false;
+
+	UFUNCTION()
+	void OnRep_IsInteracting();
+
+	UFUNCTION(Server, Reliable)
+		void RPCInteract();
+
+	void RPCInteract_Implementation();
 
 	//Grab Pickupable items and drop
 	void PickupAndDrop();

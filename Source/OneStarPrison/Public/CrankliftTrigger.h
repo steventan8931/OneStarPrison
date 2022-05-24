@@ -32,7 +32,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		class ACrankliftPlatform* Platform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -46,6 +46,11 @@ public:
 
 	UFUNCTION()
 	void OnRep_IsMovingUp();
+
+	UFUNCTION(Client, Reliable)
+		void RPCTest();
+
+	float cacheDeltaTime = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MoveSpeed = 20.0f;

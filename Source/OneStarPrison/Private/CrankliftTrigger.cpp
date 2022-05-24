@@ -33,7 +33,7 @@ ACrankliftTrigger::ACrankliftTrigger()
 	bReplicates = true;
 	if (HasAuthority())
 	{
-		IsMovingUp = true;
+		//IsMovingUp = true;
 		
 	}
 }
@@ -55,50 +55,75 @@ void ACrankliftTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 
 void ACrankliftTrigger::OnRep_IsMovingUp()
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnRep_Repped Called"));
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
+}
+
+void ACrankliftTrigger::RPCTest_Implementation()
+{
+
 }
 
 // Called every frame
 void ACrankliftTrigger::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	if (!HasAuthority())
+	{
+		return;
+	}
 
+	Super::Tick(DeltaTime);
+	cacheDeltaTime = DeltaTime;
 	if (Platform)
 	{
 		if (OverlappingPlayer != nullptr)
 		{
 			if (OverlappingPlayer->IsInteracting)
 			{
+				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Interacting"));
 				IsMovingUp = true;
 			}
 			else
 			{
+				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Not Interacting"));
 				IsMovingUp = false;
 			}
 		}
-
-		//if (HasAuthority())
+		else
 		{
-			if (IsMovingUp)
+			IsMovingUp = false;
+		}
+
+		if (IsMovingUp)
+		{
+			if (Platform->GetActorLocation().Z <= MaxHeight)
 			{
-				if (Platform->GetActorLocation().Z <= MaxHeight)
-				{
-					Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z + DeltaTime * MoveSpeed));
-				}
+				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z + cacheDeltaTime * MoveSpeed));
 			}
-			else
+		}
+		else
+		{
+			if (Platform->GetActorLocation().Z >= MinHeight)
 			{
-				if (Platform->GetActorLocation().Z >= MinHeight)
-				{
-					Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z - DeltaTime * MoveSpeed));
-				}
+				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z - cacheDeltaTime * MoveSpeed));
 			}
+
+		}
+
+		if (HasAuthority())
+		{
+			
+				//UE_LOG(LogTemp, Warning, TEXT("OnRep_Repped Called"));
 		}
 	}
 }
 
 void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (!HasAuthority())
+	{
+		return;
+	}
+
 	if (OtherActor && (OtherActor != this))
 	{
 		if (OverlappingPlayer == nullptr)
@@ -108,7 +133,7 @@ void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 			if (playerActor)
 			{
 				OverlappingPlayer = playerActor;
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
+				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 				OverlappingPlayer->CanInteract = true;
 				InteractPopUp();
 			}
@@ -118,6 +143,11 @@ void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 
 void ACrankliftTrigger::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	if (!HasAuthority())
+	{
+		return;
+	}
+
 	if (OtherActor && (OtherActor != this))
 	{
 		if (OverlappingPlayer != nullptr)
