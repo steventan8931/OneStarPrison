@@ -189,16 +189,11 @@ void APlayerCharacter::Interact()
 {
 	//If the player is near an interactable
 	//OnRep_IsInteracting();
-	RPCInteract_Implementation();
+	RPCInteract();
 }
 void APlayerCharacter::StopInteract()
 {
-	IsInteracting = false;
-}
-
-void APlayerCharacter::OnRep_IsInteracting()
-{
-
+	RPCStopInteract();
 }
 
 void APlayerCharacter::RPCInteract_Implementation()
@@ -208,7 +203,11 @@ void APlayerCharacter::RPCInteract_Implementation()
 		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("IM CLICKING INTERACTING"));
 		IsInteracting = true;
 	}
+}
 
+void APlayerCharacter::RPCStopInteract_Implementation()
+{
+	IsInteracting = false;
 }
 
 void APlayerCharacter::PickupAndDrop()

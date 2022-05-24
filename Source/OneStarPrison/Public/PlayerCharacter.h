@@ -78,13 +78,10 @@ public:
 	UPROPERTY(VisibleAnywhere, Replicated)
 	bool IsInteracting = false;
 
-	UFUNCTION()
-	void OnRep_IsInteracting();
-
 	UFUNCTION(Server, Reliable)
 		void RPCInteract();
-
-	void RPCInteract_Implementation();
+	UFUNCTION(Server, Reliable)
+		void RPCStopInteract();
 
 	//Grab Pickupable items and drop
 	void PickupAndDrop();

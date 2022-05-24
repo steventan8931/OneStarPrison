@@ -55,7 +55,6 @@ void ACrankliftTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 
 void ACrankliftTrigger::OnRep_IsMovingUp()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
 }
 
 void ACrankliftTrigger::RPCTest_Implementation()
@@ -79,12 +78,10 @@ void ACrankliftTrigger::Tick(float DeltaTime)
 		{
 			if (OverlappingPlayer->IsInteracting)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Interacting"));
 				IsMovingUp = true;
 			}
 			else
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Not Interacting"));
 				IsMovingUp = false;
 			}
 		}
