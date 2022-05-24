@@ -212,6 +212,12 @@ void APlayerCharacter::RPCStopInteract_Implementation()
 
 void APlayerCharacter::PickupAndDrop()
 {
+	RPCPickupAndDrop();
+}
+
+void APlayerCharacter::RPCPickupAndDrop_Implementation()
+{
+
 	if (PickedUpItem)
 	{
 		IsHoldingDownThrow = true;
@@ -278,7 +284,6 @@ void APlayerCharacter::PickupAndDrop()
 
 		}
 	}
-
 }
 
 void APlayerCharacter::Throw()

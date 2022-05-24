@@ -85,6 +85,8 @@ public:
 
 	//Grab Pickupable items and drop
 	void PickupAndDrop();
+	UFUNCTION(Server, Reliable)
+		void RPCPickupAndDrop();
 
 	//Throw Picked up item
 	void Throw();
@@ -111,6 +113,6 @@ public:
 		class UUserWidget* CurrentWidget;
 
 	//Current Pickedup Item
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		class APickupable* PickedUpItem;
 };

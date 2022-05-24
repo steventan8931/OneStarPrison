@@ -53,15 +53,6 @@ void ACrankliftTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 	DOREPLIFETIME(ACrankliftTrigger, OverlappingPlayer);
 }
 
-void ACrankliftTrigger::OnRep_IsMovingUp()
-{
-}
-
-void ACrankliftTrigger::RPCTest_Implementation()
-{
-
-}
-
 // Called every frame
 void ACrankliftTrigger::Tick(float DeltaTime)
 {

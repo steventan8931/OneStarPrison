@@ -41,14 +41,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MinHeight = 0;
 
-	UPROPERTY(EditAnywhere, ReplicatedUsing=OnRep_IsMovingUp)
+	UPROPERTY(EditAnywhere, Replicated)
 		bool IsMovingUp = false;
-
-	UFUNCTION()
-	void OnRep_IsMovingUp();
-
-	UFUNCTION(Client, Reliable)
-		void RPCTest();
 
 	float cacheDeltaTime = 0.0f;
 
