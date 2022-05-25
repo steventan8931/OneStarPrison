@@ -8,15 +8,12 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
-#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 ACrankliftTrigger::ACrankliftTrigger()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
@@ -28,14 +25,6 @@ ACrankliftTrigger::ACrankliftTrigger()
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ACrankliftTrigger::OnOverlapBegin);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ACrankliftTrigger::OnOverlapEnd);
-
-	//Actor Replication
-	bReplicates = true;
-	if (HasAuthority())
-	{
-		//IsMovingUp = true;
-		
-	}
 }
 
 // Called when the game starts or when spawned
@@ -45,13 +34,13 @@ void ACrankliftTrigger::BeginPlay()
 	DrawDebugBox(GetWorld(), GetActorLocation(), FVector(200, 200, 200), FColor::Purple, true);
 }
 
-void ACrankliftTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const 
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ACrankliftTrigger, IsMovingUp);
-	DOREPLIFETIME(ACrankliftTrigger, OverlappingPlayer);
-}
+//void ACrankliftTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const 
+//{
+//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+//
+//	DOREPLIFETIME(ACrankliftTrigger, IsMovingUp);
+//	DOREPLIFETIME(ACrankliftTrigger, OverlappingPlayer);
+//}
 
 // Called every frame
 void ACrankliftTrigger::Tick(float DeltaTime)
@@ -107,11 +96,6 @@ void ACrankliftTrigger::Tick(float DeltaTime)
 
 void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!HasAuthority())
-	{
-		return;
-	}
-
 	if (OtherActor && (OtherActor != this))
 	{
 		if (OverlappingPlayer == nullptr)
@@ -131,11 +115,6 @@ void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 
 void ACrankliftTrigger::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (!HasAuthority())
-	{
-		return;
-	}
-
 	if (OtherActor && (OtherActor != this))
 	{
 		if (OverlappingPlayer != nullptr)

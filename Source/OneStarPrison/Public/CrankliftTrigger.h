@@ -19,9 +19,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	//Replication
-	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -32,7 +29,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
 
-	UPROPERTY(EditAnywhere, Replicated)
+	UPROPERTY(EditAnywhere)
 		class ACrankliftPlatform* Platform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -41,7 +38,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MinHeight = 0;
 
-	UPROPERTY(EditAnywhere, Replicated)
+	UPROPERTY(EditAnywhere)
 		bool IsMovingUp = false;
 
 	float cacheDeltaTime = 0.0f;
@@ -49,7 +46,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MoveSpeed = 20.0f;
 
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(VisibleAnywhere)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
 
 	//HUD Class to add to viewport
