@@ -217,7 +217,6 @@ void APlayerCharacter::PickupAndDrop()
 
 void APlayerCharacter::RPCPickupAndDrop_Implementation()
 {
-
 	if (PickedUpItem)
 	{
 		IsHoldingDownThrow = true;
@@ -270,6 +269,7 @@ void APlayerCharacter::RPCPickupAndDrop_Implementation()
 				pickup->Player = this;
 				pickup->Mesh->SetSimulatePhysics(false);
 				pickup->Mesh->SetCollisionProfileName("Trigger");
+				
 				pickup->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("hand_r"));
 				PickedUpItem = pickup;
 
