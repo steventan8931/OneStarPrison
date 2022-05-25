@@ -288,6 +288,11 @@ void APlayerCharacter::RPCPickupAndDrop_Implementation()
 
 void APlayerCharacter::Throw()
 {
+	RPCThrow();
+}
+
+void APlayerCharacter::RPCThrow_Implementation()
+{
 	if (PickedUpItem && IsHoldingDownThrow)
 	{
 		IsHoldingDownThrow = false;
@@ -299,13 +304,13 @@ void APlayerCharacter::Throw()
 		PickedUpItem->Mesh->AddForceAtLocation(throwPower * 150 * PickedUpItem->Mesh->GetMass(), GetMesh()->GetSocketLocation("hand_r"));
 		PickedUpItem->Player = nullptr;
 		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, FString::Printf(TEXT("Throw power = %s"), *PickedUpItem->Mesh->GetComponentVelocity().ToString()));
-		
+
 		if (CurrentWidget)
 		{
 			CurrentWidget->RemoveFromParent();
 		}
 		ThrowPowerScale = 0;
-		
+
 		PickedUpItem = nullptr;
 		return;
 	}

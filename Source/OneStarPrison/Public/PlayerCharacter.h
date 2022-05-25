@@ -90,6 +90,8 @@ public:
 
 	//Throw Picked up item
 	void Throw();
+	UFUNCTION(Server, Reliable)
+		void RPCThrow();
 
 	//Check if Throw Key is being held down
 	bool IsHoldingDownThrow = false;
