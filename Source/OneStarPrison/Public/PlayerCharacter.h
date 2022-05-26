@@ -85,13 +85,17 @@ public:
 
 	//Grab Pickupable items and drop
 	void PickupAndDrop();
-	UFUNCTION(Server, Reliable)
-		void RPCPickupAndDrop();
+	UFUNCTION(Server, Unreliable)
+		void ServerRPCPickupAndDrop();
+	UFUNCTION(NetMulticast, Unreliable)
+		void ClientRPCPickupAndDrop();
 
 	//Throw Picked up item
 	void Throw();
 	UFUNCTION(Server, Reliable)
-		void RPCThrow();
+		void ServerRPCThrow();
+	UFUNCTION(NetMulticast, Reliable)
+		void ClientRPCThrow();
 
 	//Check if Throw Key is being held down
 	bool IsHoldingDownThrow = false;

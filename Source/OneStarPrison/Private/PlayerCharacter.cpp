@@ -189,11 +189,17 @@ void APlayerCharacter::Interact()
 {
 	//If the player is near an interactable
 	//OnRep_IsInteracting();
-	RPCInteract();
+	if (HasAuthority())
+	{
+		RPCInteract();
+	}
 }
 void APlayerCharacter::StopInteract()
 {
-	RPCStopInteract();
+	if (HasAuthority())
+	{
+		RPCStopInteract();
+	}
 }
 
 void APlayerCharacter::RPCInteract_Implementation()
@@ -212,10 +218,15 @@ void APlayerCharacter::RPCStopInteract_Implementation()
 
 void APlayerCharacter::PickupAndDrop()
 {
-	RPCPickupAndDrop();
+	ServerRPCPickupAndDrop();
 }
 
-void APlayerCharacter::RPCPickupAndDrop_Implementation()
+void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
+{
+	ClientRPCPickupAndDrop();
+}
+
+void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 {
 	if (PickedUpItem)
 	{
@@ -288,10 +299,14 @@ void APlayerCharacter::RPCPickupAndDrop_Implementation()
 
 void APlayerCharacter::Throw()
 {
-	RPCThrow();
+	ServerRPCThrow();
 }
 
-void APlayerCharacter::RPCThrow_Implementation()
+void APlayerCharacter::ServerRPCThrow_Implementation()
+{
+	ClientRPCThrow();
+}
+void APlayerCharacter::ClientRPCThrow_Implementation()
 {
 	if (PickedUpItem && IsHoldingDownThrow)
 	{
