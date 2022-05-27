@@ -2,9 +2,3 @@
 
 
 #include "PickupableKey.h"
-#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
-
-void APickupableKey::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-}
