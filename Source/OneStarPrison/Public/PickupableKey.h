@@ -14,4 +14,6 @@ class ONESTARPRISON_API APickupableKey : public APickupable
 {
 	GENERATED_BODY()
 	
+protected:
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 };

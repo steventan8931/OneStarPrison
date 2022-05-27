@@ -8,15 +8,12 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
-#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 ACrankliftTrigger::ACrankliftTrigger()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
@@ -28,14 +25,6 @@ ACrankliftTrigger::ACrankliftTrigger()
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ACrankliftTrigger::OnOverlapBegin);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ACrankliftTrigger::OnOverlapEnd);
-
-	//Actor Replication
-	bReplicates = true;
-	if (HasAuthority())
-	{
-		IsMovingUp = true;
-		
-	}
 }
 
 // Called when the game starts or when spawned
@@ -45,24 +34,24 @@ void ACrankliftTrigger::BeginPlay()
 	DrawDebugBox(GetWorld(), GetActorLocation(), FVector(200, 200, 200), FColor::Purple, true);
 }
 
-void ACrankliftTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const 
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ACrankliftTrigger, IsMovingUp);
-	DOREPLIFETIME(ACrankliftTrigger, OverlappingPlayer);
-}
-
-void ACrankliftTrigger::OnRep_IsMovingUp()
-{
-	UE_LOG(LogTemp, Warning, TEXT("OnRep_Repped Called"));
-}
+//void ACrankliftTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const 
+//{
+//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+//
+//	DOREPLIFETIME(ACrankliftTrigger, IsMovingUp);
+//	DOREPLIFETIME(ACrankliftTrigger, OverlappingPlayer);
+//}
 
 // Called every frame
 void ACrankliftTrigger::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	if (!HasAuthority())
+	{
+		return;
+	}
 
+	Super::Tick(DeltaTime);
+	cacheDeltaTime = DeltaTime;
 	if (Platform)
 	{
 		if (OverlappingPlayer != nullptr)
@@ -76,23 +65,31 @@ void ACrankliftTrigger::Tick(float DeltaTime)
 				IsMovingUp = false;
 			}
 		}
-
-		//if (HasAuthority())
+		else
 		{
-			if (IsMovingUp)
+			IsMovingUp = false;
+		}
+
+		if (IsMovingUp)
+		{
+			if (Platform->GetActorLocation().Z <= MaxHeight)
 			{
-				if (Platform->GetActorLocation().Z <= MaxHeight)
-				{
-					Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z + DeltaTime * MoveSpeed));
-				}
+				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z + cacheDeltaTime * MoveSpeed));
 			}
-			else
+		}
+		else
+		{
+			if (Platform->GetActorLocation().Z >= MinHeight)
 			{
-				if (Platform->GetActorLocation().Z >= MinHeight)
-				{
-					Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z - DeltaTime * MoveSpeed));
-				}
+				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z - cacheDeltaTime * MoveSpeed));
 			}
+
+		}
+
+		if (HasAuthority())
+		{
+			
+				//UE_LOG(LogTemp, Warning, TEXT("OnRep_Repped Called"));
 		}
 	}
 }
@@ -108,7 +105,7 @@ void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 			if (playerActor)
 			{
 				OverlappingPlayer = playerActor;
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
+				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 				OverlappingPlayer->CanInteract = true;
 				InteractPopUp();
 			}

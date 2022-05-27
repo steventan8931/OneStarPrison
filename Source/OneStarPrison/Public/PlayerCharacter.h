@@ -55,6 +55,9 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
+	//Replication
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -70,14 +73,29 @@ public:
 	//Interact with object/button press/hold
 	void Interact();
 	void StopInteract();
+	UPROPERTY(VisibleAnywhere, Replicated)
 	bool CanInteract = false;
+	UPROPERTY(VisibleAnywhere, Replicated)
 	bool IsInteracting = false;
+
+	UFUNCTION(Server, Reliable)
+		void RPCInteract();
+	UFUNCTION(Server, Reliable)
+		void RPCStopInteract();
 
 	//Grab Pickupable items and drop
 	void PickupAndDrop();
+	UFUNCTION(Server, Unreliable)
+		void ServerRPCPickupAndDrop();
+	UFUNCTION(NetMulticast, Unreliable)
+		void ClientRPCPickupAndDrop();
 
 	//Throw Picked up item
 	void Throw();
+	UFUNCTION(Server, Reliable)
+		void ServerRPCThrow();
+	UFUNCTION(NetMulticast, Reliable)
+		void ClientRPCThrow();
 
 	//Check if Throw Key is being held down
 	bool IsHoldingDownThrow = false;
@@ -101,6 +119,6 @@ public:
 		class UUserWidget* CurrentWidget;
 
 	//Current Pickedup Item
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		class APickupable* PickedUpItem;
 };

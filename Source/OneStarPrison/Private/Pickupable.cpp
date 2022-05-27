@@ -2,6 +2,7 @@
 
 
 #include "Pickupable.h"
+//#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 APickupable::APickupable()
@@ -11,7 +12,6 @@ APickupable::APickupable()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisualRepresentation"));
 	RootComponent = Mesh;
-
 	Player = nullptr;
 }
 
@@ -29,3 +29,10 @@ void APickupable::Tick(float DeltaTime)
 
 }
 
+//void APickupable::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+//{
+//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+//
+//	DOREPLIFETIME(APickupable, Mesh);
+//	DOREPLIFETIME(APickupable, Player);
+//}

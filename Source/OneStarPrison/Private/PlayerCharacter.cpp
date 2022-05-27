@@ -12,6 +12,7 @@
 #include "Pickupable.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -64,6 +65,18 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	if (!HasAuthority())
+	{
+		PlayerIndex = 1;
+	}
+}
+
+void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APlayerCharacter, IsInteracting);
+	DOREPLIFETIME(APlayerCharacter, CanInteract);
 }
 
 // Called every frame
@@ -175,18 +188,45 @@ void APlayerCharacter::MoveRight(float Value)
 void APlayerCharacter::Interact()
 {
 	//If the player is near an interactable
-	if (CanInteract)
+	//OnRep_IsInteracting();
+	if (HasAuthority())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("INTERACTING"));
-		IsInteracting = true;
+		RPCInteract();
 	}
 }
 void APlayerCharacter::StopInteract()
+{
+	if (HasAuthority())
+	{
+		RPCStopInteract();
+	}
+}
+
+void APlayerCharacter::RPCInteract_Implementation()
+{
+	if (CanInteract)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("IM CLICKING INTERACTING"));
+		IsInteracting = true;
+	}
+}
+
+void APlayerCharacter::RPCStopInteract_Implementation()
 {
 	IsInteracting = false;
 }
 
 void APlayerCharacter::PickupAndDrop()
+{
+	ServerRPCPickupAndDrop();
+}
+
+void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
+{
+	ClientRPCPickupAndDrop();
+}
+
+void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 {
 	if (PickedUpItem)
 	{
@@ -224,7 +264,6 @@ void APlayerCharacter::PickupAndDrop()
 
 	if (isHit)
 	{
-
 		//Loop through TArray
 		for (auto& Hit : OutHits)
 		{
@@ -241,6 +280,7 @@ void APlayerCharacter::PickupAndDrop()
 				pickup->Player = this;
 				pickup->Mesh->SetSimulatePhysics(false);
 				pickup->Mesh->SetCollisionProfileName("Trigger");
+				
 				pickup->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("hand_r"));
 				PickedUpItem = pickup;
 
@@ -255,10 +295,18 @@ void APlayerCharacter::PickupAndDrop()
 
 		}
 	}
-
 }
 
 void APlayerCharacter::Throw()
+{
+	ServerRPCThrow();
+}
+
+void APlayerCharacter::ServerRPCThrow_Implementation()
+{
+	ClientRPCThrow();
+}
+void APlayerCharacter::ClientRPCThrow_Implementation()
 {
 	if (PickedUpItem && IsHoldingDownThrow)
 	{
@@ -271,13 +319,13 @@ void APlayerCharacter::Throw()
 		PickedUpItem->Mesh->AddForceAtLocation(throwPower * 150 * PickedUpItem->Mesh->GetMass(), GetMesh()->GetSocketLocation("hand_r"));
 		PickedUpItem->Player = nullptr;
 		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, FString::Printf(TEXT("Throw power = %s"), *PickedUpItem->Mesh->GetComponentVelocity().ToString()));
-		
+
 		if (CurrentWidget)
 		{
 			CurrentWidget->RemoveFromParent();
 		}
 		ThrowPowerScale = 0;
-		
+
 		PickedUpItem = nullptr;
 		return;
 	}

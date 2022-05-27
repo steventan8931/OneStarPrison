@@ -1,6 +1,6 @@
-C:\Users\Ashley\source\repos\UNREAL\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Module.AdvancedSessions.gen.3_of_3.cpp
+C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Module.AdvancedSessions.gen.3_of_3.cpp
 /I .
-/I C:\Users\Ashley\source\repos\UNREAL\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Private
+/I C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Private
 /I ..\Plugins\Online\OnlineSubsystem\Intermediate\Build\Win64\UnrealGame\Inc\OnlineSubsystem
 /I ..\Plugins\Online\OnlineSubsystem
 /I ..\Plugins\Online\OnlineSubsystem\Source
@@ -109,9 +109,9 @@ C:\Users\Ashley\source\repos\UNREAL\OneStarPrison\Plugins\AdvancedSessions\Advan
 /I Runtime\TypedElementFramework\Public
 /I ..\Intermediate\Build\Win64\UnrealGame\Inc\TypedElementRuntime
 /I Runtime\TypedElementRuntime\Public
-/I C:\Users\Ashley\source\repos\UNREAL\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Inc\AdvancedSessions
-/I C:\Users\Ashley\source\repos\UNREAL\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source
-/I C:\Users\Ashley\source\repos\UNREAL\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes
+/I C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Inc\AdvancedSessions
+/I C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source
+/I C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes
 /I ThirdParty\mimalloc\include
 /I ThirdParty\LibTiff\Source\Win64
 /I ThirdParty\LibTiff\Source
@@ -121,12 +121,12 @@ C:\Users\Ashley\source\repos\UNREAL\OneStarPrison\Plugins\AdvancedSessions\Advan
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt"
-/FI"C:\Users\Ashley\source\repos\UNREAL\OneStarPrison\Intermediate\Build\Win64\OneStarPrison\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
-/FI"C:\Users\Ashley\source\repos\UNREAL\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Definitions.AdvancedSessions.h"
-/Yu"C:\Users\Ashley\source\repos\UNREAL\OneStarPrison\Intermediate\Build\Win64\OneStarPrison\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
-/Fp"C:\Users\Ashley\source\repos\UNREAL\OneStarPrison\Intermediate\Build\Win64\OneStarPrison\Development\Engine\SharedPCH.Engine.ShadowErrors.h.pch"
-/Fo"C:\Users\Ashley\source\repos\UNREAL\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Module.AdvancedSessions.gen.3_of_3.cpp.obj"
-/sourceDependencies C:\Users\Ashley\source\repos\UNREAL\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Module.AdvancedSessions.gen.3_of_3.cpp.json
+/FI"C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Intermediate\Build\Win64\OneStarPrison\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
+/FI"C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Definitions.AdvancedSessions.h"
+/Yu"C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Intermediate\Build\Win64\OneStarPrison\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
+/Fp"C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Intermediate\Build\Win64\OneStarPrison\Development\Engine\SharedPCH.Engine.ShadowErrors.h.pch"
+/Fo"C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Module.AdvancedSessions.gen.3_of_3.cpp.obj"
+/sourceDependencies C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Module.AdvancedSessions.gen.3_of_3.cpp.json
 /Zc:inline
 /nologo
 /Oi
