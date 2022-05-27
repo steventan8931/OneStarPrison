@@ -187,19 +187,11 @@ void APlayerCharacter::MoveRight(float Value)
 
 void APlayerCharacter::Interact()
 {
-	//If the player is near an interactable
-	//OnRep_IsInteracting();
-	if (HasAuthority())
-	{
-		RPCInteract();
-	}
+	RPCInteract();
 }
 void APlayerCharacter::StopInteract()
 {
-	if (HasAuthority())
-	{
-		RPCStopInteract();
-	}
+	RPCStopInteract();
 }
 
 void APlayerCharacter::RPCInteract_Implementation()
