@@ -38,7 +38,7 @@
 #define WITH_CEF3 1
 #define WITH_LIVE_CODING 1
 #define UE_LIVE_CODING_ENGINE_DIR "G:\\UE5\\UE_5.0\\Engine"
-#define UE_LIVE_CODING_PROJECT "C:\\Users\\Ashley\\source\\repos\\UNREAL\\OneStarPrison\\OneStarPrison.uproject"
+#define UE_LIVE_CODING_PROJECT "C:\\Users\\Ashley\\source\\repos\\UNREAL\\Vertical\\OneStarPrison\\OneStarPrison.uproject"
 #define WITH_CPP_MODULES 0
 #define WITH_CPP_COROUTINES 0
 #define UBT_MODULE_MANIFEST "UnrealGame.modules"
