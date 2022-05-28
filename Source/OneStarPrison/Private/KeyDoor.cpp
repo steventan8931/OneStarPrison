@@ -8,6 +8,7 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 AKeyDoor::AKeyDoor()
@@ -31,6 +32,13 @@ void AKeyDoor::BeginPlay()
 {
 	Super::BeginPlay();
 	DrawDebugBox(GetWorld(), GetActorLocation(), FVector(200,200,200), FColor::Green, true);
+}
+
+void AKeyDoor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AKeyDoor, OpenPosition);
 }
 
 // Called every frame
