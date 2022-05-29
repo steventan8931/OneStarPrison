@@ -1,20 +1,21 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CrankliftTrigger.h"
-#include "Components/BoxComponent.h"
+#include "InteractiveStepsButton.h"
 #include "PlayerCharacter.h"
-#include "CrankliftPlatform.h"
+#include "InteractiveSteps.h"
+#include "InteractiveStepsManager.h"
 
+#include "Components/BoxComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
-ACrankliftTrigger::ACrankliftTrigger()
+AInteractiveStepsButton::AInteractiveStepsButton()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
 
@@ -23,64 +24,44 @@ ACrankliftTrigger::ACrankliftTrigger()
 	BoxCollision->SetCollisionProfileName(TEXT("Trigger"));
 	BoxCollision->SetupAttachment(RootComponent);
 
-	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ACrankliftTrigger::OnOverlapBegin);
-	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ACrankliftTrigger::OnOverlapEnd);
+	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AInteractiveStepsButton::OnOverlapBegin);
+	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AInteractiveStepsButton::OnOverlapEnd);
 }
 
 // Called when the game starts or when spawned
-void ACrankliftTrigger::BeginPlay()
+void AInteractiveStepsButton::BeginPlay()
 {
 	Super::BeginPlay();
-	DrawDebugBox(GetWorld(), GetActorLocation(), FVector(200, 200, 200), FColor::Purple, true);
+	
 }
 
 // Called every frame
-void ACrankliftTrigger::Tick(float DeltaTime)
+void AInteractiveStepsButton::Tick(float DeltaTime)
 {
-	if (!HasAuthority())
-	{
-		return;
-	}
-
 	Super::Tick(DeltaTime);
-	cacheDeltaTime = DeltaTime;
-	if (Platform)
+
+	if (LinkedStep)
 	{
 		if (OverlappingPlayer != nullptr)
 		{
 			if (OverlappingPlayer->IsInteracting)
 			{
-				IsMovingUp = true;
+				StepsManager->SetOpenStep(LinkedStep);
+				StepsManager->OpenDoor(DeltaTime);
 			}
 			else
 			{
-				IsMovingUp = false;
+				StepsManager->SetOpenStep(nullptr);
 			}
 		}
 		else
 		{
-			IsMovingUp = false;
-		}
-
-		if (IsMovingUp)
-		{
-			if (Platform->GetActorLocation().Z <= MaxHeight)
-			{
-				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z + cacheDeltaTime * MoveSpeed));
-			}
-		}
-		else
-		{
-			if (Platform->GetActorLocation().Z >= MinHeight)
-			{
-				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z - cacheDeltaTime * MoveSpeed));
-			}
 
 		}
 	}
 }
 
-void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AInteractiveStepsButton::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	if (OtherActor && (OtherActor != this))
 	{
@@ -99,7 +80,7 @@ void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 	}
 }
 
-void ACrankliftTrigger::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void AInteractiveStepsButton::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (OtherActor && (OtherActor != this))
 	{
@@ -110,14 +91,13 @@ void ACrankliftTrigger::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, 
 				CurrentWidget->RemoveFromParent();
 			}
 
-			IsMovingUp = false;
 			OverlappingPlayer = nullptr;
 		}
 
 	}
 }
 
-void ACrankliftTrigger::InteractPopUp()
+void AInteractiveStepsButton::InteractPopUp()
 {
 	if (HUDWidgetClass != nullptr)
 	{
@@ -131,3 +111,4 @@ void ACrankliftTrigger::InteractPopUp()
 		}
 	}
 }
+
