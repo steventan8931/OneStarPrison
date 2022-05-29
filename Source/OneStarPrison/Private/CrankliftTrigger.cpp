@@ -34,14 +34,6 @@ void ACrankliftTrigger::BeginPlay()
 	DrawDebugBox(GetWorld(), GetActorLocation(), FVector(200, 200, 200), FColor::Purple, true);
 }
 
-//void ACrankliftTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const 
-//{
-//	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-//
-//	DOREPLIFETIME(ACrankliftTrigger, IsMovingUp);
-//	DOREPLIFETIME(ACrankliftTrigger, OverlappingPlayer);
-//}
-
 // Called every frame
 void ACrankliftTrigger::Tick(float DeltaTime)
 {
@@ -84,12 +76,6 @@ void ACrankliftTrigger::Tick(float DeltaTime)
 				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z - cacheDeltaTime * MoveSpeed));
 			}
 
-		}
-
-		if (HasAuthority())
-		{
-			
-				//UE_LOG(LogTemp, Warning, TEXT("OnRep_Repped Called"));
 		}
 	}
 }
