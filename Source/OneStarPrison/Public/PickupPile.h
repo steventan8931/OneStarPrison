@@ -4,30 +4,41 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Pickupable.generated.h"
+#include "PickupPile.generated.h"
 
 UCLASS()
-class ONESTARPRISON_API APickupable : public AActor
+class ONESTARPRISON_API APickupPile : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	APickupable();
+	APickupPile();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	////Replication
-	//virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
 
 	UPROPERTY(VisibleAnywhere)
-		class APlayerCharacter* Player;
+		class UBoxComponent* BoxCollision;
+
+	UPROPERTY(EditAnywhere)
+		int PickupsToSpawn = 3;
+
+	UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<class AActor>ActorToSpawn;
+
+	UPROPERTY(VisibleAnywhere)
+		TArray<class AActor*> ListOfPickups;
+
+	void CheckForPickUp();
+
+	AActor* SpawnActor();
 };
