@@ -55,7 +55,7 @@ void APickupPile::CheckForPickUp()
 		{
 			if (pickup->Player)
 			{
-				SpawnActor();
+				ListOfPickups[Index] = SpawnActor();
 			}
 
 		}
