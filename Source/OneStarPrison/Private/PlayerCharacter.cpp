@@ -57,8 +57,8 @@ APlayerCharacter::APlayerCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
-	//Defaults
-	PickedUpItem = nullptr;
+	ThrowCameraPos = CreateDefaultSubobject<USceneComponent>(TEXT("ThrowCameraPos"));
+	ThrowCameraPos->SetupAttachment(GetCapsuleComponent());
 }
 
 // Called when the game starts or when spawned
@@ -89,12 +89,25 @@ void APlayerCharacter::Tick(float DeltaTime)
 		//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, FString::Printf(TEXT("Throw power = %f"), ThrowPowerScale));
 		if (ThrowPowerScale < MaxThrowPower)
 		{
+			FVector pos = FMath::Lerp(FollowCamera->GetComponentLocation(), ThrowCameraPos->GetComponentLocation(), DeltaTime);
+			FollowCamera->SetWorldLocation(pos);
+
+			FRotator rot = FMath::Lerp(FollowCamera->GetComponentRotation(), ThrowCameraPos->GetComponentRotation(), DeltaTime);
+			FollowCamera->SetWorldRotation(rot);
 			ThrowPowerScale += (DeltaTime * MaxThrowPower);
 		}
 		else
 		{
 			Throw();              
 		}
+	}
+	else
+	{
+		FVector pos = FMath::Lerp(FollowCamera->GetRelativeLocation(), FVector::ZeroVector, DeltaTime);
+		FollowCamera->SetRelativeLocation(pos);
+
+		FRotator rot = FMath::Lerp(FollowCamera->GetRelativeRotation(), FRotator::ZeroRotator, DeltaTime);
+		FollowCamera->SetRelativeRotation(rot);
 	}
 
 }
@@ -306,11 +319,19 @@ void APlayerCharacter::ClientRPCThrow_Implementation()
 		PickedUpItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		PickedUpItem->Mesh->SetCollisionProfileName("BlockAllDynamic");
 		PickedUpItem->Mesh->SetSimulatePhysics(true);
-		FVector throwPower = GetActorForwardVector() * ThrowPowerScale;
+
+		FVector throwPower = FollowCamera->GetForwardVector() * ThrowPowerScale;
 		//PickedUpItem->Mesh->AddForce(throwPower);
 		PickedUpItem->Mesh->AddForceAtLocation(throwPower * 150 * PickedUpItem->Mesh->GetMass(), GetMesh()->GetSocketLocation("hand_r"));
+		PickedUpItem->Mesh->AddForce(throwPower * 150 * PickedUpItem->Mesh->GetMass(), TEXT("hand_r"));
 		PickedUpItem->Player = nullptr;
 		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, FString::Printf(TEXT("Throw power = %s"), *PickedUpItem->Mesh->GetComponentVelocity().ToString()));
+
+		//FVector throwPower = GetActorForwardVector() * ThrowPowerScale;
+		////PickedUpItem->Mesh->AddForce(throwPower);
+		//PickedUpItem->Mesh->AddForceAtLocation(throwPower * 150 * PickedUpItem->Mesh->GetMass(), GetMesh()->GetSocketLocation("hand_r"));
+		//PickedUpItem->Player = nullptr;
+		//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, FString::Printf(TEXT("Throw power = %s"), *PickedUpItem->Mesh->GetComponentVelocity().ToString()));
 
 		if (CurrentWidget)
 		{

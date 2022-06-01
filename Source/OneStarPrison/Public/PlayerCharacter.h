@@ -70,6 +70,9 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class USceneComponent* ThrowCameraPos;
+
 	//Interact with object/button press/hold
 	void Interact();
 	void StopInteract();
@@ -96,6 +99,7 @@ public:
 		void ServerRPCThrow();
 	UFUNCTION(NetMulticast, Reliable)
 		void ClientRPCThrow();
+	float cacheDeltaTime = 0;
 
 	//Check if Throw Key is being held down
 	bool IsHoldingDownThrow = false;
@@ -120,5 +124,5 @@ public:
 
 	//Current Pickedup Item
 	UPROPERTY(VisibleAnywhere, Replicated)
-		class APickupable* PickedUpItem;
+		class APickupable* PickedUpItem = nullptr;
 };
