@@ -95,6 +95,25 @@ void APlayerCharacter::Tick(float DeltaTime)
 			FRotator rot = FMath::Lerp(FollowCamera->GetComponentRotation(), ThrowCameraPos->GetComponentRotation(), DeltaTime);
 			FollowCamera->SetWorldRotation(rot);
 			ThrowPowerScale += (DeltaTime * MaxThrowPower);
+
+			FVector velocity = GetActorForwardVector() + (0, 0, 0.5f);
+			velocity.Normalize();
+			FPredictProjectilePathParams params;
+			params.StartLocation = GetMesh()->GetSocketLocation("hand_r");
+
+			FVector throwPower = FollowCamera->GetForwardVector() * ThrowPowerScale;
+			params.LaunchVelocity = velocity * ThrowPowerScale * 10;
+			params.ProjectileRadius = 10;
+			params.bTraceWithChannel = false;
+			params.DrawDebugTime = 0.1f;
+			params.DrawDebugType = EDrawDebugTrace::ForDuration;
+			TArray<AActor*> actors;
+			actors.Add(this);
+			actors.Add(PickedUpItem);
+			params.ActorsToIgnore = actors;
+
+			FPredictProjectilePathResult result;
+			UGameplayStatics::PredictProjectilePath(GetWorld(), params, result);
 		}
 		else
 		{
@@ -317,21 +336,21 @@ void APlayerCharacter::ClientRPCThrow_Implementation()
 	{
 		IsHoldingDownThrow = false;
 		PickedUpItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		PickedUpItem->Mesh->SetCollisionProfileName("BlockAllDynamic");
-		PickedUpItem->Mesh->SetSimulatePhysics(true);
+		//PickedUpItem->Mesh->SetSimulatePhysics(true);
 
 		FVector throwPower = FollowCamera->GetForwardVector() * ThrowPowerScale;
-		//PickedUpItem->Mesh->AddForce(throwPower);
-		PickedUpItem->Mesh->AddForceAtLocation(throwPower * 150 * PickedUpItem->Mesh->GetMass(), GetMesh()->GetSocketLocation("hand_r"));
-		PickedUpItem->Mesh->AddForce(throwPower * 150 * PickedUpItem->Mesh->GetMass(), TEXT("hand_r"));
-		PickedUpItem->Player = nullptr;
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, FString::Printf(TEXT("Throw power = %s"), *PickedUpItem->Mesh->GetComponentVelocity().ToString()));
-
-		//FVector throwPower = GetActorForwardVector() * ThrowPowerScale;
 		////PickedUpItem->Mesh->AddForce(throwPower);
 		//PickedUpItem->Mesh->AddForceAtLocation(throwPower * 150 * PickedUpItem->Mesh->GetMass(), GetMesh()->GetSocketLocation("hand_r"));
+		//PickedUpItem->Mesh->AddForce(throwPower * 150 * PickedUpItem->Mesh->GetMass(), TEXT("hand_r"));
 		//PickedUpItem->Player = nullptr;
 		//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, FString::Printf(TEXT("Throw power = %s"), *PickedUpItem->Mesh->GetComponentVelocity().ToString()));
+
+		FVector velocity = GetActorForwardVector() + (0, 0, 0.5f);
+		velocity.Normalize();
+
+		PickedUpItem->Launch(velocity * ThrowPowerScale * 10);
+		PickedUpItem->Mesh->SetCollisionProfileName("BlockAllDynamic");
+		PickedUpItem->Player = nullptr;
 
 		if (CurrentWidget)
 		{

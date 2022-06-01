@@ -30,4 +30,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 		class APlayerCharacter* Player;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UProjectileMovementComponent* ProjectileMovement;
+
+	UFUNCTION()
+		void OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	void Launch(FVector _Velocity);
 };
