@@ -38,8 +38,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		int TargetHeight = 0;
 
-		int TotalPos = 0;
-
 	UPROPERTY(VisibleAnywhere)
 		int RockCount = 0;
 

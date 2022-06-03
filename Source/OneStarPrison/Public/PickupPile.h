@@ -41,4 +41,5 @@ public:
 	void CheckForPickUp();
 
 	AActor* SpawnActor();
+
 };

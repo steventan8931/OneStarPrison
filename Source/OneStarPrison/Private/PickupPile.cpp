@@ -4,6 +4,7 @@
 #include "PickupPile.h"
 #include "Components/BoxComponent.h"
 #include "Pickupable.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 APickupPile::APickupPile()
