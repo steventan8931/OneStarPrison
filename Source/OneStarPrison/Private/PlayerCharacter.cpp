@@ -14,6 +14,9 @@
 #include "Kismet/GameplayStatics.h"
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
+#include "Components/SplineMeshComponent.h"
+#include "Components/SplineComponent.h"
+
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
@@ -59,6 +62,10 @@ APlayerCharacter::APlayerCharacter()
 
 	ThrowCameraPos = CreateDefaultSubobject<USceneComponent>(TEXT("ThrowCameraPos"));
 	ThrowCameraPos->SetupAttachment(GetCapsuleComponent());
+
+	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
+	SplineComponent->SetupAttachment(GetCapsuleComponent());
+	SplineMesh = CreateDefaultSubobject<UStaticMesh>("SplineMesh");
 }
 
 // Called when the game starts or when spawned
@@ -86,9 +93,15 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	if (IsHoldingDownThrow)
 	{
-		//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, FString::Printf(TEXT("Throw power = %f"), ThrowPowerScale));
 		if (ThrowPowerScale < MaxThrowPower)
 		{
+			SplineComponent->ClearSplinePoints();
+			for (int Index = 0; Index != SplineComponentArray.Num(); ++Index)
+			{
+				SplineComponentArray[Index]->DestroyComponent();
+			}
+			SplineComponentArray.Empty();
+
 			FVector pos = FMath::Lerp(FollowCamera->GetComponentLocation(), ThrowCameraPos->GetComponentLocation(), DeltaTime);
 			FollowCamera->SetWorldLocation(pos);
 
@@ -96,28 +109,58 @@ void APlayerCharacter::Tick(float DeltaTime)
 			FollowCamera->SetWorldRotation(rot);
 			ThrowPowerScale += (DeltaTime * MaxThrowPower);
 
-			FVector velocity = GetActorForwardVector() + (0, 0, 0.5f);
+			FVector velocity = GetActorForwardVector() + FVector(0, 0, 0.5f);
 			velocity.Normalize();
 			FPredictProjectilePathParams params;
 			params.StartLocation = GetMesh()->GetSocketLocation("hand_r");
 
-			FVector throwPower = FollowCamera->GetForwardVector() * ThrowPowerScale;
-			params.LaunchVelocity = velocity * ThrowPowerScale * 10;
+			cacheVelocity = velocity * ThrowPowerScale * 10;
+			params.LaunchVelocity = cacheVelocity;
 			params.ProjectileRadius = 10;
 			params.bTraceWithChannel = false;
-			params.DrawDebugTime = 0.1f;
-			params.DrawDebugType = EDrawDebugTrace::ForDuration;
+			params.DrawDebugTime = 0.0f;
+			params.DrawDebugType = EDrawDebugTrace::None;
+			params.SimFrequency = 5;
 			TArray<AActor*> actors;
 			actors.Add(this);
 			actors.Add(PickedUpItem);
+			params.bTraceComplex = true;
 			params.ActorsToIgnore = actors;
 
 			FPredictProjectilePathResult result;
 			UGameplayStatics::PredictProjectilePath(GetWorld(), params, result);
+
+			for (int Index = 0; Index != result.PathData.Num(); ++Index)
+			{
+				SplineComponent->AddSplinePointAtIndex(result.PathData[Index].Location, Index, ESplineCoordinateSpace::Local, true);
+			}
+
+			for (int Index = 0; Index < (SplineComponent->GetNumberOfSplinePoints() - 1); ++Index)
+			{
+				USplineMeshComponent* spline = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
+				spline->SetStaticMesh(SplineMesh);
+				//spline->SetMaterial(0,SplineMaterial);
+				spline->SetStartScale(FVector2D(0.1f, 0.1f),true);
+				spline->SetEndScale(FVector2D(0.1f, 0.1f), true);
+				spline->SetForwardAxis(ESplineMeshAxis::Z);
+				spline->RegisterComponentWithWorld(GetWorld());
+
+				spline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
+				spline->SetMobility(EComponentMobility::Movable);
+
+				const FVector startPoint = SplineComponent->GetLocationAtSplinePoint(Index, ESplineCoordinateSpace::Local);
+				const FVector startTangent = SplineComponent->GetLocationAtSplinePoint(Index, ESplineCoordinateSpace::Local);
+				const FVector endPoint = SplineComponent->GetLocationAtSplinePoint(Index + 1, ESplineCoordinateSpace::Local);
+				const FVector endTangent = SplineComponent->GetLocationAtSplinePoint(Index + 1, ESplineCoordinateSpace::Local);
+				
+				spline->SetStartAndEnd(startPoint, startTangent, endPoint, endTangent, true);
+				spline->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+				SplineComponentArray.Add(spline);
+			}
 		}
 		else
 		{
-			Throw();              
+			Throw();  
 		}
 	}
 	else
@@ -125,8 +168,15 @@ void APlayerCharacter::Tick(float DeltaTime)
 		FVector pos = FMath::Lerp(FollowCamera->GetRelativeLocation(), FVector::ZeroVector, DeltaTime);
 		FollowCamera->SetRelativeLocation(pos);
 
-		FRotator rot = FMath::Lerp(FollowCamera->GetRelativeRotation(), FRotator::ZeroRotator, DeltaTime);
+		FRotator rot = FRotator::ZeroRotator;// FMath::Lerp(FollowCamera->GetRelativeRotation(), FRotator::ZeroRotator, DeltaTime);
 		FollowCamera->SetRelativeRotation(rot);
+
+		SplineComponent->ClearSplinePoints(true);
+		for (int Index = 0; Index != SplineComponentArray.Num(); ++Index)
+		{
+			SplineComponentArray[Index]->DestroyComponent();
+		}
+		SplineComponentArray.Empty();
 	}
 
 }
@@ -336,20 +386,9 @@ void APlayerCharacter::ClientRPCThrow_Implementation()
 	{
 		IsHoldingDownThrow = false;
 		PickedUpItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		//PickedUpItem->Mesh->SetSimulatePhysics(true);
-
-		FVector throwPower = FollowCamera->GetForwardVector() * ThrowPowerScale;
-		////PickedUpItem->Mesh->AddForce(throwPower);
-		//PickedUpItem->Mesh->AddForceAtLocation(throwPower * 150 * PickedUpItem->Mesh->GetMass(), GetMesh()->GetSocketLocation("hand_r"));
-		//PickedUpItem->Mesh->AddForce(throwPower * 150 * PickedUpItem->Mesh->GetMass(), TEXT("hand_r"));
-		//PickedUpItem->Player = nullptr;
-		//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, FString::Printf(TEXT("Throw power = %s"), *PickedUpItem->Mesh->GetComponentVelocity().ToString()));
-
-		FVector velocity = GetActorForwardVector() + (0, 0, 0.5f);
-		velocity.Normalize();
-
-		PickedUpItem->Launch(velocity * ThrowPowerScale * 10);
 		PickedUpItem->Mesh->SetCollisionProfileName("BlockAllDynamic");
+
+		PickedUpItem->Launch(cacheVelocity);
 		PickedUpItem->Player = nullptr;
 
 		if (CurrentWidget)

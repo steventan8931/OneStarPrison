@@ -60,6 +60,6 @@ void APickupable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 
 void APickupable::Launch(FVector _Velocity)
 {
-	ProjectileMovement->SetVelocityInLocalSpace(_Velocity);
+	ProjectileMovement->Velocity = _Velocity;
 	ProjectileMovement->Activate();
 }
