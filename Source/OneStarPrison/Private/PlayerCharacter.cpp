@@ -154,7 +154,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 				const FVector endTangent = SplineComponent->GetLocationAtSplinePoint(Index + 1, ESplineCoordinateSpace::Local);
 				
 				spline->SetStartAndEnd(startPoint, startTangent, endPoint, endTangent, true);
-				spline->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+				//spline->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+				spline->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 				SplineComponentArray.Add(spline);
 			}
 		}
