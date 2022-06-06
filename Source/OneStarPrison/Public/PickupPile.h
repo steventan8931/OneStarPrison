@@ -19,6 +19,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	//Replication
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -38,7 +41,11 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		TArray<class AActor*> ListOfPickups;
 
+	UFUNCTION(Server, Unreliable)
 	void CheckForPickUp();
+	UFUNCTION(Server, Unreliable)
+	void RPCCheckForPickUp();
+
 
 	AActor* SpawnActor();
 

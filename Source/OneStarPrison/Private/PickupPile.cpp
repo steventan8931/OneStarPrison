@@ -34,20 +34,38 @@ void APickupPile::BeginPlay()
 	}
 }
 
+void APickupPile::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+}
+
 // Called every frame
 void APickupPile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (HasAuthority())
+	{
+		CheckForPickUp();
+	}
+
+
+}
+
+
+void APickupPile::RPCCheckForPickUp_Implementation()
+{
 	CheckForPickUp();
 }
 
 AActor* APickupPile::SpawnActor()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("SPAWNED"));
+
 	return(GetWorld()->SpawnActor<AActor>(ActorToSpawn, GetActorTransform()));
 }
 
-void APickupPile::CheckForPickUp()
+void APickupPile::CheckForPickUp_Implementation()
 {
 	for (int Index = 0; Index != ListOfPickups.Num(); ++Index)
 	{
@@ -56,6 +74,7 @@ void APickupPile::CheckForPickUp()
 		{
 			if (pickup->Player)
 			{
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("CLIENT"));
 				ListOfPickups[Index] = SpawnActor();
 			}
 
