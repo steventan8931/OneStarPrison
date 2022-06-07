@@ -351,7 +351,9 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 				pickup->Mesh->SetSimulatePhysics(false);
 				pickup->Mesh->SetCollisionProfileName("Trigger");
 				
-				pickup->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone0023"));
+				pickup->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone0023"));
+				//pickup->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone0023"));
+
 				PickedUpItem = pickup;
 
 				if (GEngine)
