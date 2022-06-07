@@ -90,7 +90,6 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 	if (IsHoldingDownThrow)
 	{
 		if (ThrowPowerScale < MaxThrowPower)
@@ -102,17 +101,18 @@ void APlayerCharacter::Tick(float DeltaTime)
 			}
 			SplineComponentArray.Empty();
 
-			FVector pos = FMath::Lerp(FollowCamera->GetComponentLocation(), ThrowCameraPos->GetComponentLocation(), DeltaTime);
-			FollowCamera->SetWorldLocation(pos);
-
-			FRotator rot = FMath::Lerp(FollowCamera->GetComponentRotation(), ThrowCameraPos->GetComponentRotation(), DeltaTime);
-			FollowCamera->SetWorldRotation(rot);
+			CameraBoom->TargetArmLength = 200;
+			
 			ThrowPowerScale += (DeltaTime * MaxThrowPower);
+			
+			FRotator rot = FRotator(0, GetControlRotation().Yaw, 0);
 
-			FVector velocity = GetActorForwardVector() + FVector(0, 0, 0.5f);
+			SetActorRotation(rot);
+			FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
 			velocity.Normalize();
 			FPredictProjectilePathParams params;
-			params.StartLocation = GetMesh()->GetSocketLocation("hand_r");
+			params.StartLocation = GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
+
 
 			cacheVelocity = velocity * ThrowPowerScale * 10;
 			params.LaunchVelocity = cacheVelocity;
@@ -154,7 +154,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 				const FVector endTangent = SplineComponent->GetLocationAtSplinePoint(Index + 1, ESplineCoordinateSpace::Local);
 				
 				spline->SetStartAndEnd(startPoint, startTangent, endPoint, endTangent, true);
-				//spline->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 				spline->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 				SplineComponentArray.Add(spline);
 			}
@@ -166,11 +165,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	}
 	else
 	{
-		FVector pos = FMath::Lerp(FollowCamera->GetRelativeLocation(), FVector::ZeroVector, DeltaTime);
-		FollowCamera->SetRelativeLocation(pos);
-
-		FRotator rot = FRotator::ZeroRotator;// FMath::Lerp(FollowCamera->GetRelativeRotation(), FRotator::ZeroRotator, DeltaTime);
-		FollowCamera->SetRelativeRotation(rot);
+		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, 350, DeltaTime);
 
 		SplineComponent->ClearSplinePoints(true);
 		for (int Index = 0; Index != SplineComponentArray.Num(); ++Index)
@@ -324,12 +319,12 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 
 	TArray<FHitResult> OutHits;
 
-	FVector SweepStart = GetMesh()->GetSocketLocation("hand_r");
+	FVector SweepStart = GetActorLocation(); //GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
 
-	FVector SweepEnd = GetMesh()->GetSocketLocation("hand_r");
+	FVector SweepEnd = GetActorLocation(); //GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
 
 	//Create a collision sphere
-	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(100.0f);
+	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(150.0f);
 
 	//Draw debug sphere
 	DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 100, FColor::White, false, 1);
@@ -356,7 +351,7 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 				pickup->Mesh->SetSimulatePhysics(false);
 				pickup->Mesh->SetCollisionProfileName("Trigger");
 				
-				pickup->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("hand_r"));
+				pickup->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone0023"));
 				PickedUpItem = pickup;
 
 				if (GEngine)
