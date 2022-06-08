@@ -116,15 +116,15 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		FVector cacheVelocity;
-	//Throw Rendering
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		class USplineComponent* SplineComponent;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		TArray<class USplineMeshComponent*> SplineComponentArray;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UStaticMesh* SplineMesh;
-	UPROPERTY(EditAnywhere)
-		UMaterialInstance* SplineMeshMaterial;
+	////Throw Rendering
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	//	class USplineComponent* SplineComponent;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	//	TArray<class USplineMeshComponent*> SplineComponentArray;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//	class UStaticMesh* SplineMesh;
+	//UPROPERTY(EditAnywhere)
+	//	UMaterialInstance* SplineMeshMaterial;
 
 	//HUD Class to add to viewport
 	UPROPERTY(EditAnywhere)

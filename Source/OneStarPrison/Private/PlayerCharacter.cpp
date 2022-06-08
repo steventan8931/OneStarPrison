@@ -63,9 +63,9 @@ APlayerCharacter::APlayerCharacter()
 	ThrowCameraPos = CreateDefaultSubobject<USceneComponent>(TEXT("ThrowCameraPos"));
 	ThrowCameraPos->SetupAttachment(GetCapsuleComponent());
 
-	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
-	SplineComponent->SetupAttachment(GetCapsuleComponent());
-	SplineMesh = CreateDefaultSubobject<UStaticMesh>("SplineMesh");
+	//SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
+	//SplineComponent->SetupAttachment(GetCapsuleComponent());
+	//SplineMesh = CreateDefaultSubobject<UStaticMesh>("SplineMesh");
 }
 
 // Called when the game starts or when spawned
@@ -95,12 +95,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 	{
 		if (ThrowPowerScale < MaxThrowPower)
 		{
-			SplineComponent->ClearSplinePoints();
-			for (int Index = 0; Index != SplineComponentArray.Num(); ++Index)
-			{
-				SplineComponentArray[Index]->DestroyComponent();
-			}
-			SplineComponentArray.Empty();
+			//SplineComponent->ClearSplinePoints();
+			//for (int Index = 0; Index != SplineComponentArray.Num(); ++Index)
+			//{
+			//	SplineComponentArray[Index]->DestroyComponent();
+			//}
+			//SplineComponentArray.Empty();
 
 			CameraBoom->TargetArmLength = 200;
 			
@@ -111,54 +111,54 @@ void APlayerCharacter::Tick(float DeltaTime)
 			SetActorRotation(rot);
 			FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
 			velocity.Normalize();
-			FPredictProjectilePathParams params;
-			params.StartLocation = GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
+			//FPredictProjectilePathParams params;
+			//params.StartLocation = GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
 
 
 			cacheVelocity = velocity * ThrowPowerScale * 10;
-			params.LaunchVelocity = cacheVelocity;
-			params.ProjectileRadius = 10;
-			params.bTraceWithChannel = false;
-			params.DrawDebugTime = 0.0f;
-			params.DrawDebugType = EDrawDebugTrace::None;
-			params.SimFrequency = 5;
-			TArray<AActor*> actors;
-			actors.Add(this);
-			actors.Add(PickedUpItem);
-			params.bTraceComplex = true;
-			params.ActorsToIgnore = actors;
+			//params.LaunchVelocity = cacheVelocity;
+			//params.ProjectileRadius = 10;
+			//params.bTraceWithChannel = false;
+			//params.DrawDebugTime = 0.0f;
+			//params.DrawDebugType = EDrawDebugTrace::None;
+			//params.SimFrequency = 5;
+			//TArray<AActor*> actors;
+			//actors.Add(this);
+			//actors.Add(PickedUpItem);
+			//params.bTraceComplex = true;
+			//params.ActorsToIgnore = actors;
 
-			FPredictProjectilePathResult result;
-			UGameplayStatics::PredictProjectilePath(GetWorld(), params, result);
+			//FPredictProjectilePathResult result;
+			//UGameplayStatics::PredictProjectilePath(GetWorld(), params, result);
 
-			for (int Index = 0; Index != result.PathData.Num(); ++Index)
-			{
-				SplineComponent->AddSplinePointAtIndex(result.PathData[Index].Location, Index, ESplineCoordinateSpace::Local, true);
-			}
+			//for (int Index = 0; Index != result.PathData.Num(); ++Index)
+			//{
+			//	SplineComponent->AddSplinePointAtIndex(result.PathData[Index].Location, Index, ESplineCoordinateSpace::Local, true);
+			//}
 
-			for (int Index = 0; Index < (SplineComponent->GetNumberOfSplinePoints() - 1); ++Index)
-			{
-				USplineMeshComponent* spline = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
-				spline->SetStaticMesh(SplineMesh);
-				spline->SetMaterial(0,SplineMeshMaterial);
-				spline->SetMaterial(1, SplineMeshMaterial);
-				spline->SetStartScale(FVector2D(0.1f, 0.1f),true);
-				spline->SetEndScale(FVector2D(0.1f, 0.1f), true);
-				spline->SetForwardAxis(ESplineMeshAxis::Z);
-				spline->RegisterComponentWithWorld(GetWorld());
+			//for (int Index = 0; Index < (SplineComponent->GetNumberOfSplinePoints() - 1); ++Index)
+			//{
+			//	USplineMeshComponent* spline = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
+			//	spline->SetStaticMesh(SplineMesh);
+			//	spline->SetMaterial(0,SplineMeshMaterial);
+			//	spline->SetMaterial(1, SplineMeshMaterial);
+			//	spline->SetStartScale(FVector2D(0.1f, 0.1f),true);
+			//	spline->SetEndScale(FVector2D(0.1f, 0.1f), true);
+			//	spline->SetForwardAxis(ESplineMeshAxis::Z);
+			//	spline->RegisterComponentWithWorld(GetWorld());
 
-				spline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
-				spline->SetMobility(EComponentMobility::Movable);
+			//	spline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
+			//	spline->SetMobility(EComponentMobility::Movable);
 
-				const FVector startPoint = SplineComponent->GetLocationAtSplinePoint(Index, ESplineCoordinateSpace::Local);
-				const FVector startTangent = SplineComponent->GetLocationAtSplinePoint(Index, ESplineCoordinateSpace::Local);
-				const FVector endPoint = SplineComponent->GetLocationAtSplinePoint(Index + 1, ESplineCoordinateSpace::Local);
-				const FVector endTangent = SplineComponent->GetLocationAtSplinePoint(Index + 1, ESplineCoordinateSpace::Local);
-				
-				spline->SetStartAndEnd(startPoint, startTangent, endPoint, endTangent, true);
-				spline->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-				SplineComponentArray.Add(spline);
-			}
+			//	const FVector startPoint = SplineComponent->GetLocationAtSplinePoint(Index, ESplineCoordinateSpace::Local);
+			//	const FVector startTangent = SplineComponent->GetLocationAtSplinePoint(Index, ESplineCoordinateSpace::Local);
+			//	const FVector endPoint = SplineComponent->GetLocationAtSplinePoint(Index + 1, ESplineCoordinateSpace::Local);
+			//	const FVector endTangent = SplineComponent->GetLocationAtSplinePoint(Index + 1, ESplineCoordinateSpace::Local);
+			//	
+			//	spline->SetStartAndEnd(startPoint, startTangent, endPoint, endTangent, true);
+			//	spline->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			//	SplineComponentArray.Add(spline);
+			//}
 		}
 		else
 		{
@@ -169,12 +169,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 	{
 		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, 350, DeltaTime);
 
-		SplineComponent->ClearSplinePoints(true);
-		for (int Index = 0; Index != SplineComponentArray.Num(); ++Index)
-		{
-			SplineComponentArray[Index]->DestroyComponent();
-		}
-		SplineComponentArray.Empty();
+		//SplineComponent->ClearSplinePoints(true);
+		//for (int Index = 0; Index != SplineComponentArray.Num(); ++Index)
+		//{
+		//	SplineComponentArray[Index]->DestroyComponent();
+		//}
+		//SplineComponentArray.Empty();
 	}
 
 }
