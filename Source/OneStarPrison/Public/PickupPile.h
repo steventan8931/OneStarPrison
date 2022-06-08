@@ -41,7 +41,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		TArray<class AActor*> ListOfPickups;
 
-	UFUNCTION(Server, Unreliable)
+	UFUNCTION(NetMulticast, Unreliable)
 	void CheckForPickUp();
 	UFUNCTION(Server, Unreliable)
 	void RPCCheckForPickUp();

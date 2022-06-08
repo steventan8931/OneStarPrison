@@ -44,11 +44,7 @@ void APickupPile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (HasAuthority())
-	{
-		CheckForPickUp();
-	}
-
+	RPCCheckForPickUp();
 
 }
 
