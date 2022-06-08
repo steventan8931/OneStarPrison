@@ -11,8 +11,8 @@ struct FBreakabaleStruct
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
-	UMaterialInstance* Material;
+	//UPROPERTY(EditAnywhere)
+	//UMaterialInstance* Material = nullptr;
 
 	UPROPERTY(Editanywhere)
 		int AtHP = 0;

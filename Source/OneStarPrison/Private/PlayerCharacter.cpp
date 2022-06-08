@@ -84,6 +84,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 
 	DOREPLIFETIME(APlayerCharacter, IsInteracting);
 	DOREPLIFETIME(APlayerCharacter, CanInteract);
+	DOREPLIFETIME(APlayerCharacter, PickedUpItem);
 }
 
 // Called every frame

@@ -80,7 +80,10 @@ void ABreakable::UpdateMaterial()
 	{
 		if(CurrentHealth == ListOfMaterialsAtHealth[Index].AtHP)
 		{
-			Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
+			//if (ListOfMaterialsAtHealth[Index].Material != nullptr)
+			//{
+			//	Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
+			//}
 		}
 	}
 

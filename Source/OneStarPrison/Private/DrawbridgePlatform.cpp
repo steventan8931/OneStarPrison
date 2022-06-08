@@ -11,6 +11,7 @@ ADrawbridgePlatform::ADrawbridgePlatform()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
+	RootComponent = Mesh;
 }
 
 // Called when the game starts or when spawned
