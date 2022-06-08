@@ -139,7 +139,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 			{
 				USplineMeshComponent* spline = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
 				spline->SetStaticMesh(SplineMesh);
-				//spline->SetMaterial(0,SplineMaterial);
+				spline->SetMaterial(0,SplineMeshMaterial);
+				spline->SetMaterial(1, SplineMeshMaterial);
 				spline->SetStartScale(FVector2D(0.1f, 0.1f),true);
 				spline->SetEndScale(FVector2D(0.1f, 0.1f), true);
 				spline->SetForwardAxis(ESplineMeshAxis::Z);
@@ -276,7 +277,6 @@ void APlayerCharacter::RPCInteract_Implementation()
 {
 	if (CanInteract)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("IM CLICKING INTERACTING"));
 		IsInteracting = true;
 	}
 }

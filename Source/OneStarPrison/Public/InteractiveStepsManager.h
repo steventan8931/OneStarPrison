@@ -28,13 +28,13 @@ public:
 		TArray<AInteractiveSteps*> ListOfInteractiveSteps;
 
 	UPROPERTY(EditAnywhere)
-		class AInteractiveSteps* CurrentStep;
+		TArray<AInteractiveSteps*> CurrentSteps;
 
 	UPROPERTY(EditAnywhere)
 		bool IsStepOpen = false;
 
 	//Set the current step that should be open
-	void SetOpenStep(AInteractiveSteps* _CurrentStep);
+	void SetOpenStep(TArray<AInteractiveSteps*> &_CurrentStep);
 
 	//Transition From Current Position to Open Position
 	void OpenDoor(float _DeltaTime);

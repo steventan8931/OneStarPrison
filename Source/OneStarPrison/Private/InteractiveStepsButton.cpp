@@ -40,23 +40,26 @@ void AInteractiveStepsButton::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (LinkedStep)
+	if (LinkedSteps.Num() > 0)
 	{
 		if (OverlappingPlayer != nullptr)
 		{
 			if (OverlappingPlayer->IsInteracting)
 			{
-				StepsManager->SetOpenStep(LinkedStep);
+				StepsManager->IsStepOpen = true;
+				StepsManager->SetOpenStep(LinkedSteps);
 				StepsManager->OpenDoor(DeltaTime);
 			}
 			else
 			{
-				StepsManager->SetOpenStep(nullptr);
+				StepsManager->IsStepOpen = false;
+				StepsManager->SetOpenStep(LinkedSteps);
 			}
 		}
 		else
 		{
-
+			StepsManager->IsStepOpen = false;
+			StepsManager->SetOpenStep(LinkedSteps);
 		}
 	}
 }

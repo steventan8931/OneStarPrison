@@ -34,9 +34,9 @@ void AInteractiveStepsManager::Tick(float DeltaTime)
 
 }
 
-void AInteractiveStepsManager::SetOpenStep(AInteractiveSteps* _CurrentStep)
+void AInteractiveStepsManager::SetOpenStep(TArray<AInteractiveSteps*>  &_CurrentStep)
 {
-	CurrentStep = _CurrentStep;
+	CurrentSteps = _CurrentStep;
 }
 
 void AInteractiveStepsManager::OpenDoor(float _DeltaTime)
@@ -46,14 +46,19 @@ void AInteractiveStepsManager::OpenDoor(float _DeltaTime)
 		AInteractiveSteps* step = Cast<AInteractiveSteps>(ListOfInteractiveSteps[Index]);
 		if (step)
 		{
-			if (step == CurrentStep)
+			for (int i = 0; i < CurrentSteps.Num(); i++)
 			{
-				step->IsOpen = true;
+				if (step == CurrentSteps[i])
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("IM CLICKING INTERACTING"));
+					step->IsOpen = true;
+				}
+				else
+				{
+					//step->IsOpen = false;
+				}
 			}
-			else
-			{
-				step->IsOpen = false;
-			}
+
 
 		}		
 	}

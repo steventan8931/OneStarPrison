@@ -123,6 +123,8 @@ public:
 		TArray<class USplineMeshComponent*> SplineComponentArray;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UStaticMesh* SplineMesh;
+	UPROPERTY(EditAnywhere)
+		UMaterialInstance* SplineMeshMaterial;
 
 	//HUD Class to add to viewport
 	UPROPERTY(EditAnywhere)
