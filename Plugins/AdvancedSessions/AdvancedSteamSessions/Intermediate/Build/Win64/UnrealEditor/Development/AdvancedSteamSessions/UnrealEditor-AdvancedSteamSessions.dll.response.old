@@ -34,7 +34,7 @@
 /NODEFAULTLIB:"LIBCD"
 /NODEFAULTLIB:"LIBCPD"
 /FUNCTIONPADMIN
-"C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Intermediate\Build\Win64\OneStarPrisonEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Intermediate\Build\Win64\OneStarPrisonEditor\Development\Engine\SharedPCH.Engine.h.obj"
 "C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.cpp.obj"
 "C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.gen.cpp.obj"
 "C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Default.rc2.res"
