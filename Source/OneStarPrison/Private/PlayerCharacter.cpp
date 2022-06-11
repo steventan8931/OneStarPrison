@@ -65,7 +65,8 @@ APlayerCharacter::APlayerCharacter()
 
 	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
 	SplineComponent->SetupAttachment(GetCapsuleComponent());
-	SplineMesh = CreateDefaultSubobject<UStaticMesh>("SplineMesh");
+	//SplineMesh = CreateDefaultSubobject<UStaticMesh>("SplineMesh");
+
 }
 
 // Called when the game starts or when spawned
@@ -95,7 +96,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	{
 		if (ThrowPowerScale < MaxThrowPower)
 		{
-			SplineComponent->ClearSplinePoints();
+			SplineComponent->ClearSplinePoints(true);
 			for (int Index = 0; Index != SplineComponentArray.Num(); ++Index)
 			{
 				SplineComponentArray[Index]->DestroyComponent();
@@ -139,9 +140,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 			for (int Index = 0; Index < (SplineComponent->GetNumberOfSplinePoints() - 1); ++Index)
 			{
 				USplineMeshComponent* spline = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
-				spline->SetStaticMesh(SplineMesh);
+				if (SplineMesh)
+				{
+						spline->SetStaticMesh(SplineMesh);
+				}
+
 				spline->SetMaterial(0,SplineMeshMaterial);
-				spline->SetMaterial(1, SplineMeshMaterial);
 				spline->SetStartScale(FVector2D(0.1f, 0.1f),true);
 				spline->SetEndScale(FVector2D(0.1f, 0.1f), true);
 				spline->SetForwardAxis(ESplineMeshAxis::Z);
