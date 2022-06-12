@@ -37,15 +37,13 @@ void ADeathTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		if (OverlappingPlayer == nullptr)
-		{
-			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 			if (playerActor)
 			{
-				OverlappingPlayer = playerActor;
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Dead"));
 				playerActor->IsDead = true;
 			}
-		}
+		
 	}
 }
