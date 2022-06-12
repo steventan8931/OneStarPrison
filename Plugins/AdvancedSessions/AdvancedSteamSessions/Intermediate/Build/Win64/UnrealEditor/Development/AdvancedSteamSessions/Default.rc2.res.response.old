@@ -2,7 +2,11 @@
 /D_WIN64
 /l 0x409
 /I "."
+<<<<<<< HEAD
+/I "F:\VS2019\VC\Tools\MSVC\14.29.30133\INCLUDE"
+=======
 /I "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.31.31103\INCLUDE"
+>>>>>>> Steven
 /I "C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt"
 /I "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared"
@@ -64,5 +68,9 @@
 /DPROJECT_COPYRIGHT_STRING="Fill out your copyright notice in the Description page of Project Settings."
 /DPROJECT_PRODUCT_NAME="Third Person Game Template"
 /DPROJECT_PRODUCT_IDENTIFIER=OneStarPrison
+<<<<<<< HEAD
+/fo "H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Default.rc2.res"
+=======
 /fo "C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Default.rc2.res"
+>>>>>>> Steven
 "..\Build\Windows\Resources\Default.rc2"
