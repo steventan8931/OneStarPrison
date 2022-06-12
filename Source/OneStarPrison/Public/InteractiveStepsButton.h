@@ -30,7 +30,7 @@ public:
 		class UBoxComponent* BoxCollision;
 
 	UPROPERTY(EditAnywhere)
-		class AInteractiveSteps* LinkedStep;
+		TArray<class AInteractiveSteps*>  LinkedSteps;
 
 	UPROPERTY(EditAnywhere)
 		class AInteractiveStepsManager* StepsManager;

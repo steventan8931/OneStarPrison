@@ -6,8 +6,16 @@
 /NAME:"UnrealEditor-AdvancedSteamSessions.dll"
 /IGNORE:4221
 /NODEFAULTLIB
+<<<<<<< HEAD
 "H:\Year 3 UE Proj\OneStarPrison\Intermediate\Build\Win64\OneStarPrisonEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
 "H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.cpp.obj"
 "H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.gen.cpp.obj"
 "H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Default.rc2.res"
 /OUT:"H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\UnrealEditor-AdvancedSteamSessions.lib"
+=======
+"C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Intermediate\Build\Win64\OneStarPrisonEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.cpp.obj"
+"C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.gen.cpp.obj"
+"C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Default.rc2.res"
+/OUT:"C:\Users\Ashley\source\repos\UNREAL\Vertical\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\UnrealEditor-AdvancedSteamSessions.lib"
+>>>>>>> Steven

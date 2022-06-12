@@ -14,6 +14,9 @@
 #include "Kismet/GameplayStatics.h"
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
+#include "Components/SplineMeshComponent.h"
+#include "Components/SplineComponent.h"
+
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
@@ -57,8 +60,13 @@ APlayerCharacter::APlayerCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
-	//Defaults
-	PickedUpItem = nullptr;
+	ThrowCameraPos = CreateDefaultSubobject<USceneComponent>(TEXT("ThrowCameraPos"));
+	ThrowCameraPos->SetupAttachment(GetCapsuleComponent());
+
+	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
+	SplineComponent->SetupAttachment(GetCapsuleComponent());
+	//SplineMesh = CreateDefaultSubobject<UStaticMesh>("SplineMesh");
+
 }
 
 // Called when the game starts or when spawned
@@ -77,24 +85,100 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 
 	DOREPLIFETIME(APlayerCharacter, IsInteracting);
 	DOREPLIFETIME(APlayerCharacter, CanInteract);
+	DOREPLIFETIME(APlayerCharacter, PickedUpItem);
 }
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 	if (IsHoldingDownThrow)
 	{
-		//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, FString::Printf(TEXT("Throw power = %f"), ThrowPowerScale));
 		if (ThrowPowerScale < MaxThrowPower)
 		{
+			SplineComponent->ClearSplinePoints(true);
+			for (int Index = 0; Index != SplineComponentArray.Num(); ++Index)
+			{
+				SplineComponentArray[Index]->DestroyComponent();
+			}
+			SplineComponentArray.Empty();
+
+			CameraBoom->TargetArmLength = 200;
+			
 			ThrowPowerScale += (DeltaTime * MaxThrowPower);
+			
+			FRotator rot = FRotator(0, GetControlRotation().Yaw, 0);
+
+			SetActorRotation(rot);
+			FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
+			velocity.Normalize();
+			FPredictProjectilePathParams params;
+			params.StartLocation = GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
+
+
+			cacheVelocity = velocity * ThrowPowerScale * 10;
+			params.LaunchVelocity = cacheVelocity;
+			params.ProjectileRadius = 10;
+			params.bTraceWithChannel = false;
+			params.DrawDebugTime = 0.0f;
+			params.DrawDebugType = EDrawDebugTrace::None;
+			params.SimFrequency = 5;
+			TArray<AActor*> actors;
+			actors.Add(this);
+			actors.Add(PickedUpItem);
+			params.bTraceComplex = true;
+			params.ActorsToIgnore = actors;
+
+			FPredictProjectilePathResult result;
+			UGameplayStatics::PredictProjectilePath(GetWorld(), params, result);
+
+			for (int Index = 0; Index != result.PathData.Num(); ++Index)
+			{
+				SplineComponent->AddSplinePointAtIndex(result.PathData[Index].Location, Index, ESplineCoordinateSpace::Local, true);
+			}
+
+			for (int Index = 0; Index < (SplineComponent->GetNumberOfSplinePoints() - 1); ++Index)
+			{
+				USplineMeshComponent* spline = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
+				if (SplineMesh)
+				{
+						spline->SetStaticMesh(SplineMesh);
+				}
+
+				spline->SetMaterial(0,SplineMeshMaterial);
+				spline->SetStartScale(FVector2D(0.1f, 0.1f),true);
+				spline->SetEndScale(FVector2D(0.1f, 0.1f), true);
+				spline->SetForwardAxis(ESplineMeshAxis::Z);
+				spline->RegisterComponentWithWorld(GetWorld());
+
+				spline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
+				spline->SetMobility(EComponentMobility::Movable);
+
+				const FVector startPoint = SplineComponent->GetLocationAtSplinePoint(Index, ESplineCoordinateSpace::Local);
+				const FVector startTangent = SplineComponent->GetLocationAtSplinePoint(Index, ESplineCoordinateSpace::Local);
+				const FVector endPoint = SplineComponent->GetLocationAtSplinePoint(Index + 1, ESplineCoordinateSpace::Local);
+				const FVector endTangent = SplineComponent->GetLocationAtSplinePoint(Index + 1, ESplineCoordinateSpace::Local);
+				
+				spline->SetStartAndEnd(startPoint, startTangent, endPoint, endTangent, true);
+				spline->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				SplineComponentArray.Add(spline);
+			}
 		}
 		else
 		{
-			Throw();              
+			Throw();  
 		}
+	}
+	else
+	{
+		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, 350, DeltaTime);
+
+		SplineComponent->ClearSplinePoints(true);
+		for (int Index = 0; Index != SplineComponentArray.Num(); ++Index)
+		{
+			SplineComponentArray[Index]->DestroyComponent();
+		}
+		SplineComponentArray.Empty();
 	}
 
 }
@@ -198,7 +282,6 @@ void APlayerCharacter::RPCInteract_Implementation()
 {
 	if (CanInteract)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("IM CLICKING INTERACTING"));
 		IsInteracting = true;
 	}
 }
@@ -241,12 +324,12 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 
 	TArray<FHitResult> OutHits;
 
-	FVector SweepStart = GetMesh()->GetSocketLocation("hand_r");
+	FVector SweepStart = GetActorLocation(); //GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
 
-	FVector SweepEnd = GetMesh()->GetSocketLocation("hand_r");
+	FVector SweepEnd = GetActorLocation(); //GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
 
 	//Create a collision sphere
-	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(100.0f);
+	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(150.0f);
 
 	//Draw debug sphere
 	DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 100, FColor::White, false, 1);
@@ -273,7 +356,9 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 				pickup->Mesh->SetSimulatePhysics(false);
 				pickup->Mesh->SetCollisionProfileName("Trigger");
 				
-				pickup->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("hand_r"));
+				pickup->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone0023"));
+				//pickup->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone0023"));
+
 				PickedUpItem = pickup;
 
 				if (GEngine)
@@ -305,12 +390,9 @@ void APlayerCharacter::ClientRPCThrow_Implementation()
 		IsHoldingDownThrow = false;
 		PickedUpItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		PickedUpItem->Mesh->SetCollisionProfileName("BlockAllDynamic");
-		PickedUpItem->Mesh->SetSimulatePhysics(true);
-		FVector throwPower = GetActorForwardVector() * ThrowPowerScale;
-		//PickedUpItem->Mesh->AddForce(throwPower);
-		PickedUpItem->Mesh->AddForceAtLocation(throwPower * 150 * PickedUpItem->Mesh->GetMass(), GetMesh()->GetSocketLocation("hand_r"));
+
+		PickedUpItem->Launch(cacheVelocity);
 		PickedUpItem->Player = nullptr;
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, FString::Printf(TEXT("Throw power = %s"), *PickedUpItem->Mesh->GetComponentVelocity().ToString()));
 
 		if (CurrentWidget)
 		{

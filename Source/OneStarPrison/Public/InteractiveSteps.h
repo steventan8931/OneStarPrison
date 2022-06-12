@@ -34,7 +34,7 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		FVector OpenPosition = FVector(0, 0, 0);
 
-	UPROPERTY(EditAnywhere, Replicated)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		FVector ClosedPosition = FVector(0, 0, 0);
 
 	//Transition From Current Position to Open Position

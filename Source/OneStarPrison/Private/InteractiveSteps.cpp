@@ -12,7 +12,7 @@ AInteractiveSteps::AInteractiveSteps()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
 	Mesh->SetupAttachment(RootComponent);
-
+	RootComponent = Mesh;
 }
 
 // Called when the game starts or when spawned

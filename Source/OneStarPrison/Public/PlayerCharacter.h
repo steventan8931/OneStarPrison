@@ -70,6 +70,9 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class USceneComponent* ThrowCameraPos;
+
 	//Interact with object/button press/hold
 	void Interact();
 	void StopInteract();
@@ -96,20 +99,32 @@ public:
 		void ServerRPCThrow();
 	UFUNCTION(NetMulticast, Reliable)
 		void ClientRPCThrow();
+	float cacheDeltaTime = 0;
 
 	//Check if Throw Key is being held down
 	bool IsHoldingDownThrow = false;
 
 	//Current Throw Power
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	float ThrowPowerScale = 0;
 	//Maximum Throw Power
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxThrowPower = 150.0f;
 	//Current Player Index
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int PlayerIndex = 0;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		FVector cacheVelocity;
+	//Throw Rendering
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		class USplineComponent* SplineComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		TArray<class USplineMeshComponent*> SplineComponentArray;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UStaticMesh* SplineMesh;
+	UPROPERTY(EditAnywhere)
+		class UMaterialInstance* SplineMeshMaterial;
 
 	//HUD Class to add to viewport
 	UPROPERTY(EditAnywhere)
@@ -120,5 +135,5 @@ public:
 
 	//Current Pickedup Item
 	UPROPERTY(VisibleAnywhere, Replicated)
-		class APickupable* PickedUpItem;
+		class APickupable* PickedUpItem = nullptr;
 };
