@@ -110,7 +110,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 			
 			FRotator rot = FRotator(0, GetControlRotation().Yaw, 0);
 
-			SetActorRotation(rot);
+			SetActorRotation(rot, ETeleportType::ResetPhysics);
 			FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
 			velocity.Normalize();
 			FPredictProjectilePathParams params;
@@ -331,7 +331,7 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 	FVector SweepEnd = GetActorLocation(); //GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
 
 	//Create a collision sphere
-	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(450.0f);
+	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(200.0f);
 
 	//Draw debug sphere
 	DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 50, FColor::White, false, 10);

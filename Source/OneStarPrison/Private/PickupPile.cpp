@@ -70,7 +70,6 @@ void APickupPile::CheckForPickUp_Implementation()
 		{
 			if (pickup->Player)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("CLIENT"));
 				ListOfPickups[Index] = SpawnActor();
 			}
 

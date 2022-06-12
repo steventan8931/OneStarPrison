@@ -29,6 +29,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		int TargetHeight = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int MaxHeight = 0;
+
 	UPROPERTY(VisibleAnywhere)
 	int StartingHeight = 0;
 

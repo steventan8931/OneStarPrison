@@ -5,6 +5,7 @@
 #include "PulleyPlatform.h"
 #include "Components/BoxComponent.h"
 #include "Pickupable.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 // Sets default values
 APulleyCollector::APulleyCollector()
@@ -31,6 +32,7 @@ void APulleyCollector::BeginPlay()
 	Super::BeginPlay();
 	
 	StartingHeight = GetActorLocation().Z;
+	UpdateTargetPos();
 }
 
 // Called every frame
@@ -66,9 +68,12 @@ void APulleyCollector::MovePlatform(float _DeltaTime)
 
 void APulleyCollector::UpdateTargetPos()
 {
-	Platform->TargetHeight = Platform->StartingHeight + (RockCount * HeightPerRock);
+	if ((Platform->StartingHeight + (RockCount * HeightPerRock)) <= Platform->MaxHeight)
+	{
+		Platform->TargetHeight = Platform->StartingHeight + (RockCount * HeightPerRock);
 
-	TargetHeight = StartingHeight - (RockCount * HeightPerRock);
+		TargetHeight = StartingHeight - (RockCount * HeightPerRock);
+	}
 }
 
 void APulleyCollector::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -97,6 +102,7 @@ void APulleyCollector::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, c
 
 		if (pickupable)
 		{
+			pickupable->ProjectileMovement->Velocity = FVector(0, 0, 0);
 			if (Platform)
 			{
 				RockCount--;
