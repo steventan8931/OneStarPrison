@@ -77,6 +77,7 @@ void APlayerCharacter::BeginPlay()
 	{
 		PlayerIndex = 1;
 	}
+	RespawnCheckpoint = GetActorLocation();
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -181,6 +182,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		SplineComponentArray.Empty();
 	}
 
+	CheckDeath(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -329,10 +331,10 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 	FVector SweepEnd = GetActorLocation(); //GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
 
 	//Create a collision sphere
-	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(150.0f);
+	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(450.0f);
 
 	//Draw debug sphere
-	DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 100, FColor::White, false, 1);
+	DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 50, FColor::White, false, 10);
 
 	//Check if something is hit
 	bool isHit = GetWorld()->SweepMultiByChannel(OutHits, SweepStart, SweepEnd, FQuat::Identity, ECC_WorldStatic, MyColSphere);
@@ -377,6 +379,21 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 void APlayerCharacter::Throw()
 {
 	ServerRPCThrow();
+}
+
+void APlayerCharacter::CheckDeath(float _DeltaTime)
+{
+	if (IsDead)
+	{
+		DeathTimerCounter += _DeltaTime;
+
+		if (DeathTimerCounter > DeathTimer)
+		{
+			SetActorLocation(RespawnCheckpoint);
+			DeathTimerCounter = 0.0f;
+			IsDead = false;
+		}
+	}
 }
 
 void APlayerCharacter::ServerRPCThrow_Implementation()
