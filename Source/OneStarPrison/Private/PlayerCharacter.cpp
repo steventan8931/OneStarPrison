@@ -331,10 +331,10 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 	FVector SweepEnd = GetActorLocation(); //GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
 
 	//Create a collision sphere
-	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(150.0f);
+	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(450.0f);
 
 	//Draw debug sphere
-	DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 100, FColor::White, false, 1);
+	DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 50, FColor::White, false, 10);
 
 	//Check if something is hit
 	bool isHit = GetWorld()->SweepMultiByChannel(OutHits, SweepStart, SweepEnd, FQuat::Identity, ECC_WorldStatic, MyColSphere);
