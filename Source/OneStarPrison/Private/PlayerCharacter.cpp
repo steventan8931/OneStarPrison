@@ -77,6 +77,7 @@ void APlayerCharacter::BeginPlay()
 	{
 		PlayerIndex = 1;
 	}
+	RespawnCheckpoint = GetActorLocation();
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -181,6 +182,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		SplineComponentArray.Empty();
 	}
 
+	CheckDeath(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -377,6 +379,21 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 void APlayerCharacter::Throw()
 {
 	ServerRPCThrow();
+}
+
+void APlayerCharacter::CheckDeath(float _DeltaTime)
+{
+	if (IsDead)
+	{
+		DeathTimerCounter += _DeltaTime;
+
+		if (DeathTimerCounter > DeathTimer)
+		{
+			SetActorLocation(RespawnCheckpoint);
+			DeathTimerCounter = 0.0f;
+			IsDead = false;
+		}
+	}
 }
 
 void APlayerCharacter::ServerRPCThrow_Implementation()

@@ -136,4 +136,18 @@ public:
 	//Current Pickedup Item
 	UPROPERTY(VisibleAnywhere, Replicated)
 		class APickupable* PickedUpItem = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		FVector RespawnCheckpoint = FVector(0, 0, 0);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool IsDead = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float DeathTimer = 1.0f;
+
+	float DeathTimerCounter = 1.0f;
+
+	//Checks if dead then respawn player
+	void CheckDeath(float _DeltaTime);
 };
