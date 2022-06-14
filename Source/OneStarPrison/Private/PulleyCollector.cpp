@@ -68,11 +68,14 @@ void APulleyCollector::MovePlatform(float _DeltaTime)
 
 void APulleyCollector::UpdateTargetPos()
 {
-	if ((Platform->StartingHeight + (RockCount * HeightPerRock)) <= Platform->MaxHeight)
+	if (Platform)
 	{
-		Platform->TargetHeight = Platform->StartingHeight + (RockCount * HeightPerRock);
+		if ((Platform->StartingHeight + (RockCount * HeightPerRock)) <= Platform->MaxHeight)
+		{
+			Platform->TargetHeight = Platform->StartingHeight + (RockCount * HeightPerRock);
 
-		TargetHeight = StartingHeight - (RockCount * HeightPerRock);
+			TargetHeight = StartingHeight - (RockCount * HeightPerRock);
+		}
 	}
 }
 
