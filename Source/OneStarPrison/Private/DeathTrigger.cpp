@@ -4,6 +4,7 @@
 #include "DeathTrigger.h"
 #include "Components/BoxComponent.h"
 #include "PlayerCharacter.h"
+#include "Pushable.h"
 
 // Sets default values
 ADeathTrigger::ADeathTrigger()
@@ -37,13 +38,21 @@ void ADeathTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 {
 	if (OtherActor && (OtherActor != this))
 	{
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+		if (playerActor)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Dead"));
+			playerActor->IsDead = true;
+		}
 
-			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
-			if (playerActor)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Dead"));
-				playerActor->IsDead = true;
-			}
+		APushable* pushable = Cast<APushable>(OtherActor);
+
+		if (pushable)
+		{
+			pushable->Mesh->SetSimulatePhysics(false);
+			pushable->SetActorTransform(pushable->StartingTransform);
+			pushable->Mesh->SetSimulatePhysics(true);
+		}
 		
 	}
 }

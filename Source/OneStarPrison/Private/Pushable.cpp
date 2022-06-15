@@ -18,6 +18,7 @@ void APushable::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	StartingTransform = GetActorTransform();
 }
 
 // Called every frame

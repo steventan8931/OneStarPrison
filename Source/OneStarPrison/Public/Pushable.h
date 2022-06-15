@@ -28,4 +28,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		int PulleyWeightage = 5;
+
+	UPROPERTY(VisibleAnywhere)
+		FTransform StartingTransform;
 };
