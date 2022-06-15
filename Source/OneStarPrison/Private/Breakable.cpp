@@ -40,7 +40,16 @@ void ABreakable::BeginPlay()
 
 	CurrentHealth = MaxHealth;
 
-	//Algo::Reverse(ListOfMaterialsAtHealth);
+	for (int Index = 0; Index != ListOfMaterialsAtHealth.Num(); ++Index)
+	{
+		if (CurrentHealth == ListOfMaterialsAtHealth[Index].AtHP)
+		{
+			if (ListOfMaterialsAtHealth[Index].Material != nullptr)
+			{
+				Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
+			}
+		}
+	}
 }
 
 // Called every frame
@@ -82,10 +91,10 @@ void ABreakable::UpdateMaterial()
 	{
 		if(CurrentHealth == ListOfMaterialsAtHealth[Index].AtHP)
 		{
-			//if (ListOfMaterialsAtHealth[Index].Material != nullptr)
-			//{
-			//	Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
-			//}
+			if (ListOfMaterialsAtHealth[Index].Material != nullptr)
+			{
+				Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
+			}
 		}
 	}
 
