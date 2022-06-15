@@ -11,6 +11,8 @@
 //Reverse Array
 #include "Algo/Reverse.h"
 
+#include "Pickupable.h"
+
 // Sets default values
 ABreakable::ABreakable()
 {
@@ -95,14 +97,26 @@ void ABreakable::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 	{
 		if (OverlappingPlayer == nullptr)
 		{
-			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
-
-			if (playerActor)
+			if (!IsBreakableByProjectiles)
 			{
-				OverlappingPlayer = playerActor;
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
-				OverlappingPlayer->CanInteract = true;
-				InteractPopUp();
+				APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+
+				if (playerActor)
+				{
+					OverlappingPlayer = playerActor;
+					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
+					OverlappingPlayer->CanInteract = true;
+					InteractPopUp();
+				}
+			}
+			else
+			{
+				APickupable* pickupable = Cast<APickupable>(OtherActor);
+
+				if (pickupable)
+				{
+					UpdateMaterial();
+				}
 			}
 		}
 	}

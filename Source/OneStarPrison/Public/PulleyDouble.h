@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "DrawbridgeTrigger.generated.h"
+#include "PulleyDouble.generated.h"
 
 UCLASS()
-class ONESTARPRISON_API ADrawbridgeTrigger : public AActor
+class ONESTARPRISON_API APulleyDouble : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ADrawbridgeTrigger();
+	APulleyDouble();
 
 protected:
 	// Called when the game starts or when spawned
@@ -23,9 +23,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere)
-		class ADrawbridgePlatform* Platform;
-
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
 
@@ -33,19 +30,40 @@ public:
 		class UBoxComponent* BoxCollision;
 
 	UPROPERTY(EditAnywhere)
-		bool IsPlayerInteractable = false;
-
-	UPROPERTY(VisibleAnywhere)
-		class APlayerCharacter* OverlappingPlayer = nullptr;
-
-	//HUD Class to add to viewport
+		class APulleyDouble* OtherPlatform;
+	
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UUserWidget> HUDWidgetClass;
+		class ABreakable* BreakablePlatform;
+
+	UPROPERTY(EditAnywhere)
+		bool HoldsRockPile = false;
+
+	//Movement
+	UPROPERTY(VisibleAnywhere)
+		int TargetHeight = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int MaxHeight = 0;
+
+	UPROPERTY(EditAnywhere)
+		int MaxHeightAfterBreaking = 0;
 
 	UPROPERTY(VisibleAnywhere)
-		class UUserWidget* CurrentWidget;
+		int StartingHeight = 0;
 
-	void InteractPopUp();
+	//Weighting
+	UPROPERTY(EditAnywhere)
+		int RockCount = 0;
+
+	UPROPERTY(EditAnywhere)
+		int HeightPerRock = 50;
+
+	UPROPERTY(EditAnywhere)
+		float MoveSpeed = 100.0f;
+
+	void MovePlatform(float _DeltaTime);
+
+	void UpdateTargetPos();
 
 	//Overlap Functions
 	UFUNCTION()

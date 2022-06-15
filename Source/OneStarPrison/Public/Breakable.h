@@ -42,6 +42,9 @@ public:
 		class UBoxComponent* BoxCollision;
 
 	UPROPERTY(EditAnywhere)
+		bool IsBreakableByProjectiles = false;
+
+	UPROPERTY(EditAnywhere)
 		int MaxHealth = 0;
 	UPROPERTY(VisibleAnywhere)
 		int CurrentHealth = 0;
