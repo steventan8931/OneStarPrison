@@ -50,8 +50,6 @@ void ADeathRockSpawner::Tick(float DeltaTime)
 
 AActor* ADeathRockSpawner::SpawnActor()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("SPAWNED"));
-
 	return(GetWorld()->SpawnActor<AActor>(ActorToSpawn, GetActorTransform()));
 }
 

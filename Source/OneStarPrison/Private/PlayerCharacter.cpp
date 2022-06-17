@@ -313,7 +313,7 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
 
-			CurrentWidget = CreateWidget<UUserWidget>(UGameplayStatics::GetPlayerController(GetWorld(), PlayerIndex), HUDWidgetClass);
+			CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), HUDWidgetClass);
 
 			if (CurrentWidget)
 			{

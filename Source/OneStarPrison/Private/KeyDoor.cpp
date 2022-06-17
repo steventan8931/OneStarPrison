@@ -54,27 +54,36 @@ void AKeyDoor::Tick(float DeltaTime)
 
 	if (OverlappingPlayer)
 	{
-		if (OverlappingPlayer->IsInteracting)
+		APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
+		if (key)
 		{
-			APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
-			if (key)
+			if (!CurrentWidget)
 			{
-				if (IsKeyOneTimeUse)
+				InteractPopUp();
+			}
+
+			if (OverlappingPlayer->IsInteracting)
+			{
+				if (key)
 				{
-					OverlappingPlayer->PickedUpItem->Destroy();
-					OverlappingPlayer->PickedUpItem = nullptr;
+					if (IsKeyOneTimeUse)
+					{
+						OverlappingPlayer->PickedUpItem->Destroy();
+						OverlappingPlayer->PickedUpItem = nullptr;
+					}
+
+					IsOpen = true;
+
+					if (CurrentWidget)
+					{
+						CurrentWidget->RemoveFromParent();
+					}
+
+					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
 				}
-
-				IsOpen = true;
-
-				if (CurrentWidget)
-				{
-					CurrentWidget->RemoveFromParent();
-				}
-
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
 			}
 		}
+
 	}
 }
 
@@ -106,7 +115,7 @@ void AKeyDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class A
 				{
 					if (!IsOpen)
 					{
-						InteractPopUp();
+						//InteractPopUp();
 					}
 
 				}
@@ -119,7 +128,6 @@ void AKeyDoor::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AAc
 {
 	if (OtherActor && (OtherActor != this))
 	{
-
 		if (OverlappingPlayer != nullptr)
 		{
 			if (CurrentWidget)
@@ -140,7 +148,7 @@ void AKeyDoor::InteractPopUp()
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
 
-		CurrentWidget = CreateWidget<UUserWidget>(UGameplayStatics::GetPlayerController(GetWorld(), OverlappingPlayer->PlayerIndex), HUDWidgetClass);
+		CurrentWidget = CreateWidget<UUserWidget>(OverlappingPlayer->GetWorld(), HUDWidgetClass);
 
 		if (CurrentWidget)
 		{
