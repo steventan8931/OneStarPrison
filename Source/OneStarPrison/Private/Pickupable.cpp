@@ -25,8 +25,6 @@ APickupable::APickupable()
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
 	ProjectileMovement->Bounciness = 0.3f;
-
-
 }
 
 // Called when the game starts or when spawned

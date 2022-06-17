@@ -334,7 +334,7 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(200.0f);
 
 	//Draw debug sphere
-	DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 50, FColor::White, false, 10);
+	//DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 50, FColor::White, false, 10);
 
 	//Check if something is hit
 	bool isHit = GetWorld()->SweepMultiByChannel(OutHits, SweepStart, SweepEnd, FQuat::Identity, ECC_WorldStatic, MyColSphere);
