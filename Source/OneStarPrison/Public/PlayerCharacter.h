@@ -95,13 +95,19 @@ public:
 
 	//Throw Picked up item
 	void Throw();
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, Unreliable)
 		void ServerRPCThrow();
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(Client, Unreliable)
 		void ClientRPCThrow();
+	UFUNCTION(Client, Unreliable)
+		void ClientShowThrowWidget();
 	float cacheDeltaTime = 0;
 
+	UPROPERTY(Replicated)
+	FRotator rot = FRotator::ZeroRotator;
+
 	//Check if Throw Key is being held down
+	//UPROPERTY(Replicated)
 	bool IsHoldingDownThrow = false;
 
 	//Current Throw Power
@@ -130,7 +136,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> HUDWidgetClass;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		class UUserWidget* CurrentWidget;
 
 	//Current Pickedup Item

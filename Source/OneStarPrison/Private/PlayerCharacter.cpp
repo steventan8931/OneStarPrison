@@ -87,12 +87,16 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, IsInteracting);
 	DOREPLIFETIME(APlayerCharacter, CanInteract);
 	DOREPLIFETIME(APlayerCharacter, PickedUpItem);
+	DOREPLIFETIME(APlayerCharacter, rot);
+	DOREPLIFETIME(APlayerCharacter, CurrentWidget);
+	//DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
 }
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	if (IsHoldingDownThrow)
 	{
 		if (ThrowPowerScale < MaxThrowPower)
@@ -108,7 +112,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 			
 			ThrowPowerScale += (DeltaTime * MaxThrowPower);
 			
-			FRotator rot = FRotator(0, GetControlRotation().Yaw, 0);
+			rot = FRotator(0, GetControlRotation().Yaw, 0);
 
 			SetActorRotation(rot, ETeleportType::ResetPhysics);
 			FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
@@ -300,7 +304,28 @@ void APlayerCharacter::PickupAndDrop()
 
 void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 {
+	//ClientShowThrowWidget();
 	ClientRPCPickupAndDrop();
+}
+
+void APlayerCharacter::ClientShowThrowWidget_Implementation()
+{
+	if (PickedUpItem)
+	{
+		IsHoldingDownThrow = true;
+
+		CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), HUDWidgetClass);
+
+		if (HUDWidgetClass != nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
+
+			if (CurrentWidget)
+			{
+				CurrentWidget->AddToPlayerScreen();
+			}
+		}
+	}
 }
 
 void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
@@ -309,18 +334,17 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 	{
 		IsHoldingDownThrow = true;
 
+		CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), HUDWidgetClass);
+
 		if (HUDWidgetClass != nullptr)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
-
-			CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), HUDWidgetClass);
 
 			if (CurrentWidget)
 			{
 				CurrentWidget->AddToPlayerScreen();
 			}
 		}
-
 		return;
 	}
 
@@ -400,6 +424,7 @@ void APlayerCharacter::ServerRPCThrow_Implementation()
 {
 	ClientRPCThrow();
 }
+
 void APlayerCharacter::ClientRPCThrow_Implementation()
 {
 	if (PickedUpItem && IsHoldingDownThrow)
