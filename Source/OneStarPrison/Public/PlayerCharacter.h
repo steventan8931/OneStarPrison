@@ -88,16 +88,16 @@ public:
 
 	//Grab Pickupable items and drop
 	void PickupAndDrop();
-	UFUNCTION(Server, Unreliable)
+	UFUNCTION(Server, Reliable)
 		void ServerRPCPickupAndDrop();
-	UFUNCTION(NetMulticast, Unreliable)
+	UFUNCTION(NetMulticast, Reliable)
 		void ClientRPCPickupAndDrop();
 
 	//Throw Picked up item
 	void Throw();
-	UFUNCTION(Server, Unreliable)
+	UFUNCTION(Server, Reliable)
 		void ServerRPCThrow();
-	UFUNCTION(Client, Unreliable)
+	UFUNCTION(NetMulticast, Reliable)
 		void ClientRPCThrow();
 	UFUNCTION(Client, Unreliable)
 		void ClientShowThrowWidget();

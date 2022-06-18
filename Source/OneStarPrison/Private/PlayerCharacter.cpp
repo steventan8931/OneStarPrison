@@ -304,7 +304,7 @@ void APlayerCharacter::PickupAndDrop()
 
 void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 {
-	//ClientShowThrowWidget();
+	ClientShowThrowWidget();
 	ClientRPCPickupAndDrop();
 }
 
@@ -334,17 +334,6 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 	{
 		IsHoldingDownThrow = true;
 
-		CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), HUDWidgetClass);
-
-		if (HUDWidgetClass != nullptr)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
-
-			if (CurrentWidget)
-			{
-				CurrentWidget->AddToPlayerScreen();
-			}
-		}
 		return;
 	}
 
