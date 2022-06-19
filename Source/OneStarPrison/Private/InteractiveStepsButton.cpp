@@ -10,6 +10,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+
 // Sets default values
 AInteractiveStepsButton::AInteractiveStepsButton()
 {
@@ -33,6 +35,14 @@ void AInteractiveStepsButton::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AInteractiveStepsButton::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AInteractiveStepsButton, CurrentWidget);
+	DOREPLIFETIME(AInteractiveStepsButton, OverlappingPlayer);
 }
 
 // Called every frame
@@ -77,7 +87,7 @@ void AInteractiveStepsButton::OnOverlapBegin(class UPrimitiveComponent* Overlapp
 				OverlappingPlayer = playerActor;
 				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 				OverlappingPlayer->CanInteract = true;
-				InteractPopUp();
+				ServerInteractPopUp();
 			}
 		}
 	}
@@ -89,10 +99,7 @@ void AInteractiveStepsButton::OnOverlapEnd(class UPrimitiveComponent* Overlapped
 	{
 		if (OverlappingPlayer != nullptr)
 		{
-			if (CurrentWidget)
-			{
-				CurrentWidget->RemoveFromParent();
-			}
+			ServerRemoveWidget();
 
 			OverlappingPlayer = nullptr;
 		}
@@ -100,7 +107,11 @@ void AInteractiveStepsButton::OnOverlapEnd(class UPrimitiveComponent* Overlapped
 	}
 }
 
-void AInteractiveStepsButton::InteractPopUp()
+void AInteractiveStepsButton::ServerInteractPopUp_Implementation()
+{
+	InteractPopUp();
+}
+void AInteractiveStepsButton::InteractPopUp_Implementation()
 {
 	if (HUDWidgetClass != nullptr)
 	{
@@ -115,3 +126,15 @@ void AInteractiveStepsButton::InteractPopUp()
 	}
 }
 
+void AInteractiveStepsButton::ServerRemoveWidget_Implementation()
+{
+	RemoveWidget();
+}
+
+void AInteractiveStepsButton::RemoveWidget_Implementation()
+{
+	if (CurrentWidget)
+	{
+		CurrentWidget->RemoveFromParent();
+	}
+}

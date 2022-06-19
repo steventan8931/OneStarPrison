@@ -19,6 +19,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	////Replication
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -35,7 +37,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		class AInteractiveStepsManager* StepsManager;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
 
 	//Overlap Functions
@@ -50,8 +52,16 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> HUDWidgetClass;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		class UUserWidget* CurrentWidget;
 
+	UFUNCTION(Server, Unreliable)
+		void ServerInteractPopUp();
+	UFUNCTION(Client, Unreliable)
 	void InteractPopUp();
+
+	UFUNCTION(Server, Unreliable)
+		void ServerRemoveWidget();
+	UFUNCTION(Client, Unreliable)
+	void RemoveWidget();
 };
