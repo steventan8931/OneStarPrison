@@ -6,8 +6,6 @@
 #include "PlayerCharacter.h"
 #include "PickupableKey.h"
 
-#include "Blueprint/UserWidget.h"
-#include "Kismet/GameplayStatics.h"
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
@@ -57,13 +55,11 @@ void AKeyDoor::Tick(float DeltaTime)
 		APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
 		if (key)
 		{
-			if (!CurrentWidget)
-			{
-				InteractPopUp();
-			}
+			OverlappingPlayer->CanInteract = true;
 
 			if (OverlappingPlayer->IsInteracting)
 			{
+
 				if (key)
 				{
 					if (IsKeyOneTimeUse)
@@ -74,10 +70,7 @@ void AKeyDoor::Tick(float DeltaTime)
 
 					IsOpen = true;
 
-					if (CurrentWidget)
-					{
-						CurrentWidget->RemoveFromParent();
-					}
+					OverlappingPlayer->CanInteract = false;
 
 					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
 				}
@@ -109,16 +102,6 @@ void AKeyDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class A
 				OverlappingPlayer = playerActor;
 				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
 				OverlappingPlayer->CanInteract = true;
-
-				APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
-				if (key)
-				{
-					if (!IsOpen)
-					{
-						//InteractPopUp();
-					}
-
-				}
 			}
 		}
 	}
@@ -130,11 +113,7 @@ void AKeyDoor::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AAc
 	{
 		if (OverlappingPlayer != nullptr)
 		{
-			if (CurrentWidget)
-			{
-				CurrentWidget->RemoveFromParent();
-			}
-
+			OverlappingPlayer->CanInteract = false;
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Player left"));
 			OverlappingPlayer = nullptr;
 		}
@@ -142,17 +121,3 @@ void AKeyDoor::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AAc
 	}
 }
 
-void AKeyDoor::InteractPopUp()
-{
-	if (HUDWidgetClass != nullptr)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
-
-		CurrentWidget = CreateWidget<UUserWidget>(OverlappingPlayer->GetWorld(), HUDWidgetClass);
-
-		if (CurrentWidget)
-		{
-			CurrentWidget->AddToPlayerScreen();
-		}
-	}
-}

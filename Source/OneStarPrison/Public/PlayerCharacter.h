@@ -139,17 +139,31 @@ public:
 	UPROPERTY(VisibleAnywhere, Replicated)
 		class UUserWidget* CurrentThrowWidget;
 
+	//Pickup Widget
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> PickupWidgetClass;
 
 	UPROPERTY(VisibleAnywhere, Replicated)
 		class UUserWidget* CurrentPickupWidget;
 
+	//Interact Widget
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> InteractWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, Replicated)
+		class UUserWidget* CurrentInteractWidget;
+
 	//Show Pickup Widget
 	UFUNCTION(Server, Reliable)
 		void ServerCheckPickup();
 	UFUNCTION(Client, Reliable)
 		void CheckPickup();
+
+	//Show Interact Widget
+	UFUNCTION(Server, Reliable)
+		void ServerCheckInteract();
+	UFUNCTION(Client, Reliable)
+		void CheckInteract();
 
 	//Current Pickedup Item
 	UPROPERTY(VisibleAnywhere, Replicated)

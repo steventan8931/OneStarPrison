@@ -78,6 +78,8 @@ void APlayerCharacter::BeginPlay()
 		PlayerIndex = 1;
 	}
 	RespawnCheckpoint = GetActorLocation();
+
+	CurrentInteractWidget = CreateWidget<UUserWidget>(GetWorld(), InteractWidgetClass);
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -98,6 +100,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	ServerCheckPickup();
+	ServerCheckInteract();
 
 	if (IsHoldingDownThrow)
 	{
@@ -503,6 +506,55 @@ void APlayerCharacter::CheckPickup_Implementation()
 				}
 			}
 
+		}
+	}
+
+}
+
+
+void APlayerCharacter::ServerCheckInteract_Implementation()
+{
+	CheckInteract();
+}
+
+void APlayerCharacter::CheckInteract_Implementation()
+{
+	//if (CurrentInteractWidget)
+	//{
+	//	if (CurrentInteractWidget->IsVisible())
+	//	{
+	//		CurrentInteractWidget->RemoveFromParent();
+	//	}
+	//}
+
+	if (CanInteract)
+	{
+
+
+		if (InteractWidgetClass != nullptr)
+		{
+
+			if (CurrentInteractWidget)
+			{
+				if (!CurrentInteractWidget->IsVisible())
+				{
+					CurrentInteractWidget->AddToPlayerScreen();
+				}
+				else
+				{
+					//->RemoveFromParent();
+				}
+			}
+		}
+	}
+	else
+	{
+		if (CurrentInteractWidget)
+		{
+			if (CurrentInteractWidget->IsVisible())
+			{
+				CurrentInteractWidget->RemoveFromParent();
+			}
 		}
 	}
 

@@ -60,14 +60,6 @@ public:
 
 	class APlayerCharacter* OverlappingPlayer = nullptr;
 
-	//HUD Class to add to viewport
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UUserWidget> HUDWidgetClass;
-
-	class UUserWidget* CurrentWidget;
-
-	void InteractPopUp();
-
 	//Overlap Functions
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

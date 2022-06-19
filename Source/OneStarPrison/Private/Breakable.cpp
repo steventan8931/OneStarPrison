@@ -5,9 +5,6 @@
 #include "Components/BoxComponent.h"
 #include "PlayerCharacter.h"
 
-#include "Blueprint/UserWidget.h"
-#include "Kismet/GameplayStatics.h"
-
 //Reverse Array
 #include "Algo/Reverse.h"
 
@@ -115,7 +112,6 @@ void ABreakable::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 					OverlappingPlayer = playerActor;
 					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 					OverlappingPlayer->CanInteract = true;
-					InteractPopUp();
 				}
 			}
 			else
@@ -137,28 +133,12 @@ void ABreakable::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class A
 	{
 		if (OverlappingPlayer != nullptr)
 		{
-			if (CurrentWidget)
-			{
-				CurrentWidget->RemoveFromParent();
-			}
+			OverlappingPlayer->CanInteract = false;
 
 			OverlappingPlayer = nullptr;
+
 		}
 
 	}
 }
 
-void ABreakable::InteractPopUp()
-{
-	if (HUDWidgetClass != nullptr)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
-
-		CurrentWidget = CreateWidget<UUserWidget>(OverlappingPlayer->GetWorld(), HUDWidgetClass);
-
-		if (CurrentWidget)
-		{
-			CurrentWidget->AddToPlayerScreen();
-		}
-	}
-}

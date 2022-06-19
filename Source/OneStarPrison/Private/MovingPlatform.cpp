@@ -1,12 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ // Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "MovingPlatform.h"
 #include "Components/BoxComponent.h"
 #include "PlayerCharacter.h"
 #include "CrankliftPlatform.h"
-#include "Blueprint/UserWidget.h"
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AMovingPlatform::AMovingPlatform()
@@ -90,7 +88,7 @@ void AMovingPlatform::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
 				OverlappingPlayer = playerActor;
 				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 				OverlappingPlayer->CanInteract = true;
-				InteractPopUp();
+
 			}
 		}
 	}
@@ -102,10 +100,7 @@ void AMovingPlatform::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cl
 	{
 		if (OverlappingPlayer != nullptr)
 		{
-			if (CurrentWidget)
-			{
-				CurrentWidget->RemoveFromParent();
-			}
+			OverlappingPlayer->CanInteract = false;
 
 			IsMoving = false;
 			OverlappingPlayer = nullptr;
@@ -114,17 +109,3 @@ void AMovingPlatform::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cl
 	}
 }
 
-void AMovingPlatform::InteractPopUp()
-{
-	if (HUDWidgetClass != nullptr)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
-
-		CurrentWidget = CreateWidget<UUserWidget>(UGameplayStatics::GetPlayerController(GetWorld(), OverlappingPlayer->PlayerIndex), HUDWidgetClass);
-
-		if (CurrentWidget)
-		{
-			CurrentWidget->AddToPlayerScreen();
-		}
-	}
-}

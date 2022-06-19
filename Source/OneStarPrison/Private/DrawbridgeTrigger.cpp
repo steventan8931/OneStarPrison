@@ -6,8 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "Pickupable.h"
 #include "PlayerCharacter.h"
-#include "Blueprint/UserWidget.h"
-#include "Kismet/GameplayStatics.h"
+
 
 // Sets default values
 ADrawbridgeTrigger::ADrawbridgeTrigger()
@@ -46,7 +45,7 @@ void ADrawbridgeTrigger::Tick(float DeltaTime)
 			if (OverlappingPlayer->IsInteracting)
 			{
 				Platform->IsOpen = true;
-				CurrentWidget->RemoveFromParent();
+				OverlappingPlayer->CanInteract = false;
 			}
 		}
 	}
@@ -80,7 +79,7 @@ void ADrawbridgeTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 					OverlappingPlayer = playerActor;
 					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 					OverlappingPlayer->CanInteract = true;
-					InteractPopUp();
+
 				}
 			}
 		}
@@ -97,29 +96,9 @@ void ADrawbridgeTrigger::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp,
 		if (OverlappingPlayer != nullptr)
 		{
 
-
-			if (CurrentWidget)
-			{
-				CurrentWidget->RemoveFromParent();
-			}
-
+			OverlappingPlayer->CanInteract = false;
 			OverlappingPlayer = nullptr;
 		}
 
-	}
-}
-
-void ADrawbridgeTrigger::InteractPopUp()
-{
-	if (HUDWidgetClass != nullptr)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
-
-		CurrentWidget = CreateWidget<UUserWidget>(OverlappingPlayer->GetWorld(), HUDWidgetClass);
-
-		if (CurrentWidget)
-		{
-			CurrentWidget->AddToPlayerScreen();
-		}
 	}
 }
