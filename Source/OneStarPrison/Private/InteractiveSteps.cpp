@@ -28,6 +28,7 @@ void AInteractiveSteps::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 
 	DOREPLIFETIME(AInteractiveSteps, OpenPosition);
 	DOREPLIFETIME(AInteractiveSteps, ClosedPosition);
+	DOREPLIFETIME(AInteractiveSteps, IsOpen);
 }
 
 // Called every frame

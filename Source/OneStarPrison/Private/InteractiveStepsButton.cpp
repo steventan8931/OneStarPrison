@@ -8,6 +8,8 @@
 
 #include "Components/BoxComponent.h"
 
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+
 // Sets default values
 AInteractiveStepsButton::AInteractiveStepsButton()
 {
@@ -36,6 +38,14 @@ void AInteractiveStepsButton::BeginPlay()
 	
 }
 
+void AInteractiveStepsButton::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AInteractiveStepsButton, LinkedSteps);
+	DOREPLIFETIME(AInteractiveStepsButton, StepsManager);
+}
+
 // Called every frame
 void AInteractiveStepsButton::Tick(float DeltaTime)
 {
@@ -62,7 +72,7 @@ void AInteractiveStepsButton::Tick(float DeltaTime)
 		else
 		{
 			MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
-			StepsManager->IsStepOpen = false;
+			//StepsManager->IsStepOpen = false;
 			//StepsManager->SetOpenStep(LinkedSteps);
 		}
 	}
@@ -93,6 +103,7 @@ void AInteractiveStepsButton::OnOverlapEnd(class UPrimitiveComponent* Overlapped
 		if (OverlappingPlayer != nullptr)
 		{
 			OverlappingPlayer->CanInteract = false;
+			OverlappingPlayer->IsInteracting = false;
 			OverlappingPlayer = nullptr;
 		}
 
