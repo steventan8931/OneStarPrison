@@ -27,6 +27,15 @@ public:
 		class UStaticMeshComponent* Mesh;
 
 	UPROPERTY(VisibleAnywhere)
+		class UStaticMeshComponent* MovableMesh;
+
+	UPROPERTY(EditAnywhere)
+		FRotator HandleOpenRotation = FRotator(0, 0, 0);
+
+	UPROPERTY(EditAnywhere)
+		FRotator HandleClosedRotation = FRotator(0, 0, 0);
+
+	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
 
 	UPROPERTY(EditAnywhere)
