@@ -5,7 +5,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "PlayerCharacter.h"
 
-//#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 APickupable::APickupable()
@@ -31,6 +31,14 @@ APickupable::APickupable()
 void APickupable::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void APickupable::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APickupable, Player);
+	DOREPLIFETIME(APickupable, IsInAir);
 }
 
 // Called every frame
