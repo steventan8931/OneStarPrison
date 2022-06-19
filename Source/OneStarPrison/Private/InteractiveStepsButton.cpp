@@ -7,8 +7,6 @@
 #include "InteractiveStepsManager.h"
 
 #include "Components/BoxComponent.h"
-#include "Blueprint/UserWidget.h"
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AInteractiveStepsButton::AInteractiveStepsButton()
@@ -77,7 +75,6 @@ void AInteractiveStepsButton::OnOverlapBegin(class UPrimitiveComponent* Overlapp
 				OverlappingPlayer = playerActor;
 				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 				OverlappingPlayer->CanInteract = true;
-				InteractPopUp();
 			}
 		}
 	}
@@ -89,29 +86,9 @@ void AInteractiveStepsButton::OnOverlapEnd(class UPrimitiveComponent* Overlapped
 	{
 		if (OverlappingPlayer != nullptr)
 		{
-			if (CurrentWidget)
-			{
-				CurrentWidget->RemoveFromParent();
-			}
-
+			OverlappingPlayer->CanInteract = false;
 			OverlappingPlayer = nullptr;
 		}
 
 	}
 }
-
-void AInteractiveStepsButton::InteractPopUp()
-{
-	if (HUDWidgetClass != nullptr)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
-
-		CurrentWidget = CreateWidget<UUserWidget>(UGameplayStatics::GetPlayerController(GetWorld(), OverlappingPlayer->PlayerIndex), HUDWidgetClass);
-
-		if (CurrentWidget)
-		{
-			CurrentWidget->AddToPlayerScreen();
-		}
-	}
-}
-

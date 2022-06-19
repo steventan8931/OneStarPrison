@@ -45,13 +45,4 @@ public:
 	//Overlap Functions
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-	//HUD Class to add to viewport
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UUserWidget> HUDWidgetClass;
-
-	UPROPERTY(VisibleAnywhere)
-		class UUserWidget* CurrentWidget;
-
-	void InteractPopUp();
 };

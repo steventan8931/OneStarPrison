@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "CrankliftTrigger.generated.h"
+#include "MovingPlatform.generated.h"
 
 UCLASS()
-class ONESTARPRISON_API ACrankliftTrigger : public AActor
+class ONESTARPRISON_API AMovingPlatform : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ACrankliftTrigger();
+	AMovingPlatform();
 
 protected:
 	// Called when the game starts or when spawned
@@ -32,17 +32,14 @@ public:
 	UPROPERTY(EditAnywhere)
 		class ACrankliftPlatform* Platform;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float MaxHeight = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float MinHeight = 0;
+	UPROPERTY(EditAnywhere)
+		FVector OpenPosition = FVector(0, 0, 0);
 
 	UPROPERTY(EditAnywhere)
-		bool IsMovingUp = false;
+		FVector ClosedPosition = FVector(0, 0, 0);
 
-	float cacheDeltaTime = 0.0f;
-
+	UPROPERTY()
+		bool IsMoving = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MoveSpeed = 20.0f;
 
@@ -56,6 +53,5 @@ public:
 	//Overlap Functions
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
 
 };

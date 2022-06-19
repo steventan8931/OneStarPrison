@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "CrankliftTrigger.generated.h"
+#include "PulleyDouble.generated.h"
 
 UCLASS()
-class ONESTARPRISON_API ACrankliftTrigger : public AActor
+class ONESTARPRISON_API APulleyDouble : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ACrankliftTrigger();
+	APulleyDouble();
 
 protected:
 	// Called when the game starts or when spawned
@@ -30,24 +30,40 @@ public:
 		class UBoxComponent* BoxCollision;
 
 	UPROPERTY(EditAnywhere)
-		class ACrankliftPlatform* Platform;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float MaxHeight = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float MinHeight = 0;
+		class APulleyDouble* OtherPlatform;
+	
+	UPROPERTY(EditAnywhere)
+		class ABreakable* BreakablePlatform;
 
 	UPROPERTY(EditAnywhere)
-		bool IsMovingUp = false;
+		bool HoldsRockPile = false;
 
-	float cacheDeltaTime = 0.0f;
+	//Movement
+	UPROPERTY(VisibleAnywhere)
+		int TargetHeight = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float MoveSpeed = 20.0f;
+		int MaxHeight = 0;
+
+	UPROPERTY(EditAnywhere)
+		int MaxHeightAfterBreaking = 0;
 
 	UPROPERTY(VisibleAnywhere)
-		class APlayerCharacter* OverlappingPlayer = nullptr;
+		int StartingHeight = 0;
+
+	//Weighting
+	UPROPERTY(EditAnywhere)
+		int RockCount = 0;
+
+	UPROPERTY(EditAnywhere)
+		int HeightPerRock = 50;
+
+	UPROPERTY(EditAnywhere)
+		float MoveSpeed = 100.0f;
+
+	void MovePlatform(float _DeltaTime);
+
+	void UpdateTargetPos();
 
 	//Overlap Functions
 	UFUNCTION()
@@ -56,6 +72,4 @@ public:
 	//Overlap Functions
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-
 };

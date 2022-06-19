@@ -50,7 +50,6 @@ void AInteractiveStepsManager::OpenDoor(float _DeltaTime)
 			{
 				if (step == CurrentSteps[i])
 				{
-					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("IM CLICKING INTERACTING"));
 					step->IsOpen = true;
 				}
 				else

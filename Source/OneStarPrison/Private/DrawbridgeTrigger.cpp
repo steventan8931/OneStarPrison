@@ -5,6 +5,8 @@
 #include "DrawbridgePlatform.h"
 #include "Components/BoxComponent.h"
 #include "Pickupable.h"
+#include "PlayerCharacter.h"
+
 
 // Sets default values
 ADrawbridgeTrigger::ADrawbridgeTrigger()
@@ -22,6 +24,7 @@ ADrawbridgeTrigger::ADrawbridgeTrigger()
 	BoxCollision->SetupAttachment(RootComponent);
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ADrawbridgeTrigger::OnOverlapBegin);
+	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ADrawbridgeTrigger::OnOverlapEnd);
 }
 
 // Called when the game starts or when spawned
@@ -35,23 +38,67 @@ void ADrawbridgeTrigger::BeginPlay()
 void ADrawbridgeTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if (Platform)
+	{
+		if (OverlappingPlayer != nullptr)
+		{
+			if (OverlappingPlayer->IsInteracting)
+			{
+				Platform->IsOpen = true;
+				OverlappingPlayer->CanInteract = false;
+			}
+		}
+	}
 }
 
 void ADrawbridgeTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		APickupable* pickupable = Cast<APickupable>(OtherActor);
-
-		if (pickupable)
+		if (!IsPlayerInteractable)
 		{
-			if (Platform)
-			{
-				Platform->IsOpen = true;
-			}
+			APickupable* pickupable = Cast<APickupable>(OtherActor);
 
+			if (pickupable)
+			{
+				if (Platform)
+				{
+					Platform->IsOpen = true;
+				}
+
+			}
 		}
+		else
+		{
+			if (OverlappingPlayer == nullptr)
+			{
+				APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+
+				if (playerActor)
+				{
+					OverlappingPlayer = playerActor;
+					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
+					OverlappingPlayer->CanInteract = true;
+
+				}
+			}
+		}
+
 	}
 }
 
+void ADrawbridgeTrigger::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("leffttt"));
+	if (OtherActor && (OtherActor != this))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("leffttt"));
+		if (OverlappingPlayer != nullptr)
+		{
+
+			OverlappingPlayer->CanInteract = false;
+			OverlappingPlayer = nullptr;
+		}
+
+	}
+}

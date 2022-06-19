@@ -6,8 +6,6 @@
 #include "PlayerCharacter.h"
 #include "PickupableKey.h"
 
-#include "Blueprint/UserWidget.h"
-#include "Kismet/GameplayStatics.h"
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
@@ -54,27 +52,31 @@ void AKeyDoor::Tick(float DeltaTime)
 
 	if (OverlappingPlayer)
 	{
-		if (OverlappingPlayer->IsInteracting)
+		APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
+		if (key)
 		{
-			APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
-			if (key)
+			OverlappingPlayer->CanInteract = true;
+
+			if (OverlappingPlayer->IsInteracting)
 			{
-				if (IsKeyOneTimeUse)
+
+				if (key)
 				{
-					OverlappingPlayer->PickedUpItem->Destroy();
-					OverlappingPlayer->PickedUpItem = nullptr;
+					if (IsKeyOneTimeUse)
+					{
+						OverlappingPlayer->PickedUpItem->Destroy();
+						OverlappingPlayer->PickedUpItem = nullptr;
+					}
+
+					IsOpen = true;
+
+					OverlappingPlayer->CanInteract = false;
+
+					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
 				}
-
-				IsOpen = true;
-
-				if (CurrentWidget)
-				{
-					CurrentWidget->RemoveFromParent();
-				}
-
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
 			}
 		}
+
 	}
 }
 
@@ -100,16 +102,6 @@ void AKeyDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class A
 				OverlappingPlayer = playerActor;
 				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
 				OverlappingPlayer->CanInteract = true;
-
-				APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
-				if (key)
-				{
-					if (!IsOpen)
-					{
-						InteractPopUp();
-					}
-
-				}
 			}
 		}
 	}
@@ -119,14 +111,9 @@ void AKeyDoor::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AAc
 {
 	if (OtherActor && (OtherActor != this))
 	{
-
 		if (OverlappingPlayer != nullptr)
 		{
-			if (CurrentWidget)
-			{
-				CurrentWidget->RemoveFromParent();
-			}
-
+			OverlappingPlayer->CanInteract = false;
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Player left"));
 			OverlappingPlayer = nullptr;
 		}
@@ -134,17 +121,3 @@ void AKeyDoor::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AAc
 	}
 }
 
-void AKeyDoor::InteractPopUp()
-{
-	if (HUDWidgetClass != nullptr)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
-
-		CurrentWidget = CreateWidget<UUserWidget>(UGameplayStatics::GetPlayerController(GetWorld(), OverlappingPlayer->PlayerIndex), HUDWidgetClass);
-
-		if (CurrentWidget)
-		{
-			CurrentWidget->AddToPlayerScreen();
-		}
-	}
-}
