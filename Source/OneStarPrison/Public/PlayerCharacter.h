@@ -116,6 +116,8 @@ public:
 	//Maximum Throw Power
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxThrowPower = 150.0f;
+	UPROPERTY(EditAnywhere)
+		float ThrowSpeed = 1.0f;
 	//Current Player Index
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int PlayerIndex = 0;

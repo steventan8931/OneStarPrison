@@ -116,7 +116,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 			CameraBoom->TargetArmLength = 200;
 			
-			ThrowPowerScale += (DeltaTime * MaxThrowPower);
+			ThrowPowerScale += (DeltaTime * MaxThrowPower * ThrowSpeed);
 			
 			rot = FRotator(0, GetControlRotation().Yaw, 0);
 
@@ -339,7 +339,6 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 	if (PickedUpItem)
 	{
 		IsHoldingDownThrow = true;
-
 		return;
 	}
 
