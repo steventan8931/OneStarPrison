@@ -134,10 +134,22 @@ public:
 
 	//HUD Class to add to viewport
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UUserWidget> HUDWidgetClass;
+		TSubclassOf<class UUserWidget> ThrowWidgetClass;
 
 	UPROPERTY(VisibleAnywhere, Replicated)
-		class UUserWidget* CurrentWidget;
+		class UUserWidget* CurrentThrowWidget;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> PickupWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, Replicated)
+		class UUserWidget* CurrentPickupWidget;
+
+	//Show Pickup Widget
+	UFUNCTION(Server, Reliable)
+		void ServerCheckPickup();
+	UFUNCTION(Client, Reliable)
+		void CheckPickup();
 
 	//Current Pickedup Item
 	UPROPERTY(VisibleAnywhere, Replicated)

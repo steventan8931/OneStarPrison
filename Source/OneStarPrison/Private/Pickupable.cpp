@@ -48,6 +48,7 @@ void APickupable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 		APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
 		if (!player)
 		{
+			IsInAir = true;
 			Mesh->SetSimulatePhysics(true);
 			ProjectileMovement->Deactivate();
 		}
@@ -56,6 +57,7 @@ void APickupable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 
 void APickupable::Launch(FVector _Velocity)
 {
+	IsInAir = true;
 	ProjectileMovement->Velocity = _Velocity;
 	ProjectileMovement->Activate();
 }
