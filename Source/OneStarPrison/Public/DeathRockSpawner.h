@@ -31,7 +31,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		float SpawnRate = 5.0f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		FVector EndPosition;
 
 	float SpawnTimer = 0.0f;

@@ -80,6 +80,7 @@ void APlayerCharacter::BeginPlay()
 	RespawnCheckpoint = GetActorLocation();
 
 	CurrentInteractWidget = CreateWidget<UUserWidget>(GetWorld(), InteractWidgetClass);
+	CurrentPickupWidget = CreateWidget<UUserWidget>(GetWorld(), PickupWidgetClass);
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -482,7 +483,7 @@ void APlayerCharacter::CheckPickup_Implementation()
 			{
 				if (!pickup->IsInAir && !pickup->Player)
 				{
-					CurrentPickupWidget = CreateWidget<UUserWidget>(GetWorld(), PickupWidgetClass);
+
 
 					if (PickupWidgetClass != nullptr)
 					{
@@ -519,18 +520,8 @@ void APlayerCharacter::ServerCheckInteract_Implementation()
 
 void APlayerCharacter::CheckInteract_Implementation()
 {
-	//if (CurrentInteractWidget)
-	//{
-	//	if (CurrentInteractWidget->IsVisible())
-	//	{
-	//		CurrentInteractWidget->RemoveFromParent();
-	//	}
-	//}
-
 	if (CanInteract)
 	{
-
-
 		if (InteractWidgetClass != nullptr)
 		{
 

@@ -101,7 +101,7 @@ void AKeyDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class A
 			{
 				OverlappingPlayer = playerActor;
 				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
-				OverlappingPlayer->CanInteract = true;
+				
 			}
 		}
 	}

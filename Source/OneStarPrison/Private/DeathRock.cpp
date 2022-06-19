@@ -3,6 +3,8 @@
 
 #include "DeathRock.h"
 #include "PlayerCharacter.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+
 
 // Sets default values
 ADeathRock::ADeathRock()
@@ -22,6 +24,12 @@ void ADeathRock::BeginPlay()
 
 }
 
+void ADeathRock::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ADeathRock, EndPosition);
+}
 // Called every frame
 void ADeathRock::Tick(float DeltaTime)
 {

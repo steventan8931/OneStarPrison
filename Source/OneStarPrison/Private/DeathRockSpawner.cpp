@@ -3,6 +3,7 @@
 
 #include "DeathRockSpawner.h"
 #include "DeathRock.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 ADeathRockSpawner::ADeathRockSpawner()
@@ -27,6 +28,8 @@ void ADeathRockSpawner::BeginPlay()
 void ADeathRockSpawner::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ADeathRockSpawner, EndPosition);
 }
 
 // Called every frame
