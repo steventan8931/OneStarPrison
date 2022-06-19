@@ -24,6 +24,9 @@ AInteractiveStepsButton::AInteractiveStepsButton()
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AInteractiveStepsButton::OnOverlapBegin);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AInteractiveStepsButton::OnOverlapEnd);
+
+	MovableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Handle"));
+	MovableMesh->SetupAttachment(Mesh);
 }
 
 // Called when the game starts or when spawned
@@ -44,20 +47,23 @@ void AInteractiveStepsButton::Tick(float DeltaTime)
 		{
 			if (OverlappingPlayer->IsInteracting)
 			{
+				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
 				StepsManager->IsStepOpen = true;
 				StepsManager->SetOpenStep(LinkedSteps);
 				StepsManager->OpenDoor(DeltaTime);
 			}
 			else
 			{
+				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
 				StepsManager->IsStepOpen = false;
-				StepsManager->SetOpenStep(LinkedSteps);
+				//StepsManager->SetOpenStep(LinkedSteps);
 			}
 		}
 		else
 		{
+			MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
 			StepsManager->IsStepOpen = false;
-			StepsManager->SetOpenStep(LinkedSteps);
+			//StepsManager->SetOpenStep(LinkedSteps);
 		}
 	}
 }
