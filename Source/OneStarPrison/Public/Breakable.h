@@ -11,8 +11,8 @@ struct FBreakabaleStruct
 {
 	GENERATED_BODY()
 
-	//UPROPERTY(EditAnywhere)
-	//UMaterialInstance* Material = nullptr;
+	UPROPERTY(EditAnywhere)
+	UMaterialInstance* Material = nullptr;
 
 	UPROPERTY(Editanywhere)
 		int AtHP = 0;
@@ -42,6 +42,9 @@ public:
 		class UBoxComponent* BoxCollision;
 
 	UPROPERTY(EditAnywhere)
+		bool IsBreakableByProjectiles = false;
+
+	UPROPERTY(EditAnywhere)
 		int MaxHealth = 0;
 	UPROPERTY(VisibleAnywhere)
 		int CurrentHealth = 0;
@@ -56,14 +59,6 @@ public:
 	void UpdateMaterial();
 
 	class APlayerCharacter* OverlappingPlayer = nullptr;
-
-	//HUD Class to add to viewport
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UUserWidget> HUDWidgetClass;
-
-	class UUserWidget* CurrentWidget;
-
-	void InteractPopUp();
 
 	//Overlap Functions
 	UFUNCTION()

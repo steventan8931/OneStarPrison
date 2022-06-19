@@ -78,6 +78,9 @@ void APlayerCharacter::BeginPlay()
 		PlayerIndex = 1;
 	}
 	RespawnCheckpoint = GetActorLocation();
+
+	CurrentInteractWidget = CreateWidget<UUserWidget>(GetWorld(), InteractWidgetClass);
+	CurrentPickupWidget = CreateWidget<UUserWidget>(GetWorld(), PickupWidgetClass);
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -87,12 +90,19 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, IsInteracting);
 	DOREPLIFETIME(APlayerCharacter, CanInteract);
 	DOREPLIFETIME(APlayerCharacter, PickedUpItem);
+	DOREPLIFETIME(APlayerCharacter, rot);
+	DOREPLIFETIME(APlayerCharacter, CurrentThrowWidget);
+	//DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
 }
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	ServerCheckPickup();
+	ServerCheckInteract();
+
 	if (IsHoldingDownThrow)
 	{
 		if (ThrowPowerScale < MaxThrowPower)
@@ -108,7 +118,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 			
 			ThrowPowerScale += (DeltaTime * MaxThrowPower);
 			
-			FRotator rot = FRotator(0, GetControlRotation().Yaw, 0);
+			rot = FRotator(0, GetControlRotation().Yaw, 0);
 
 			SetActorRotation(rot, ETeleportType::ResetPhysics);
 			FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
@@ -300,7 +310,28 @@ void APlayerCharacter::PickupAndDrop()
 
 void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 {
+	ClientShowThrowWidget();
 	ClientRPCPickupAndDrop();
+}
+
+void APlayerCharacter::ClientShowThrowWidget_Implementation()
+{
+	if (PickedUpItem)
+	{
+		IsHoldingDownThrow = true;
+
+		CurrentThrowWidget = CreateWidget<UUserWidget>(GetWorld(), ThrowWidgetClass);
+
+		if (ThrowWidgetClass != nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
+
+			if (CurrentThrowWidget)
+			{
+				CurrentThrowWidget->AddToPlayerScreen();
+			}
+		}
+	}
 }
 
 void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
@@ -309,32 +340,20 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 	{
 		IsHoldingDownThrow = true;
 
-		if (HUDWidgetClass != nullptr)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
-
-			CurrentWidget = CreateWidget<UUserWidget>(UGameplayStatics::GetPlayerController(GetWorld(), PlayerIndex), HUDWidgetClass);
-
-			if (CurrentWidget)
-			{
-				CurrentWidget->AddToPlayerScreen();
-			}
-		}
-
 		return;
 	}
 
 	TArray<FHitResult> OutHits;
 
-	FVector SweepStart = GetActorLocation(); //GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
+	FVector SweepStart = GetActorLocation(); 
 
-	FVector SweepEnd = GetActorLocation(); //GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
+	FVector SweepEnd = GetActorLocation(); 
 
 	//Create a collision sphere
 	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(200.0f);
 
 	//Draw debug sphere
-	DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 50, FColor::White, false, 10);
+	//DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 50, FColor::White, false, 10);
 
 	//Check if something is hit
 	bool isHit = GetWorld()->SweepMultiByChannel(OutHits, SweepStart, SweepEnd, FQuat::Identity, ECC_WorldStatic, MyColSphere);
@@ -359,7 +378,6 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 				pickup->Mesh->SetCollisionProfileName("Trigger");
 				
 				pickup->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone0023"));
-				//pickup->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone0023"));
 
 				PickedUpItem = pickup;
 
@@ -400,6 +418,7 @@ void APlayerCharacter::ServerRPCThrow_Implementation()
 {
 	ClientRPCThrow();
 }
+
 void APlayerCharacter::ClientRPCThrow_Implementation()
 {
 	if (PickedUpItem && IsHoldingDownThrow)
@@ -411,13 +430,123 @@ void APlayerCharacter::ClientRPCThrow_Implementation()
 		PickedUpItem->Launch(cacheVelocity);
 		PickedUpItem->Player = nullptr;
 
-		if (CurrentWidget)
+		if (CurrentThrowWidget)
 		{
-			CurrentWidget->RemoveFromParent();
+			CurrentThrowWidget->RemoveFromParent();
 		}
 		ThrowPowerScale = 0;
 
 		PickedUpItem = nullptr;
 		return;
 	}
+}
+
+void APlayerCharacter::ServerCheckPickup_Implementation()
+{
+	CheckPickup();
+}
+
+void APlayerCharacter::CheckPickup_Implementation()
+{
+	if (PickedUpItem)
+	{
+		if (CurrentPickupWidget)
+		{
+			if (CurrentPickupWidget->IsVisible())
+			{
+				CurrentPickupWidget->RemoveFromParent();
+			}
+		}
+		return;
+	}
+
+	TArray<FHitResult> OutHits;
+
+	FVector SweepStart = GetActorLocation();
+
+	FVector SweepEnd = GetActorLocation();
+
+	//Create a collision sphere
+	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(200.0f);
+
+	//Check if something is hit
+	bool isHit = GetWorld()->SweepMultiByChannel(OutHits, SweepStart, SweepEnd, FQuat::Identity, ECC_WorldStatic, MyColSphere);
+
+	if (isHit)
+	{
+		//Loop through TArray
+		for (auto& Hit : OutHits)
+		{
+			APickupable* pickup = Cast<APickupable>(Hit.GetActor());
+
+			if (pickup)
+			{
+				if (!pickup->IsInAir && !pickup->Player)
+				{
+
+
+					if (PickupWidgetClass != nullptr)
+					{
+						if (CurrentPickupWidget)
+						{
+							CurrentPickupWidget->AddToPlayerScreen();
+
+						}
+						break;
+					}
+				}
+			}
+			else
+			{
+				if (CurrentPickupWidget)
+				{
+					if (CurrentPickupWidget->IsVisible())
+					{
+						CurrentPickupWidget->RemoveFromParent();
+					}
+				}
+			}
+
+		}
+	}
+
+}
+
+
+void APlayerCharacter::ServerCheckInteract_Implementation()
+{
+	CheckInteract();
+}
+
+void APlayerCharacter::CheckInteract_Implementation()
+{
+	if (CanInteract)
+	{
+		if (InteractWidgetClass != nullptr)
+		{
+
+			if (CurrentInteractWidget)
+			{
+				if (!CurrentInteractWidget->IsVisible())
+				{
+					CurrentInteractWidget->AddToPlayerScreen();
+				}
+				else
+				{
+					//->RemoveFromParent();
+				}
+			}
+		}
+	}
+	else
+	{
+		if (CurrentInteractWidget)
+		{
+			if (CurrentInteractWidget->IsVisible())
+			{
+				CurrentInteractWidget->RemoveFromParent();
+			}
+		}
+	}
+
 }

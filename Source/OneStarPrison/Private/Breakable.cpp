@@ -5,11 +5,10 @@
 #include "Components/BoxComponent.h"
 #include "PlayerCharacter.h"
 
-#include "Blueprint/UserWidget.h"
-#include "Kismet/GameplayStatics.h"
-
 //Reverse Array
 #include "Algo/Reverse.h"
+
+#include "Pickupable.h"
 
 // Sets default values
 ABreakable::ABreakable()
@@ -38,7 +37,16 @@ void ABreakable::BeginPlay()
 
 	CurrentHealth = MaxHealth;
 
-	//Algo::Reverse(ListOfMaterialsAtHealth);
+	for (int Index = 0; Index != ListOfMaterialsAtHealth.Num(); ++Index)
+	{
+		if (CurrentHealth == ListOfMaterialsAtHealth[Index].AtHP)
+		{
+			if (ListOfMaterialsAtHealth[Index].Material != nullptr)
+			{
+				Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
+			}
+		}
+	}
 }
 
 // Called every frame
@@ -80,10 +88,10 @@ void ABreakable::UpdateMaterial()
 	{
 		if(CurrentHealth == ListOfMaterialsAtHealth[Index].AtHP)
 		{
-			//if (ListOfMaterialsAtHealth[Index].Material != nullptr)
-			//{
-			//	Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
-			//}
+			if (ListOfMaterialsAtHealth[Index].Material != nullptr)
+			{
+				Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
+			}
 		}
 	}
 
@@ -95,14 +103,25 @@ void ABreakable::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 	{
 		if (OverlappingPlayer == nullptr)
 		{
-			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
-
-			if (playerActor)
+			if (!IsBreakableByProjectiles)
 			{
-				OverlappingPlayer = playerActor;
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
-				OverlappingPlayer->CanInteract = true;
-				InteractPopUp();
+				APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+
+				if (playerActor)
+				{
+					OverlappingPlayer = playerActor;
+					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
+					OverlappingPlayer->CanInteract = true;
+				}
+			}
+			else
+			{
+				APickupable* pickupable = Cast<APickupable>(OtherActor);
+
+				if (pickupable)
+				{
+					UpdateMaterial();
+				}
 			}
 		}
 	}
@@ -114,28 +133,12 @@ void ABreakable::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class A
 	{
 		if (OverlappingPlayer != nullptr)
 		{
-			if (CurrentWidget)
-			{
-				CurrentWidget->RemoveFromParent();
-			}
+			OverlappingPlayer->CanInteract = false;
 
 			OverlappingPlayer = nullptr;
+
 		}
 
 	}
 }
 
-void ABreakable::InteractPopUp()
-{
-	if (HUDWidgetClass != nullptr)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
-
-		CurrentWidget = CreateWidget<UUserWidget>(UGameplayStatics::GetPlayerController(GetWorld(), OverlappingPlayer->PlayerIndex), HUDWidgetClass);
-
-		if (CurrentWidget)
-		{
-			CurrentWidget->AddToPlayerScreen();
-		}
-	}
-}

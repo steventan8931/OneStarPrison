@@ -88,9 +88,9 @@ public:
 
 	//Grab Pickupable items and drop
 	void PickupAndDrop();
-	UFUNCTION(Server, Unreliable)
+	UFUNCTION(Server, Reliable)
 		void ServerRPCPickupAndDrop();
-	UFUNCTION(NetMulticast, Unreliable)
+	UFUNCTION(NetMulticast, Reliable)
 		void ClientRPCPickupAndDrop();
 
 	//Throw Picked up item
@@ -99,9 +99,15 @@ public:
 		void ServerRPCThrow();
 	UFUNCTION(NetMulticast, Reliable)
 		void ClientRPCThrow();
+	UFUNCTION(Client, Unreliable)
+		void ClientShowThrowWidget();
 	float cacheDeltaTime = 0;
 
+	UPROPERTY(Replicated)
+	FRotator rot = FRotator::ZeroRotator;
+
 	//Check if Throw Key is being held down
+	//UPROPERTY(Replicated)
 	bool IsHoldingDownThrow = false;
 
 	//Current Throw Power
@@ -128,10 +134,36 @@ public:
 
 	//HUD Class to add to viewport
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UUserWidget> HUDWidgetClass;
+		TSubclassOf<class UUserWidget> ThrowWidgetClass;
 
-	UPROPERTY(VisibleAnywhere)
-		class UUserWidget* CurrentWidget;
+	UPROPERTY(VisibleAnywhere, Replicated)
+		class UUserWidget* CurrentThrowWidget;
+
+	//Pickup Widget
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> PickupWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, Replicated)
+		class UUserWidget* CurrentPickupWidget;
+
+	//Interact Widget
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> InteractWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, Replicated)
+		class UUserWidget* CurrentInteractWidget;
+
+	//Show Pickup Widget
+	UFUNCTION(Server, Reliable)
+		void ServerCheckPickup();
+	UFUNCTION(Client, Reliable)
+		void CheckPickup();
+
+	//Show Interact Widget
+	UFUNCTION(Server, Reliable)
+		void ServerCheckInteract();
+	UFUNCTION(Client, Reliable)
+		void CheckInteract();
 
 	//Current Pickedup Item
 	UPROPERTY(VisibleAnywhere, Replicated)

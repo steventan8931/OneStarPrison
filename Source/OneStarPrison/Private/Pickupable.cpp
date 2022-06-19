@@ -5,7 +5,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "PlayerCharacter.h"
 
-//#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 APickupable::APickupable()
@@ -25,14 +25,20 @@ APickupable::APickupable()
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
 	ProjectileMovement->Bounciness = 0.3f;
-
-
 }
 
 // Called when the game starts or when spawned
 void APickupable::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void APickupable::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APickupable, Player);
+	DOREPLIFETIME(APickupable, IsInAir);
 }
 
 // Called every frame
@@ -50,6 +56,7 @@ void APickupable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 		APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
 		if (!player)
 		{
+			IsInAir = true;
 			Mesh->SetSimulatePhysics(true);
 			ProjectileMovement->Deactivate();
 		}
@@ -58,6 +65,7 @@ void APickupable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 
 void APickupable::Launch(FVector _Velocity)
 {
+	IsInAir = true;
 	ProjectileMovement->Velocity = _Velocity;
 	ProjectileMovement->Activate();
 }

@@ -20,7 +20,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	////Replication
-	//virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -28,11 +28,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* Mesh;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		class APlayerCharacter* Player;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UProjectileMovementComponent* ProjectileMovement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
+		bool IsInAir = false;
 
 	UFUNCTION()
 		void OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

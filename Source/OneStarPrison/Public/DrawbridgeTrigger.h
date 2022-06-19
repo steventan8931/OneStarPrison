@@ -32,7 +32,17 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
 
+	UPROPERTY(EditAnywhere)
+		bool IsPlayerInteractable = false;
+
+	UPROPERTY(VisibleAnywhere)
+		class APlayerCharacter* OverlappingPlayer = nullptr;
+
 	//Overlap Functions
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	//Overlap Functions
+	UFUNCTION()
+		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };
