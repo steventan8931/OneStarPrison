@@ -33,7 +33,6 @@ void ABreakable::BeginPlay()
 	
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ABreakable::OnOverlapBegin);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ABreakable::OnOverlapEnd);
-	DrawDebugBox(GetWorld(), GetActorLocation(), FVector(200, 200, 200), FColor::Purple, true);
 
 	CurrentHealth = MaxHealth;
 

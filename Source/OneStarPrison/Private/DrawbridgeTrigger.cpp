@@ -40,14 +40,18 @@ void ADrawbridgeTrigger::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (Platform)
 	{
-		if (OverlappingPlayer != nullptr)
+		if (!Platform->IsOpen)
 		{
-			if (OverlappingPlayer->IsInteracting)
+			if (OverlappingPlayer != nullptr)
 			{
-				Platform->IsOpen = true;
-				OverlappingPlayer->CanInteract = false;
+				if (OverlappingPlayer->IsInteracting)
+				{
+					Platform->IsOpen = true;
+					OverlappingPlayer->CanInteract = false;
+				}
 			}
 		}
+
 	}
 }
 

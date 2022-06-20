@@ -29,7 +29,6 @@ AKeyDoor::AKeyDoor()
 void AKeyDoor::BeginPlay()
 {
 	Super::BeginPlay();
-	DrawDebugBox(GetWorld(), GetActorLocation(), FVector(200,200,200), FColor::Green, true);
 }
 
 void AKeyDoor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
