@@ -53,28 +53,32 @@ void AInteractiveStepsButton::Tick(float DeltaTime)
 
 	if (LinkedSteps.Num() > 0)
 	{
-		if (OverlappingPlayer != nullptr)
+		if (StepsManager)
 		{
-			if (OverlappingPlayer->IsInteracting)
+			if (OverlappingPlayer != nullptr)
 			{
-				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
-				StepsManager->IsStepOpen = true;
-				StepsManager->SetOpenStep(LinkedSteps);
-				StepsManager->OpenDoor(DeltaTime);
+				if (OverlappingPlayer->IsInteracting)
+				{
+					MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
+					StepsManager->IsStepOpen = true;
+					StepsManager->SetOpenStep(LinkedSteps);
+					StepsManager->OpenDoor(DeltaTime);
+				}
+				else
+				{
+					MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
+					StepsManager->IsStepOpen = false;
+					//StepsManager->SetOpenStep(LinkedSteps);
+				}
 			}
 			else
 			{
 				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
-				StepsManager->IsStepOpen = false;
+				//StepsManager->IsStepOpen = false;
 				//StepsManager->SetOpenStep(LinkedSteps);
 			}
 		}
-		else
-		{
-			MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
-			//StepsManager->IsStepOpen = false;
-			//StepsManager->SetOpenStep(LinkedSteps);
-		}
+
 	}
 }
 

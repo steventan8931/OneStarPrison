@@ -111,13 +111,17 @@ void AKeyDoor::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AAc
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		if (OverlappingPlayer != nullptr)
-		{
-			OverlappingPlayer->CanInteract = false;
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Player left"));
-			OverlappingPlayer = nullptr;
-		}
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+		if (playerActor)
+		{
+			if (OverlappingPlayer != nullptr)
+			{
+				OverlappingPlayer->CanInteract = false;
+				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Player left"));
+				OverlappingPlayer = nullptr;
+			}
+		}
 	}
 }
 
