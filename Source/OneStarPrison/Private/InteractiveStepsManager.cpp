@@ -3,6 +3,8 @@
 
 #include "InteractiveStepsManager.h"
 
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+
 // Sets default values
 AInteractiveStepsManager::AInteractiveStepsManager()
 {
@@ -16,6 +18,14 @@ void AInteractiveStepsManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AInteractiveStepsManager::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AInteractiveStepsManager, ListOfInteractiveSteps);
+	DOREPLIFETIME(AInteractiveStepsManager, CurrentSteps);
 }
 
 // Called every frame
@@ -38,6 +48,7 @@ void AInteractiveStepsManager::SetOpenStep(TArray<AInteractiveSteps*>  &_Current
 {
 	CurrentSteps = _CurrentStep;
 }
+
 
 void AInteractiveStepsManager::OpenDoor(float _DeltaTime)
 {

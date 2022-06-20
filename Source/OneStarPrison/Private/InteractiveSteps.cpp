@@ -28,6 +28,7 @@ void AInteractiveSteps::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 
 	DOREPLIFETIME(AInteractiveSteps, OpenPosition);
 	DOREPLIFETIME(AInteractiveSteps, ClosedPosition);
+	DOREPLIFETIME(AInteractiveSteps, IsOpen);
 }
 
 // Called every frame
@@ -50,6 +51,7 @@ void AInteractiveSteps::OpenDoor(float _DeltaTime)
 	if (GetActorLocation() != OpenPosition)
 	{
 		FVector newPos = FMath::Lerp(GetActorLocation(), OpenPosition, _DeltaTime);
+		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("moving"));
 		SetActorLocation(newPos);
 	}
 }

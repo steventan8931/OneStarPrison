@@ -8,6 +8,8 @@
 
 #include "Components/BoxComponent.h"
 
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+
 // Sets default values
 AInteractiveStepsButton::AInteractiveStepsButton()
 {
@@ -24,6 +26,9 @@ AInteractiveStepsButton::AInteractiveStepsButton()
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AInteractiveStepsButton::OnOverlapBegin);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AInteractiveStepsButton::OnOverlapEnd);
+
+	MovableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Handle"));
+	MovableMesh->SetupAttachment(Mesh);
 }
 
 // Called when the game starts or when spawned
@@ -31,6 +36,14 @@ void AInteractiveStepsButton::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AInteractiveStepsButton::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AInteractiveStepsButton, LinkedSteps);
+	DOREPLIFETIME(AInteractiveStepsButton, StepsManager);
 }
 
 // Called every frame
@@ -44,20 +57,23 @@ void AInteractiveStepsButton::Tick(float DeltaTime)
 		{
 			if (OverlappingPlayer->IsInteracting)
 			{
+				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
 				StepsManager->IsStepOpen = true;
 				StepsManager->SetOpenStep(LinkedSteps);
 				StepsManager->OpenDoor(DeltaTime);
 			}
 			else
 			{
+				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
 				StepsManager->IsStepOpen = false;
-				StepsManager->SetOpenStep(LinkedSteps);
+				//StepsManager->SetOpenStep(LinkedSteps);
 			}
 		}
 		else
 		{
-			StepsManager->IsStepOpen = false;
-			StepsManager->SetOpenStep(LinkedSteps);
+			MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
+			//StepsManager->IsStepOpen = false;
+			//StepsManager->SetOpenStep(LinkedSteps);
 		}
 	}
 }
@@ -87,6 +103,7 @@ void AInteractiveStepsButton::OnOverlapEnd(class UPrimitiveComponent* Overlapped
 		if (OverlappingPlayer != nullptr)
 		{
 			OverlappingPlayer->CanInteract = false;
+			OverlappingPlayer->IsInteracting = false;
 			OverlappingPlayer = nullptr;
 		}
 
