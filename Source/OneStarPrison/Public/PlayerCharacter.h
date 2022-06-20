@@ -107,7 +107,7 @@ public:
 	FRotator rot = FRotator::ZeroRotator;
 
 	//Check if Throw Key is being held down
-	//UPROPERTY(Replicated)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsHoldingDownThrow = false;
 
 	//Current Throw Power
