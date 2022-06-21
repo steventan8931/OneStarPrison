@@ -95,11 +95,18 @@ void ADrawbridgeTrigger::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp,
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		if (OverlappingPlayer != nullptr)
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+
+		if (playerActor)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("leffttt"));
-			OverlappingPlayer->CanInteract = false;
-			OverlappingPlayer = nullptr;
+			if (OverlappingPlayer != nullptr)
+			{
+				if (playerActor == OverlappingPlayer)
+				{
+					OverlappingPlayer->CanInteract = false;
+					OverlappingPlayer = nullptr;
+				}
+			}
 		}
 
 	}

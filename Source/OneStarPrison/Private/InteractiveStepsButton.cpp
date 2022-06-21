@@ -104,12 +104,19 @@ void AInteractiveStepsButton::OnOverlapEnd(class UPrimitiveComponent* Overlapped
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		if (OverlappingPlayer != nullptr)
-		{
-			OverlappingPlayer->CanInteract = false;
-			OverlappingPlayer->IsInteracting = false;
-			OverlappingPlayer = nullptr;
-		}
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+		if (playerActor)
+		{
+			if (OverlappingPlayer != nullptr)
+			{
+				if (playerActor == OverlappingPlayer)
+				{
+					OverlappingPlayer->CanInteract = false;
+					OverlappingPlayer->IsInteracting = false;
+					OverlappingPlayer = nullptr;
+				}
+			}
+		}
 	}
 }

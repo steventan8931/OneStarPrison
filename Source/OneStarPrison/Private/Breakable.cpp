@@ -130,12 +130,17 @@ void ABreakable::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class A
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		if (OverlappingPlayer != nullptr)
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+
+		if (playerActor)
 		{
-			OverlappingPlayer->CanInteract = false;
+			if (OverlappingPlayer != nullptr)
+			{
+				OverlappingPlayer->CanInteract = false;
 
-			OverlappingPlayer = nullptr;
+				OverlappingPlayer = nullptr;
 
+			}
 		}
 
 	}

@@ -98,14 +98,20 @@ void AMovingPlatform::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cl
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		if (OverlappingPlayer != nullptr)
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+
+		if (playerActor)
 		{
-			OverlappingPlayer->CanInteract = false;
-
-			IsMoving = false;
-			OverlappingPlayer = nullptr;
+			if (OverlappingPlayer != nullptr)
+			{
+				if (playerActor == OverlappingPlayer)
+				{
+					OverlappingPlayer->CanInteract = false;
+					IsMoving = false;
+					OverlappingPlayer = nullptr;
+				}
+			}
 		}
-
 	}
 }
 
