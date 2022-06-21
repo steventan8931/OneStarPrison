@@ -427,8 +427,8 @@ void APlayerCharacter::ClientRPCThrow_Implementation()
 	{
 		IsHoldingDownThrow = false;
 		PickedUpItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		PickedUpItem->Mesh->SetCollisionProfileName("BlockAllDynamic");
-
+		PickedUpItem->Mesh->SetCollisionProfileName("IgnoreOnlyPawn");
+		PickedUpItem->Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		PickedUpItem->Launch(cacheVelocity);
 		PickedUpItem->Player = nullptr;
 
