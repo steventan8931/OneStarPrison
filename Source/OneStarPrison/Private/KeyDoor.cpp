@@ -7,6 +7,7 @@
 #include "PickupableKey.h"
 
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AKeyDoor::AKeyDoor()
@@ -65,6 +66,11 @@ void AKeyDoor::Tick(float DeltaTime)
 					{
 						OverlappingPlayer->PickedUpItem->Destroy();
 						OverlappingPlayer->PickedUpItem = nullptr;
+					}
+
+					if (OpenSound)
+					{
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
 					}
 
 					IsOpen = true;
