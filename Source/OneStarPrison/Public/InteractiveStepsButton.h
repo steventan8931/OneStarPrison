@@ -31,10 +31,10 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* MovableMesh;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		FRotator HandleOpenRotation = FRotator(0, 0, 0);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		FRotator HandleClosedRotation = FRotator(0, 0, 0);
 
 	UPROPERTY(VisibleAnywhere)

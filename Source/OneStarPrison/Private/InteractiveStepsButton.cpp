@@ -44,6 +44,9 @@ void AInteractiveStepsButton::GetLifetimeReplicatedProps(TArray< FLifetimeProper
 
 	DOREPLIFETIME(AInteractiveStepsButton, LinkedSteps);
 	DOREPLIFETIME(AInteractiveStepsButton, StepsManager);
+
+	DOREPLIFETIME(AInteractiveStepsButton, HandleOpenRotation);
+	DOREPLIFETIME(AInteractiveStepsButton, HandleClosedRotation);
 }
 
 // Called every frame

@@ -7,6 +7,7 @@
 #include "Pickupable.h"
 #include "PlayerCharacter.h"
 
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 ADrawbridgeTrigger::ADrawbridgeTrigger()
@@ -25,6 +26,9 @@ ADrawbridgeTrigger::ADrawbridgeTrigger()
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ADrawbridgeTrigger::OnOverlapBegin);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ADrawbridgeTrigger::OnOverlapEnd);
+
+	MovableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Handle"));
+	MovableMesh->SetupAttachment(Mesh);
 }
 
 // Called when the game starts or when spawned
@@ -33,6 +37,15 @@ void ADrawbridgeTrigger::BeginPlay()
 	Super::BeginPlay();
 	
 }
+
+void ADrawbridgeTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ADrawbridgeTrigger, HandleOpenRotation);
+	DOREPLIFETIME(ADrawbridgeTrigger, HandleClosedRotation);
+}
+
 
 // Called every frame
 void ADrawbridgeTrigger::Tick(float DeltaTime)
@@ -47,9 +60,14 @@ void ADrawbridgeTrigger::Tick(float DeltaTime)
 				if (OverlappingPlayer->IsInteracting)
 				{
 					Platform->IsOpen = true;
+					MovableMesh->SetRelativeRotation(HandleOpenRotation);
 					OverlappingPlayer->CanInteract = false;
 				}
 			}
+		}
+		else
+		{
+			MovableMesh->SetRelativeRotation(HandleClosedRotation);
 		}
 
 	}
