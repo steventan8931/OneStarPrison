@@ -85,6 +85,8 @@ public:
 		void RPCInteract();
 	UFUNCTION(Server, Reliable)
 		void RPCStopInteract();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
+		bool IsGrabbing = false;
 
 	//Grab Pickupable items and drop
 	void PickupAndDrop();

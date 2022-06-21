@@ -16,6 +16,7 @@
 
 #include "Components/SplineMeshComponent.h"
 #include "Components/SplineComponent.h"
+#include "PickupableKey.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -94,6 +95,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, CurrentThrowWidget);
 	DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
 	DOREPLIFETIME(APlayerCharacter, IsPickingUp);
+	DOREPLIFETIME(APlayerCharacter, IsGrabbing);
 
 }
 
@@ -318,6 +320,7 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 	if (PickedUpItem)
 	{
 		IsPickingUp = false;
+		IsGrabbing = false;
 		IsHoldingDownThrow = true;
 		return;
 	}
@@ -376,7 +379,20 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation(APickupable* _Picku
 	_Pickup->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone001Bone0015"));
 
 	PickedUpItem = _Pickup;
-	IsPickingUp = true;
+
+	APickupableKey* key = Cast<APickupableKey>(_Pickup);
+
+	if (key)
+	{
+		IsGrabbing = true;
+	}
+	else
+	{
+		IsPickingUp = true;
+	}
+
+	_Pickup->PlayPickupSound();
+
 }
 
 void APlayerCharacter::ClientShowThrowWidget_Implementation()
