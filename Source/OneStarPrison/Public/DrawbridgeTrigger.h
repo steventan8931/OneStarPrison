@@ -27,6 +27,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere)
+		USoundBase* OpenSound;
+
+	UPROPERTY(EditAnywhere)
 		class ADrawbridgePlatform* Platform;
 
 	UPROPERTY(VisibleAnywhere)
