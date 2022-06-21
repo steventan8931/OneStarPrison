@@ -27,16 +27,14 @@ void APickupPile::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	ListOfPickups.SetNum(PickupsToSpawn);
-	for (int Index = 0; Index != ListOfPickups.Num(); ++Index)
-	{
-		ListOfPickups[Index] = SpawnActor();
-	}
+	ServerSpawn();
 }
 
 void APickupPile::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APickupPile, ListOfPickups);
 }
 
 // Called every frame
@@ -68,12 +66,21 @@ void APickupPile::CheckForPickUp_Implementation()
 		APickupable* pickup = Cast<APickupable>(ListOfPickups[Index]);
 		if (pickup)
 		{
-			if (pickup->Player)
+			if (pickup->Player || pickup->IsInAir)
 			{
-
 				ListOfPickups[Index] = SpawnActor();
+				break;
 			}
 
 		}
+	}
+}
+
+void APickupPile::ServerSpawn_Implementation()
+{
+	ListOfPickups.SetNum(PickupsToSpawn);
+	for (int Index = 0; Index != ListOfPickups.Num(); ++Index)
+	{
+		ListOfPickups[Index] = SpawnActor();
 	}
 }

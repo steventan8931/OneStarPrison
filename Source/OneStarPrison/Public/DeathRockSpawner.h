@@ -34,6 +34,7 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		FVector EndPosition;
 
+	UPROPERTY(Replicated)
 	float SpawnTimer = 0.0f;
 
 	AActor* SpawnActor();

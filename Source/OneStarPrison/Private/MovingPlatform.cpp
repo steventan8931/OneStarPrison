@@ -6,6 +6,8 @@
 #include "PlayerCharacter.h"
 #include "CrankliftPlatform.h"
 
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+
 // Sets default values
 AMovingPlatform::AMovingPlatform()
 {
@@ -22,6 +24,9 @@ AMovingPlatform::AMovingPlatform()
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AMovingPlatform::OnOverlapBegin);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AMovingPlatform::OnOverlapEnd);
+
+	MovableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Handle"));
+	MovableMesh->SetupAttachment(Mesh);
 }
 
 // Called when the game starts or when spawned
@@ -29,6 +34,14 @@ void AMovingPlatform::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AMovingPlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMovingPlatform, HandleOpenRotation);
+	DOREPLIFETIME(AMovingPlatform, HandleClosedRotation);
 }
 
 // Called every frame
@@ -59,6 +72,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 		{
 			if (Platform->GetActorLocation() != OpenPosition)
 			{
+				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
 				FVector newPos = FMath::Lerp(Platform->GetActorLocation(), OpenPosition, DeltaTime * MoveSpeed);
 				Platform->SetActorLocation(newPos);
 			}
@@ -67,6 +81,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 		{
 			if (Platform->GetActorLocation() != ClosedPosition)
 			{
+				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
 				FVector newPos = FMath::Lerp(Platform->GetActorLocation(), ClosedPosition, DeltaTime * MoveSpeed);
 				Platform->SetActorLocation(newPos);
 			}
@@ -98,14 +113,20 @@ void AMovingPlatform::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cl
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		if (OverlappingPlayer != nullptr)
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+
+		if (playerActor)
 		{
-			OverlappingPlayer->CanInteract = false;
-
-			IsMoving = false;
-			OverlappingPlayer = nullptr;
+			if (OverlappingPlayer != nullptr)
+			{
+				if (playerActor == OverlappingPlayer)
+				{
+					OverlappingPlayer->CanInteract = false;
+					IsMoving = false;
+					OverlappingPlayer = nullptr;
+				}
+			}
 		}
-
 	}
 }
 

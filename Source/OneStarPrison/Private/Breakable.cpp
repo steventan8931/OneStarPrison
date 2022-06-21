@@ -33,7 +33,6 @@ void ABreakable::BeginPlay()
 	
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ABreakable::OnOverlapBegin);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ABreakable::OnOverlapEnd);
-	DrawDebugBox(GetWorld(), GetActorLocation(), FVector(200, 200, 200), FColor::Purple, true);
 
 	CurrentHealth = MaxHealth;
 
@@ -131,12 +130,17 @@ void ABreakable::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class A
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		if (OverlappingPlayer != nullptr)
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+
+		if (playerActor)
 		{
-			OverlappingPlayer->CanInteract = false;
+			if (OverlappingPlayer != nullptr)
+			{
+				OverlappingPlayer->CanInteract = false;
 
-			OverlappingPlayer = nullptr;
+				OverlappingPlayer = nullptr;
 
+			}
 		}
 
 	}

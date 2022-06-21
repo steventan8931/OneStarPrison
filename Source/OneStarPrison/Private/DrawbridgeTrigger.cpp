@@ -7,6 +7,7 @@
 #include "Pickupable.h"
 #include "PlayerCharacter.h"
 
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 ADrawbridgeTrigger::ADrawbridgeTrigger()
@@ -25,6 +26,9 @@ ADrawbridgeTrigger::ADrawbridgeTrigger()
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ADrawbridgeTrigger::OnOverlapBegin);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ADrawbridgeTrigger::OnOverlapEnd);
+
+	MovableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Handle"));
+	MovableMesh->SetupAttachment(Mesh);
 }
 
 // Called when the game starts or when spawned
@@ -34,20 +38,38 @@ void ADrawbridgeTrigger::BeginPlay()
 	
 }
 
+void ADrawbridgeTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ADrawbridgeTrigger, HandleOpenRotation);
+	DOREPLIFETIME(ADrawbridgeTrigger, HandleClosedRotation);
+}
+
+
 // Called every frame
 void ADrawbridgeTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	if (Platform)
 	{
-		if (OverlappingPlayer != nullptr)
+		if (!Platform->IsOpen)
 		{
-			if (OverlappingPlayer->IsInteracting)
+			if (OverlappingPlayer != nullptr)
 			{
-				Platform->IsOpen = true;
-				OverlappingPlayer->CanInteract = false;
+				if (OverlappingPlayer->IsInteracting)
+				{
+					Platform->IsOpen = true;
+					MovableMesh->SetRelativeRotation(HandleOpenRotation);
+					OverlappingPlayer->CanInteract = false;
+				}
 			}
 		}
+		else
+		{
+			MovableMesh->SetRelativeRotation(HandleClosedRotation);
+		}
+
 	}
 }
 
@@ -89,15 +111,20 @@ void ADrawbridgeTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 
 void ADrawbridgeTrigger::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("leffttt"));
 	if (OtherActor && (OtherActor != this))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("leffttt"));
-		if (OverlappingPlayer != nullptr)
-		{
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
-			OverlappingPlayer->CanInteract = false;
-			OverlappingPlayer = nullptr;
+		if (playerActor)
+		{
+			if (OverlappingPlayer != nullptr)
+			{
+				if (playerActor == OverlappingPlayer)
+				{
+					OverlappingPlayer->CanInteract = false;
+					OverlappingPlayer = nullptr;
+				}
+			}
 		}
 
 	}

@@ -19,9 +19,15 @@
 /DELAYLOAD:"d3d12.dll"
 /DELAYLOAD:"DBGHELP.DLL"
 /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\lib\x64"
+<<<<<<< HEAD
 /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\lib\um\x64"
 /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.19041.0\ucrt\x64"
 /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.19041.0\um\x64"
+=======
+/LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.7.2\lib\um\x64"
+/LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.18362.0\ucrt\x64"
+/LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.18362.0\um\x64"
+>>>>>>> Steven
 /NODEFAULTLIB:"LIBCMT"
 /NODEFAULTLIB:"LIBCPMT"
 /NODEFAULTLIB:"LIBCMTD"
@@ -33,12 +39,21 @@
 /NODEFAULTLIB:"LIBCD"
 /NODEFAULTLIB:"LIBCPD"
 /FUNCTIONPADMIN
+<<<<<<< HEAD
 "D:\Game Development\Unreal Engine\OneStarPrison\Intermediate\Build\Win64\OneStarPrisonEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
 "D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSessions\Module.AdvancedSessions.cpp.obj"
 "D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSessions\Module.AdvancedSessions.gen.1_of_3.cpp.obj"
 "D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSessions\Module.AdvancedSessions.gen.2_of_3.cpp.obj"
 "D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSessions\Module.AdvancedSessions.gen.3_of_3.cpp.obj"
 "D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSessions\Default.rc2.res"
+=======
+"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Intermediate\Build\Win64\OneStarPrisonEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSessions\Module.AdvancedSessions.cpp.obj"
+"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSessions\Module.AdvancedSessions.gen.1_of_3.cpp.obj"
+"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSessions\Module.AdvancedSessions.gen.2_of_3.cpp.obj"
+"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSessions\Module.AdvancedSessions.gen.3_of_3.cpp.obj"
+"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSessions\Default.rc2.res"
+>>>>>>> Steven
 "..\Plugins\Online\OnlineSubsystem\Intermediate\Build\Win64\UnrealEditor\Development\OnlineSubsystem\UnrealEditor-OnlineSubsystem.lib"
 "..\Intermediate\Build\Win64\UnrealEditor\Development\Sockets\UnrealEditor-Sockets.lib"
 "..\Intermediate\Build\Win64\UnrealEditor\Development\Networking\UnrealEditor-Networking.lib"
@@ -71,7 +86,13 @@
 "setupapi.lib"
 "dwmapi.lib"
 "imm32.lib"
+<<<<<<< HEAD
 /OUT:"D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Binaries\Win64\UnrealEditor-AdvancedSessions.dll"
 /IMPLIB:"D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSessions\UnrealEditor-AdvancedSessions.suppressed.lib"
 /PDB:"D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Binaries\Win64\UnrealEditor-AdvancedSessions.pdb"
+=======
+/OUT:"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Binaries\Win64\UnrealEditor-AdvancedSessions.dll"
+/IMPLIB:"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSessions\UnrealEditor-AdvancedSessions.suppressed.lib"
+/PDB:"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Binaries\Win64\UnrealEditor-AdvancedSessions.pdb"
+>>>>>>> Steven
 /ignore:4078

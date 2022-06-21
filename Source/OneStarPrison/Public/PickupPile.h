@@ -38,14 +38,16 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<class AActor>ActorToSpawn;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		TArray<class AActor*> ListOfPickups;
 
-	UFUNCTION(NetMulticast, Unreliable)
+	UFUNCTION(Client, Unreliable)
 	void CheckForPickUp();
 	UFUNCTION(Server, Unreliable)
 	void RPCCheckForPickUp();
 
+	UFUNCTION(Server, Unreliable)
+		void ServerSpawn();
 
 	AActor* SpawnActor();
 
