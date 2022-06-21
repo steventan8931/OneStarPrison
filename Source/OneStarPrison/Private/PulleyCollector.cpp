@@ -87,6 +87,9 @@ void APulleyCollector::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 
 		if (pickupable)
 		{
+			pickupable->Mesh->SetSimulatePhysics(true);
+
+			pickupable->ProjectileMovement->Deactivate();
 			if (Platform)
 			{
 				RockCount++;
