@@ -125,13 +125,13 @@ void APlayerCharacter::Tick(float DeltaTime)
 			velocity.Normalize();
 			FPredictProjectilePathParams params;
 			params.StartLocation = GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
-
+			//GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello %s"), *params.StartLocation.ToString()));
 
 			cacheVelocity = velocity * ThrowPowerScale * 10;
 			params.LaunchVelocity = cacheVelocity;
 			params.ProjectileRadius = 10;
 			params.bTraceWithChannel = false;
-			params.DrawDebugTime = 0.0f;
+			params.DrawDebugTime = 1.0f;
 			params.DrawDebugType = EDrawDebugTrace::None;
 			params.SimFrequency = 5;
 			TArray<AActor*> actors;
@@ -315,6 +315,7 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 	if (PickedUpItem)
 	{
 		IsHoldingDownThrow = true;
+		cacheHoldThrow = true;
 		return;
 	}
 
@@ -368,6 +369,7 @@ void APlayerCharacter::ClientShowThrowWidget_Implementation()
 	if (PickedUpItem)
 	{
 		IsHoldingDownThrow = true;
+		cacheHoldThrow = true;
 
 		CurrentThrowWidget = CreateWidget<UUserWidget>(GetWorld(), ThrowWidgetClass);
 
