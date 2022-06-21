@@ -7,6 +7,7 @@
 #include "PickupableKey.h"
 
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ADoubleDoor::ADoubleDoor()
@@ -58,26 +59,23 @@ void ADoubleDoor::Tick(float DeltaTime)
 			APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
 			if (key)
 			{
-				//OverlappingPlayer->CanInteract = true;
 
-				//if (OverlappingPlayer->IsInteracting)
+				if (IsKeyOneTimeUse)
 				{
-
-					if (key)
-					{
-						if (IsKeyOneTimeUse)
-						{
-							OverlappingPlayer->PickedUpItem->Destroy();
-							OverlappingPlayer->PickedUpItem = nullptr;
-						}
-
-						IsOpen = true;
-
-						//OverlappingPlayer->CanInteract = false;
-
-						GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
-					}
+					OverlappingPlayer->PickedUpItem->Destroy();
+					OverlappingPlayer->PickedUpItem = nullptr;
 				}
+
+				IsOpen = true;
+
+				if (OpenSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+				}
+
+
+				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
+			
 			}
 		}
 

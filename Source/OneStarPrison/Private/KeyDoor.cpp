@@ -67,7 +67,12 @@ void AKeyDoor::Tick(float DeltaTime)
 						OverlappingPlayer->PickedUpItem->Destroy();
 						OverlappingPlayer->PickedUpItem = nullptr;
 					}
-					UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound,GetActorLocation());
+
+					if (OpenSound)
+					{
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+					}
+
 					IsOpen = true;
 
 					OverlappingPlayer->CanInteract = false;

@@ -25,6 +25,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditAnywhere)
+		USoundBase* OpenSound;
+
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
 
