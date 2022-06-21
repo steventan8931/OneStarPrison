@@ -19,15 +19,30 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	//Replication
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere)
+		USoundBase* OpenSound;
 
 	UPROPERTY(EditAnywhere)
 		class ADrawbridgePlatform* Platform;
 
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
+	
+	UPROPERTY(VisibleAnywhere)
+		class UStaticMeshComponent* MovableMesh;
+
+	UPROPERTY(EditAnywhere, Replicated)
+		FRotator HandleOpenRotation = FRotator(-50, 0, 0);
+
+	UPROPERTY(EditAnywhere, Replicated)
+		FRotator HandleClosedRotation = FRotator(50, 0, 0);
 
 	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;

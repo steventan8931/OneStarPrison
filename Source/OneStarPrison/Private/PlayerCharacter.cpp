@@ -92,7 +92,9 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, PickedUpItem);
 	DOREPLIFETIME(APlayerCharacter, rot);
 	DOREPLIFETIME(APlayerCharacter, CurrentThrowWidget);
-	//DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
+	DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
+	DOREPLIFETIME(APlayerCharacter, IsPickingUp);
+
 }
 
 // Called every frame
@@ -124,14 +126,14 @@ void APlayerCharacter::Tick(float DeltaTime)
 			FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
 			velocity.Normalize();
 			FPredictProjectilePathParams params;
-			params.StartLocation = GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
-
+			params.StartLocation = GetMesh()->GetSocketLocation("Base-HumanPalmBone001Bone0015");
+			//GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello %s"), *params.StartLocation.ToString()));
 
 			cacheVelocity = velocity * ThrowPowerScale * 10;
 			params.LaunchVelocity = cacheVelocity;
 			params.ProjectileRadius = 10;
 			params.bTraceWithChannel = false;
-			params.DrawDebugTime = 0.0f;
+			params.DrawDebugTime = 1.0f;
 			params.DrawDebugType = EDrawDebugTrace::None;
 			params.SimFrequency = 5;
 			TArray<AActor*> actors;
@@ -191,7 +193,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 		}
 		SplineComponentArray.Empty();
 	}
-
+	
+	IsPickingUp = false;
 	CheckDeath(DeltaTime);
 }
 
@@ -311,42 +314,19 @@ void APlayerCharacter::PickupAndDrop()
 void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 {
 	ClientShowThrowWidget();
-	ClientRPCPickupAndDrop();
-}
 
-void APlayerCharacter::ClientShowThrowWidget_Implementation()
-{
 	if (PickedUpItem)
 	{
-		IsHoldingDownThrow = true;
-
-		CurrentThrowWidget = CreateWidget<UUserWidget>(GetWorld(), ThrowWidgetClass);
-
-		if (ThrowWidgetClass != nullptr)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
-
-			if (CurrentThrowWidget)
-			{
-				CurrentThrowWidget->AddToPlayerScreen();
-			}
-		}
-	}
-}
-
-void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
-{
-	if (PickedUpItem)
-	{
+		IsPickingUp = false;
 		IsHoldingDownThrow = true;
 		return;
 	}
 
 	TArray<FHitResult> OutHits;
 
-	FVector SweepStart = GetActorLocation(); 
+	FVector SweepStart = GetActorLocation();
 
-	FVector SweepEnd = GetActorLocation(); 
+	FVector SweepEnd = GetActorLocation();
 
 	//Create a collision sphere
 	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(200.0f);
@@ -372,13 +352,7 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 					continue;
 				}
 
-				pickup->Player = this;
-				pickup->Mesh->SetSimulatePhysics(false);
-				pickup->Mesh->SetCollisionProfileName("Trigger");
-				
-				pickup->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone0023"));
-
-				PickedUpItem = pickup;
+				ClientRPCPickupAndDrop(pickup);
 
 				if (GEngine)
 				{
@@ -392,6 +366,39 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
 		}
 	}
 }
+
+void APlayerCharacter::ClientRPCPickupAndDrop_Implementation(APickupable* _Pickup)
+{
+	_Pickup->Player = this;
+	_Pickup->Mesh->SetSimulatePhysics(false);
+	_Pickup->Mesh->SetCollisionProfileName("Trigger");
+
+	_Pickup->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone001Bone0015"));
+
+	PickedUpItem = _Pickup;
+	IsPickingUp = true;
+}
+
+void APlayerCharacter::ClientShowThrowWidget_Implementation()
+{
+	if (PickedUpItem)
+	{
+		IsHoldingDownThrow = true;
+
+		CurrentThrowWidget = CreateWidget<UUserWidget>(GetWorld(), ThrowWidgetClass);
+
+		if (ThrowWidgetClass != nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
+
+			if (CurrentThrowWidget)
+			{
+				CurrentThrowWidget->AddToPlayerScreen();
+			}
+		}
+	}
+}
+
 
 void APlayerCharacter::Throw()
 {
@@ -424,8 +431,8 @@ void APlayerCharacter::ClientRPCThrow_Implementation()
 	{
 		IsHoldingDownThrow = false;
 		PickedUpItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		PickedUpItem->Mesh->SetCollisionProfileName("BlockAllDynamic");
-
+		PickedUpItem->Mesh->SetCollisionProfileName("IgnoreOnlyPawn");
+		PickedUpItem->Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		PickedUpItem->Launch(cacheVelocity);
 		PickedUpItem->Player = nullptr;
 
@@ -443,6 +450,7 @@ void APlayerCharacter::ClientRPCThrow_Implementation()
 void APlayerCharacter::ServerCheckPickup_Implementation()
 {
 	CheckPickup();
+
 }
 
 void APlayerCharacter::CheckPickup_Implementation()
@@ -482,8 +490,6 @@ void APlayerCharacter::CheckPickup_Implementation()
 			{
 				if (!pickup->IsInAir && !pickup->Player)
 				{
-
-
 					if (PickupWidgetClass != nullptr)
 					{
 						if (CurrentPickupWidget)
@@ -508,7 +514,7 @@ void APlayerCharacter::CheckPickup_Implementation()
 
 		}
 	}
-
+	IsPickingUp = false;
 }
 
 

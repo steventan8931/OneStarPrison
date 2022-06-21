@@ -6,6 +6,9 @@
 #include "PlayerCharacter.h"
 #include "CrankliftPlatform.h"
 
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+#include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
 // Sets default values
 AMovingPlatform::AMovingPlatform()
 {
@@ -22,13 +25,28 @@ AMovingPlatform::AMovingPlatform()
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AMovingPlatform::OnOverlapBegin);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AMovingPlatform::OnOverlapEnd);
+
+	MovableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Handle"));
+	MovableMesh->SetupAttachment(Mesh);
 }
 
 // Called when the game starts or when spawned
 void AMovingPlatform::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (MovingSound)
+	{
+		AudioComponent = UGameplayStatics::SpawnSound2D(this, MovingSound);
+	}
+}
+
+void AMovingPlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMovingPlatform, HandleOpenRotation);
+	DOREPLIFETIME(AMovingPlatform, HandleClosedRotation);
 }
 
 // Called every frame
@@ -38,10 +56,26 @@ void AMovingPlatform::Tick(float DeltaTime)
 
 	if (Platform)
 	{
+		if (AudioComponent)
+		{
+			if (!AudioComponent->IsPlaying())
+			{
+				AudioComponent->Play();
+			}
+		}
+
 		if (OverlappingPlayer != nullptr)
 		{
 			if (OverlappingPlayer->IsInteracting)
 			{
+				if (AudioComponent)
+				{
+					if(!AudioComponent->IsPlaying())
+					{
+						AudioComponent->Play();
+					}
+				}
+
 				IsMoving = true;
 			}
 			else
@@ -52,6 +86,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 		else
 		{
 			IsMoving = false;
+
 		}
 
 
@@ -59,16 +94,36 @@ void AMovingPlatform::Tick(float DeltaTime)
 		{
 			if (Platform->GetActorLocation() != OpenPosition)
 			{
+				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
 				FVector newPos = FMath::Lerp(Platform->GetActorLocation(), OpenPosition, DeltaTime * MoveSpeed);
 				Platform->SetActorLocation(newPos);
+			}
+
+			GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello %d"), FVector::Distance(Platform->GetActorLocation(), OpenPosition)));
+
+			if (FVector::Distance(Platform->GetActorLocation(), OpenPosition) < 25)
+			{
+				if (AudioComponent)
+				{
+					AudioComponent->Stop();
+				}
 			}
 		}
 		else
 		{
 			if (Platform->GetActorLocation() != ClosedPosition)
 			{
+				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
 				FVector newPos = FMath::Lerp(Platform->GetActorLocation(), ClosedPosition, DeltaTime * MoveSpeed);
 				Platform->SetActorLocation(newPos);
+			}
+
+			if (FVector::Distance(Platform->GetActorLocation(), ClosedPosition) < 25)
+			{
+				if (AudioComponent)
+				{
+					AudioComponent->Stop();
+				}
 			}
 		}
 
@@ -98,14 +153,20 @@ void AMovingPlatform::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cl
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		if (OverlappingPlayer != nullptr)
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+
+		if (playerActor)
 		{
-			OverlappingPlayer->CanInteract = false;
-
-			IsMoving = false;
-			OverlappingPlayer = nullptr;
+			if (OverlappingPlayer != nullptr)
+			{
+				if (playerActor == OverlappingPlayer)
+				{
+					OverlappingPlayer->CanInteract = false;
+					IsMoving = false;
+					OverlappingPlayer = nullptr;
+				}
+			}
 		}
-
 	}
 }
 

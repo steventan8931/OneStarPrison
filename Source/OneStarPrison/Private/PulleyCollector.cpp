@@ -7,6 +7,8 @@
 #include "Pickupable.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 APulleyCollector::APulleyCollector()
 {
@@ -87,8 +89,15 @@ void APulleyCollector::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 
 		if (pickupable)
 		{
+			pickupable->Mesh->SetSimulatePhysics(true);
+
+			pickupable->ProjectileMovement->Deactivate();
 			if (Platform)
 			{
+				if (MovingSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
+				}
 				RockCount++;
 				UpdateTargetPos();
 			}

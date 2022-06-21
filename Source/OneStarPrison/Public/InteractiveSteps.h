@@ -28,7 +28,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		bool IsOpen = false;
 
 	UPROPERTY(EditAnywhere, Replicated)

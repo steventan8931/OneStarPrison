@@ -7,6 +7,7 @@
 #include "PickupableKey.h"
 
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AKeyDoor::AKeyDoor()
@@ -29,7 +30,6 @@ AKeyDoor::AKeyDoor()
 void AKeyDoor::BeginPlay()
 {
 	Super::BeginPlay();
-	DrawDebugBox(GetWorld(), GetActorLocation(), FVector(200,200,200), FColor::Green, true);
 }
 
 void AKeyDoor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -66,6 +66,11 @@ void AKeyDoor::Tick(float DeltaTime)
 					{
 						OverlappingPlayer->PickedUpItem->Destroy();
 						OverlappingPlayer->PickedUpItem = nullptr;
+					}
+
+					if (OpenSound)
+					{
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
 					}
 
 					IsOpen = true;
@@ -111,13 +116,17 @@ void AKeyDoor::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AAc
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		if (OverlappingPlayer != nullptr)
-		{
-			OverlappingPlayer->CanInteract = false;
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Player left"));
-			OverlappingPlayer = nullptr;
-		}
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+		if (playerActor)
+		{
+			if (OverlappingPlayer != nullptr)
+			{
+				OverlappingPlayer->CanInteract = false;
+				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Player left"));
+				OverlappingPlayer = nullptr;
+			}
+		}
 	}
 }
 

@@ -91,7 +91,9 @@ public:
 	UFUNCTION(Server, Reliable)
 		void ServerRPCPickupAndDrop();
 	UFUNCTION(NetMulticast, Reliable)
-		void ClientRPCPickupAndDrop();
+		void ClientRPCPickupAndDrop(APickupable* _Pickup);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
+		bool IsPickingUp = false;
 
 	//Throw Picked up item
 	void Throw();
@@ -107,7 +109,7 @@ public:
 	FRotator rot = FRotator::ZeroRotator;
 
 	//Check if Throw Key is being held down
-	//UPROPERTY(Replicated)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 	bool IsHoldingDownThrow = false;
 
 	//Current Throw Power
