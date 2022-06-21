@@ -56,10 +56,14 @@ void AMovingPlatform::Tick(float DeltaTime)
 
 	if (Platform)
 	{
-		if (!AudioComponent->IsPlaying())
+		if (AudioComponent)
 		{
-			AudioComponent->Play();
+			if (!AudioComponent->IsPlaying())
+			{
+				AudioComponent->Play();
+			}
 		}
+
 		if (OverlappingPlayer != nullptr)
 		{
 			if (OverlappingPlayer->IsInteracting)
