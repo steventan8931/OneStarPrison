@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AdvancedExternalUILibrary.h
 H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AdvancedFriendsLibrary.h
 H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AdvancedGameSession.h
@@ -22,28 +21,3 @@ H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source
 H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\BlueprintDataDefinitions.h
 H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AutoLoginUserCallbackProxy.h
 H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\FindFriendSessionCallbackProxy.h
-=======
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AdvancedExternalUILibrary.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AdvancedFriendsGameInstance.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AdvancedFriendsInterface.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AdvancedFriendsLibrary.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AdvancedIdentityLibrary.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AdvancedGameSession.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AdvancedSessionsLibrary.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AdvancedVoiceLibrary.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\AutoLoginUserCallbackProxy.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\BlueprintDataDefinitions.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\CancelFindSessionsCallbackProxy.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\CreateSessionCallbackProxyAdvanced.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\EndSessionCallbackProxy.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\FindFriendSessionCallbackProxy.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\FindSessionsCallbackProxyAdvanced.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\GetFriendsCallbackProxy.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\GetRecentPlayersCallbackProxy.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\GetUserPrivilegeCallbackProxy.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\LoginUserCallbackProxy.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\LogoutUserCallbackProxy.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\SendFriendInviteCallbackProxy.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\StartSessionCallbackProxyAdvanced.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes\UpdateSessionCallbackProxyAdvanced.h
->>>>>>> Steven
