@@ -343,7 +343,7 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 			if (pickup)
 			{
 				//If item is already picked up go to next actor
-				if (pickup->Player || pickup->IsInAir)
+				if (pickup->Player)
 				{
 					continue;
 				}
