@@ -92,6 +92,8 @@ public:
 		void ServerRPCPickupAndDrop();
 	UFUNCTION(NetMulticast, Reliable)
 		void ClientRPCPickupAndDrop(APickupable* _Pickup);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
+		bool IsPickingUp = false;
 
 	//Throw Picked up item
 	void Throw();
@@ -109,8 +111,6 @@ public:
 	//Check if Throw Key is being held down
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 	bool IsHoldingDownThrow = false;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		bool cacheHoldThrow = true;
 
 	//Current Throw Power
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

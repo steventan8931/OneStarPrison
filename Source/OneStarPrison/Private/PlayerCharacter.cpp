@@ -93,6 +93,8 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, rot);
 	DOREPLIFETIME(APlayerCharacter, CurrentThrowWidget);
 	DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
+	DOREPLIFETIME(APlayerCharacter, IsPickingUp);
+
 }
 
 // Called every frame
@@ -191,7 +193,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 		}
 		SplineComponentArray.Empty();
 	}
-
+	
+	IsPickingUp = false;
 	CheckDeath(DeltaTime);
 }
 
@@ -314,8 +317,8 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 
 	if (PickedUpItem)
 	{
+		IsPickingUp = false;
 		IsHoldingDownThrow = true;
-		cacheHoldThrow = true;
 		return;
 	}
 
@@ -364,12 +367,23 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 	}
 }
 
+void APlayerCharacter::ClientRPCPickupAndDrop_Implementation(APickupable* _Pickup)
+{
+	_Pickup->Player = this;
+	_Pickup->Mesh->SetSimulatePhysics(false);
+	_Pickup->Mesh->SetCollisionProfileName("Trigger");
+
+	_Pickup->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone001Bone0015"));
+
+	PickedUpItem = _Pickup;
+	IsPickingUp = true;
+}
+
 void APlayerCharacter::ClientShowThrowWidget_Implementation()
 {
 	if (PickedUpItem)
 	{
 		IsHoldingDownThrow = true;
-		cacheHoldThrow = true;
 
 		CurrentThrowWidget = CreateWidget<UUserWidget>(GetWorld(), ThrowWidgetClass);
 
@@ -385,16 +399,6 @@ void APlayerCharacter::ClientShowThrowWidget_Implementation()
 	}
 }
 
-void APlayerCharacter::ClientRPCPickupAndDrop_Implementation(APickupable* _Pickup)
-{
-	_Pickup->Player = this;
-	_Pickup->Mesh->SetSimulatePhysics(false);
-	_Pickup->Mesh->SetCollisionProfileName("Trigger");
-
-	_Pickup->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone001Bone0015"));
-
-	PickedUpItem = _Pickup;
-}
 
 void APlayerCharacter::Throw()
 {
@@ -446,6 +450,7 @@ void APlayerCharacter::ClientRPCThrow_Implementation()
 void APlayerCharacter::ServerCheckPickup_Implementation()
 {
 	CheckPickup();
+
 }
 
 void APlayerCharacter::CheckPickup_Implementation()
@@ -509,7 +514,7 @@ void APlayerCharacter::CheckPickup_Implementation()
 
 		}
 	}
-
+	IsPickingUp = false;
 }
 
 
