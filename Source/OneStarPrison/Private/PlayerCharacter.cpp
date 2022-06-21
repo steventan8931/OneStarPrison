@@ -124,7 +124,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 			FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
 			velocity.Normalize();
 			FPredictProjectilePathParams params;
-			params.StartLocation = GetMesh()->GetSocketLocation("Base-HumanPalmBone0023");
+			params.StartLocation = GetMesh()->GetSocketLocation("Base-HumanPalmBone001Bone0015");
 			//GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello %s"), *params.StartLocation.ToString()));
 
 			cacheVelocity = velocity * ThrowPowerScale * 10;
@@ -391,7 +391,7 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation(APickupable* _Picku
 	_Pickup->Mesh->SetSimulatePhysics(false);
 	_Pickup->Mesh->SetCollisionProfileName("Trigger");
 
-	_Pickup->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone0023"));
+	_Pickup->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone001Bone0015"));
 
 	PickedUpItem = _Pickup;
 }
