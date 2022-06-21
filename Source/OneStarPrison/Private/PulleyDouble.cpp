@@ -8,6 +8,8 @@
 #include "Pushable.h"
 #include "Breakable.h"
 
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 APulleyDouble::APulleyDouble()
 {
@@ -108,6 +110,11 @@ void APulleyDouble::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 		{
 			if (OtherPlatform)
 			{
+				if (MovingSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
+				}
+
 				RockCount += pushable->PulleyWeightage;
 			}
 
