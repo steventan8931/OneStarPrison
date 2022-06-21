@@ -92,7 +92,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, PickedUpItem);
 	DOREPLIFETIME(APlayerCharacter, rot);
 	DOREPLIFETIME(APlayerCharacter, CurrentThrowWidget);
-	//DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
+	DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
 }
 
 // Called every frame
@@ -311,7 +311,56 @@ void APlayerCharacter::PickupAndDrop()
 void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 {
 	ClientShowThrowWidget();
-	ClientRPCPickupAndDrop();
+
+	if (PickedUpItem)
+	{
+		IsHoldingDownThrow = true;
+		return;
+	}
+
+	TArray<FHitResult> OutHits;
+
+	FVector SweepStart = GetActorLocation();
+
+	FVector SweepEnd = GetActorLocation();
+
+	//Create a collision sphere
+	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(200.0f);
+
+	//Draw debug sphere
+	//DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 50, FColor::White, false, 10);
+
+	//Check if something is hit
+	bool isHit = GetWorld()->SweepMultiByChannel(OutHits, SweepStart, SweepEnd, FQuat::Identity, ECC_WorldStatic, MyColSphere);
+
+	if (isHit)
+	{
+		//Loop through TArray
+		for (auto& Hit : OutHits)
+		{
+			APickupable* pickup = Cast<APickupable>(Hit.GetActor());
+
+			if (pickup)
+			{
+				//If item is already picked up go to next actor
+				if (pickup->Player || pickup->IsInAir)
+				{
+					continue;
+				}
+
+				ClientRPCPickupAndDrop(pickup);
+
+				if (GEngine)
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, *Hit.GetActor()->GetName());
+				}
+
+				//Stop after picking up an item
+				break;
+			}
+
+		}
+	}
 }
 
 void APlayerCharacter::ClientShowThrowWidget_Implementation()
@@ -334,63 +383,15 @@ void APlayerCharacter::ClientShowThrowWidget_Implementation()
 	}
 }
 
-void APlayerCharacter::ClientRPCPickupAndDrop_Implementation()
+void APlayerCharacter::ClientRPCPickupAndDrop_Implementation(APickupable* _Pickup)
 {
-	if (PickedUpItem)
-	{
-		IsHoldingDownThrow = true;
-		return;
-	}
+	_Pickup->Player = this;
+	_Pickup->Mesh->SetSimulatePhysics(false);
+	_Pickup->Mesh->SetCollisionProfileName("Trigger");
 
-	TArray<FHitResult> OutHits;
+	_Pickup->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone0023"));
 
-	FVector SweepStart = GetActorLocation(); 
-
-	FVector SweepEnd = GetActorLocation(); 
-
-	//Create a collision sphere
-	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(200.0f);
-
-	//Draw debug sphere
-	//DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 50, FColor::White, false, 10);
-
-	//Check if something is hit
-	bool isHit = GetWorld()->SweepMultiByChannel(OutHits, SweepStart, SweepEnd, FQuat::Identity, ECC_WorldStatic, MyColSphere);
-
-	if (isHit)
-	{
-		//Loop through TArray
-		for (auto& Hit : OutHits)
-		{
-			APickupable* pickup = Cast<APickupable>(Hit.GetActor());
-
-			if (pickup)
-			{
-				//If item is already picked up go to next actor
-				if (pickup->Player)
-				{
-					continue;
-				}
-
-				pickup->Player = this;
-				pickup->Mesh->SetSimulatePhysics(false);
-				pickup->Mesh->SetCollisionProfileName("Trigger");
-				
-				pickup->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone0023"));
-
-				PickedUpItem = pickup;
-
-				if (GEngine)
-				{
-					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, *Hit.GetActor()->GetName());
-				}
-
-				//Stop after picking up an item
-				break;
-			}
-
-		}
-	}
+	PickedUpItem = _Pickup;
 }
 
 void APlayerCharacter::Throw()
@@ -482,8 +483,6 @@ void APlayerCharacter::CheckPickup_Implementation()
 			{
 				if (!pickup->IsInAir && !pickup->Player)
 				{
-
-
 					if (PickupWidgetClass != nullptr)
 					{
 						if (CurrentPickupWidget)
