@@ -42,7 +42,8 @@ void AMovingPlatform::BeginPlay()
 			AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, MovingSound, Platform->GetActorLocation());
 			if (AudioComponent)
 			{
-				AudioComponent->SetIsReplicated(true);
+				//AudioComponent->SetIsReplicated(true);
+				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("moving"));
 			}
 
 		}
@@ -59,7 +60,12 @@ void AMovingPlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& Ou
 	DOREPLIFETIME(AMovingPlatform, Platform);
 	DOREPLIFETIME(AMovingPlatform, OpenPosition);
 	DOREPLIFETIME(AMovingPlatform, ClosedPosition);
-	DOREPLIFETIME(AMovingPlatform, AudioComponent);
+
+	DOREPLIFETIME(AMovingPlatform, IsMoving);
+	DOREPLIFETIME(AMovingPlatform, MoveSpeed);
+	
+		
+	//DOREPLIFETIME(AMovingPlatform, AudioComponent);
 }
 
 // Called every frame
@@ -107,7 +113,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 				Platform->SetActorLocation(newPos);
 
 
-				if (FVector::Distance(Platform->GetActorLocation(), OpenPosition) < 25)
+				if (FVector::Distance(Platform->GetActorLocation(), OpenPosition) < 500)
 				{
 					ServerPlaySound(true);
 				}
@@ -128,7 +134,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 				FVector newPos = FMath::Lerp(Platform->GetActorLocation(), ClosedPosition, DeltaTime * MoveSpeed);
 				Platform->SetActorLocation(newPos);
 
-				if (FVector::Distance(Platform->GetActorLocation(), ClosedPosition) < 25)
+				if (FVector::Distance(Platform->GetActorLocation(), ClosedPosition) < 500)
 				{
 					ServerPlaySound(true);
 				}
@@ -138,7 +144,10 @@ void AMovingPlatform::Tick(float DeltaTime)
 
 				}
 			}
-
+			else
+			{
+				ServerPlaySound(false);
+			}
 
 		}
 
@@ -195,6 +204,5 @@ void AMovingPlatform::ClientPlaySound_Implementation(bool _IsPaused)
 	if (AudioComponent)
 	{
 		AudioComponent->SetPaused(_IsPaused);
-
 	}
 }
