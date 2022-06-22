@@ -36,7 +36,7 @@ void ADrawbridgePlatform::OpenPlatform(float _DeltaTime)
 {
 	if (GetActorRotation() != OpenRotation)
 	{
-		FRotator newRot = FMath::Lerp(GetActorRotation(), OpenRotation, _DeltaTime);
+		FRotator newRot = FMath::Lerp(GetActorRotation(), OpenRotation, _DeltaTime * 2.0f);
 		SetActorRotation(newRot);
 	}
 }

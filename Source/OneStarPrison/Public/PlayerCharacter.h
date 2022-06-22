@@ -78,13 +78,15 @@ public:
 	void StopInteract();
 	UPROPERTY(VisibleAnywhere, Replicated)
 	bool CanInteract = false;
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(Replicated)
 	bool IsInteracting = false;
 
 	UFUNCTION(Server, Reliable)
 		void RPCInteract();
 	UFUNCTION(Server, Reliable)
 		void RPCStopInteract();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
+		bool IsGrabbing = false;
 
 	//Grab Pickupable items and drop
 	void PickupAndDrop();
@@ -92,6 +94,8 @@ public:
 		void ServerRPCPickupAndDrop();
 	UFUNCTION(NetMulticast, Reliable)
 		void ClientRPCPickupAndDrop(APickupable* _Pickup);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
+		bool IsPickingUp = false;
 
 	//Throw Picked up item
 	void Throw();
@@ -109,8 +113,6 @@ public:
 	//Check if Throw Key is being held down
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 	bool IsHoldingDownThrow = false;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		bool cacheHoldThrow = true;
 
 	//Current Throw Power
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -124,7 +126,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int PlayerIndex = 0;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 		FVector cacheVelocity;
 	//Throw Rendering
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -140,21 +142,21 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> ThrowWidgetClass;
 
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(Replicated)
 		class UUserWidget* CurrentThrowWidget;
 
 	//Pickup Widget
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> PickupWidgetClass;
 
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(Replicated)
 		class UUserWidget* CurrentPickupWidget;
 
 	//Interact Widget
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> InteractWidgetClass;
 
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(Replicated)
 		class UUserWidget* CurrentInteractWidget;
 
 	//Show Pickup Widget

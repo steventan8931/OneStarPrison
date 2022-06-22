@@ -7,7 +7,8 @@
 #include "CrankliftPlatform.h"
 
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
-
+#include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
 // Sets default values
 AMovingPlatform::AMovingPlatform()
 {
@@ -33,6 +34,15 @@ AMovingPlatform::AMovingPlatform()
 void AMovingPlatform::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (MovingSound)
+	{
+		if (Platform)
+		{
+			AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, MovingSound, Platform->GetActorLocation());
+			AudioComponent->SetPaused(true);
+		}
+	}
 	
 }
 
@@ -51,10 +61,27 @@ void AMovingPlatform::Tick(float DeltaTime)
 
 	if (Platform)
 	{
+		if (AudioComponent)
+		{
+			if (!AudioComponent->IsPlaying())
+			{
+				AudioComponent->Play();
+			}
+		}
+
 		if (OverlappingPlayer != nullptr)
 		{
 			if (OverlappingPlayer->IsInteracting)
 			{
+				if (AudioComponent)
+				{
+					if(!AudioComponent->IsPlaying())
+					{
+						AudioComponent->Play();
+						AudioComponent->SetPaused(false);
+					}
+				}
+
 				IsMoving = true;
 			}
 			else
@@ -65,6 +92,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 		else
 		{
 			IsMoving = false;
+
 		}
 
 
@@ -75,7 +103,27 @@ void AMovingPlatform::Tick(float DeltaTime)
 				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
 				FVector newPos = FMath::Lerp(Platform->GetActorLocation(), OpenPosition, DeltaTime * MoveSpeed);
 				Platform->SetActorLocation(newPos);
+
+
+				if (FVector::Distance(Platform->GetActorLocation(), OpenPosition) < 25)
+				{
+					if (AudioComponent)
+					{
+						AudioComponent->SetPaused(true);
+						//AudioComponent->Stop();
+					}
+				}
+				else
+				{
+					if (AudioComponent)
+					{
+						AudioComponent->SetPaused(false);
+					}
+				}
 			}
+
+			//GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello %d"), FVector::Distance(Platform->GetActorLocation(), OpenPosition)));
+
 		}
 		else
 		{
@@ -84,7 +132,25 @@ void AMovingPlatform::Tick(float DeltaTime)
 				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
 				FVector newPos = FMath::Lerp(Platform->GetActorLocation(), ClosedPosition, DeltaTime * MoveSpeed);
 				Platform->SetActorLocation(newPos);
+
+				if (FVector::Distance(Platform->GetActorLocation(), ClosedPosition) < 25)
+				{
+					if (AudioComponent)
+					{
+						AudioComponent->SetPaused(true);
+					}
+				}
+				else
+				{
+					if (AudioComponent)
+					{
+						AudioComponent->SetPaused(false);		
+					}
+
+				}
 			}
+
+
 		}
 
 	}

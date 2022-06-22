@@ -8,6 +8,7 @@
 #include "PlayerCharacter.h"
 
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ADrawbridgeTrigger::ADrawbridgeTrigger()
@@ -60,6 +61,10 @@ void ADrawbridgeTrigger::Tick(float DeltaTime)
 				if (OverlappingPlayer->IsInteracting)
 				{
 					Platform->IsOpen = true;
+					if (OpenSound)
+					{
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+					}
 					MovableMesh->SetRelativeRotation(HandleOpenRotation);
 					OverlappingPlayer->CanInteract = false;
 				}
@@ -86,6 +91,10 @@ void ADrawbridgeTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 				if (Platform)
 				{
 					Platform->IsOpen = true;
+					if (OpenSound)
+					{
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+					}
 				}
 
 			}

@@ -16,6 +16,7 @@
 
 #include "Components/SplineMeshComponent.h"
 #include "Components/SplineComponent.h"
+#include "PickupableKey.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -93,6 +94,9 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, rot);
 	DOREPLIFETIME(APlayerCharacter, CurrentThrowWidget);
 	DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
+	DOREPLIFETIME(APlayerCharacter, IsPickingUp);
+	DOREPLIFETIME(APlayerCharacter, IsGrabbing);
+
 }
 
 // Called every frame
@@ -191,7 +195,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 		}
 		SplineComponentArray.Empty();
 	}
-
+	
+	IsPickingUp = false;
+	IsGrabbing = false;
 	CheckDeath(DeltaTime);
 }
 
@@ -284,6 +290,11 @@ void APlayerCharacter::MoveRight(float Value)
 void APlayerCharacter::Interact()
 {
 	RPCInteract();
+	if (CanInteract)
+	{
+		IsInteracting = true;
+		IsGrabbing = true;
+	}
 }
 void APlayerCharacter::StopInteract()
 {
@@ -295,17 +306,33 @@ void APlayerCharacter::RPCInteract_Implementation()
 	if (CanInteract)
 	{
 		IsInteracting = true;
+		IsGrabbing = true;
 	}
 }
 
 void APlayerCharacter::RPCStopInteract_Implementation()
 {
 	IsInteracting = false;
+	IsGrabbing = false;
 }
 
 void APlayerCharacter::PickupAndDrop()
 {
 	ServerRPCPickupAndDrop();
+
+	if (PickedUpItem)
+	{
+		APickupableKey* key = Cast<APickupableKey>(PickedUpItem);
+
+		if (key)
+		{
+			IsGrabbing = true;
+		}
+		else
+		{
+			IsPickingUp = true;
+		}
+	}
 }
 
 void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
@@ -314,8 +341,9 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 
 	if (PickedUpItem)
 	{
+		IsPickingUp = false;
+		IsGrabbing = false;
 		IsHoldingDownThrow = true;
-		cacheHoldThrow = true;
 		return;
 	}
 
@@ -364,12 +392,36 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 	}
 }
 
+void APlayerCharacter::ClientRPCPickupAndDrop_Implementation(APickupable* _Pickup)
+{
+	_Pickup->Player = this;
+	_Pickup->Mesh->SetSimulatePhysics(false);
+	_Pickup->Mesh->SetCollisionProfileName("Trigger");
+
+	_Pickup->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone001Bone0015"));
+
+	PickedUpItem = _Pickup;
+
+	APickupableKey* key = Cast<APickupableKey>(_Pickup);
+
+	if (key)
+	{
+		IsGrabbing = true;
+	}
+	else
+	{
+		IsPickingUp = true;
+	}
+
+	_Pickup->PlayPickupSound();
+
+}
+
 void APlayerCharacter::ClientShowThrowWidget_Implementation()
 {
 	if (PickedUpItem)
 	{
 		IsHoldingDownThrow = true;
-		cacheHoldThrow = true;
 
 		CurrentThrowWidget = CreateWidget<UUserWidget>(GetWorld(), ThrowWidgetClass);
 
@@ -385,16 +437,6 @@ void APlayerCharacter::ClientShowThrowWidget_Implementation()
 	}
 }
 
-void APlayerCharacter::ClientRPCPickupAndDrop_Implementation(APickupable* _Pickup)
-{
-	_Pickup->Player = this;
-	_Pickup->Mesh->SetSimulatePhysics(false);
-	_Pickup->Mesh->SetCollisionProfileName("Trigger");
-
-	_Pickup->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone001Bone0015"));
-
-	PickedUpItem = _Pickup;
-}
 
 void APlayerCharacter::Throw()
 {
@@ -446,6 +488,7 @@ void APlayerCharacter::ClientRPCThrow_Implementation()
 void APlayerCharacter::ServerCheckPickup_Implementation()
 {
 	CheckPickup();
+
 }
 
 void APlayerCharacter::CheckPickup_Implementation()
@@ -489,8 +532,10 @@ void APlayerCharacter::CheckPickup_Implementation()
 					{
 						if (CurrentPickupWidget)
 						{
-							CurrentPickupWidget->AddToPlayerScreen();
-
+							if (!CurrentPickupWidget->IsVisible())
+							{
+								CurrentPickupWidget->AddToPlayerScreen();
+							}
 						}
 						break;
 					}
@@ -509,7 +554,8 @@ void APlayerCharacter::CheckPickup_Implementation()
 
 		}
 	}
-
+	IsPickingUp = false;
+	IsGrabbing = false;
 }
 
 
