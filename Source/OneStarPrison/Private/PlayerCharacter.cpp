@@ -290,6 +290,11 @@ void APlayerCharacter::MoveRight(float Value)
 void APlayerCharacter::Interact()
 {
 	RPCInteract();
+	if (CanInteract)
+	{
+		IsInteracting = true;
+		IsGrabbing = true;
+	}
 }
 void APlayerCharacter::StopInteract()
 {
@@ -314,6 +319,17 @@ void APlayerCharacter::RPCStopInteract_Implementation()
 void APlayerCharacter::PickupAndDrop()
 {
 	ServerRPCPickupAndDrop();
+
+	APickupableKey* key = Cast<APickupableKey>(PickedUpItem);
+
+	if (key)
+	{
+		IsGrabbing = true;
+	}
+	else
+	{
+		IsPickingUp = true;
+	}
 }
 
 void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
