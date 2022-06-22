@@ -37,8 +37,10 @@ void AMovingPlatform::BeginPlay()
 
 	if (MovingSound)
 	{
-		AudioComponent = UGameplayStatics::SpawnSound2D(this, MovingSound);
-		AudioComponent->Stop();
+		if (Platform)
+		{
+			AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, MovingSound, Platform->GetActorLocation());
+		}
 	}
 	
 }
@@ -75,6 +77,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 					if(!AudioComponent->IsPlaying())
 					{
 						AudioComponent->Play();
+						AudioComponent->SetPaused(false);
 					}
 				}
 
@@ -99,17 +102,27 @@ void AMovingPlatform::Tick(float DeltaTime)
 				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
 				FVector newPos = FMath::Lerp(Platform->GetActorLocation(), OpenPosition, DeltaTime * MoveSpeed);
 				Platform->SetActorLocation(newPos);
+
+
+				if (FVector::Distance(Platform->GetActorLocation(), OpenPosition) < 25)
+				{
+					if (AudioComponent)
+					{
+						AudioComponent->SetPaused(true);
+						//AudioComponent->Stop();
+					}
+				}
+				else
+				{
+					if (AudioComponent)
+					{
+						AudioComponent->SetPaused(false);
+					}
+				}
 			}
 
 			//GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello %d"), FVector::Distance(Platform->GetActorLocation(), OpenPosition)));
 
-			if (FVector::Distance(Platform->GetActorLocation(), OpenPosition) < 25)
-			{
-				if (AudioComponent)
-				{
-					AudioComponent->Stop();
-				}
-			}
 		}
 		else
 		{
@@ -118,15 +131,25 @@ void AMovingPlatform::Tick(float DeltaTime)
 				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
 				FVector newPos = FMath::Lerp(Platform->GetActorLocation(), ClosedPosition, DeltaTime * MoveSpeed);
 				Platform->SetActorLocation(newPos);
-			}
 
-			if (FVector::Distance(Platform->GetActorLocation(), ClosedPosition) < 25)
-			{
-				if (AudioComponent)
+				if (FVector::Distance(Platform->GetActorLocation(), ClosedPosition) < 25)
 				{
-					AudioComponent->Stop();
+					if (AudioComponent)
+					{
+						AudioComponent->SetPaused(true);
+					}
+				}
+				else
+				{
+					if (AudioComponent)
+					{
+						AudioComponent->SetPaused(false);		
+					}
+
 				}
 			}
+
+
 		}
 
 	}
