@@ -78,7 +78,7 @@ public:
 	void StopInteract();
 	UPROPERTY(VisibleAnywhere, Replicated)
 	bool CanInteract = false;
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(Replicated)
 	bool IsInteracting = false;
 
 	UFUNCTION(Server, Reliable)
@@ -126,7 +126,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int PlayerIndex = 0;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 		FVector cacheVelocity;
 	//Throw Rendering
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -142,21 +142,21 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> ThrowWidgetClass;
 
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(Replicated)
 		class UUserWidget* CurrentThrowWidget;
 
 	//Pickup Widget
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> PickupWidgetClass;
 
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(Replicated)
 		class UUserWidget* CurrentPickupWidget;
 
 	//Interact Widget
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> InteractWidgetClass;
 
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(Replicated)
 		class UUserWidget* CurrentInteractWidget;
 
 	//Show Pickup Widget
