@@ -39,13 +39,10 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		bool IsOpen = false;
 
-	UPROPERTY(EditAnywhere)
-		bool IsKeyOneTimeUse = true;
-
 	UPROPERTY(EditAnywhere, Replicated)
 		FRotator LOpenRotation = FRotator(0, 0, 0);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		FRotator ROpenRotation = FRotator(0, 0, 0);
 
 	UPROPERTY(VisibleAnywhere)
