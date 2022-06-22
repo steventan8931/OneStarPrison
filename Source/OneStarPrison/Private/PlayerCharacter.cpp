@@ -197,6 +197,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	}
 	
 	IsPickingUp = false;
+	IsGrabbing = false;
 	CheckDeath(DeltaTime);
 }
 
@@ -300,12 +301,14 @@ void APlayerCharacter::RPCInteract_Implementation()
 	if (CanInteract)
 	{
 		IsInteracting = true;
+		IsGrabbing = true;
 	}
 }
 
 void APlayerCharacter::RPCStopInteract_Implementation()
 {
 	IsInteracting = false;
+	IsGrabbing = false;
 }
 
 void APlayerCharacter::PickupAndDrop()
@@ -531,6 +534,7 @@ void APlayerCharacter::CheckPickup_Implementation()
 		}
 	}
 	IsPickingUp = false;
+	IsGrabbing = false;
 }
 
 
