@@ -26,6 +26,14 @@ public:
 	UPROPERTY(EditAnywhere)
 		USoundBase* MovingSound;
 
+	UPROPERTY(EditAnywhere)
+		UAudioComponent* AudioComponent;
+
+	UFUNCTION(Server, Reliable)
+		void ServerPlaySound();
+	UFUNCTION(NetMulticast, Reliable)
+		void ClientPlaySound();
+
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
 

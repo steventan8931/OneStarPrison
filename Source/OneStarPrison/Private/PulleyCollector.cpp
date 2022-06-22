@@ -8,6 +8,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 APulleyCollector::APulleyCollector()
@@ -35,6 +36,20 @@ void APulleyCollector::BeginPlay()
 	
 	StartingHeight = GetActorLocation().Z;
 	UpdateTargetPos();
+
+	if (MovingSound)
+	{
+		if (Platform)
+		{
+			AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, MovingSound, GetActorLocation());
+			if (AudioComponent)
+			{
+				//AudioComponent->Play();
+				//dioComponent->SetPaused(true);
+			}
+
+		}
+	}
 }
 
 // Called every frame
@@ -89,15 +104,17 @@ void APulleyCollector::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 
 		if (pickupable)
 		{
+			if (!pickupable->Mesh->IsSimulatingPhysics())
+			{
+				ServerPlaySound();
+			}
+
 			pickupable->Mesh->SetSimulatePhysics(true);
 
 			pickupable->ProjectileMovement->Deactivate();
 			if (Platform)
 			{
-				if (MovingSound)
-				{
-					UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
-				}
+
 				RockCount++;
 				UpdateTargetPos();
 			}
@@ -122,5 +139,18 @@ void APulleyCollector::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, c
 			}
 
 		}
+	}
+}
+
+void APulleyCollector::ServerPlaySound_Implementation()
+{
+	ClientPlaySound();
+}
+
+void APulleyCollector::ClientPlaySound_Implementation()
+{
+	if (MovingSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
 	}
 }

@@ -107,7 +107,7 @@ public:
 		void ClientShowThrowWidget();
 	float cacheDeltaTime = 0;
 
-	UPROPERTY(Replicated)
+	UPROPERTY()
 	FRotator rot = FRotator::ZeroRotator;
 
 	//Check if Throw Key is being held down
