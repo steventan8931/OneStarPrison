@@ -86,34 +86,18 @@ void APulleyDouble::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 {
 	if (OtherActor && (OtherActor != this))
 	{
-
-		//if (!HoldsRockPile)
-		//{
-		//	APickupable* pickupable = Cast<APickupable>(OtherActor);
-
-		//	if (pickupable)
-		//	{
-		//		if (OtherPlatform)
-		//		{
-		//			pickupable->ProjectileMovement->Velocity = FVector(0, 0, 0);
-		//			pickupable->Mesh->SetSimulatePhysics(true);
-		//			RockCount++;
-		//		}
-
-		//	}
-
-		//}
-
 		APushable* pushable = Cast<APushable>(OtherActor);
 
 		if (pushable)
 		{
 			if (OtherPlatform)
 			{
-				if (MovingSound)
+				if (!pushable->HasBeenPushed)
 				{
-					UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
+					ServerPlaySound();
+					pushable->HasBeenPushed = true;
 				}
+
 
 				RockCount += pushable->PulleyWeightage;
 			}
@@ -127,27 +111,34 @@ void APulleyDouble::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, clas
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		//if (!HoldsRockPile)
-		//{
-		//	APickupable* pickupable = Cast<APickupable>(OtherActor);
 
-		//	if (pickupable)
-		//	{
-		//		if (OtherPlatform)
-		//		{
-		//			RockCount--;
-		//		}
-		//	}
-		//}
 		APushable* pushable = Cast<APushable>(OtherActor);
 
 		if (pushable)
 		{
 			if (OtherPlatform)
 			{
+				if (MovingSound)
+				{
+					ServerPlaySound();
+					pushable->HasBeenPushed = true;
+				}
 				RockCount -= pushable->PulleyWeightage;
 			}
 
 		}
+	}
+}
+
+void APulleyDouble::ServerPlaySound_Implementation()
+{
+	ClientPlaySound();
+}
+
+void APulleyDouble::ClientPlaySound_Implementation()
+{
+	if (MovingSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
 	}
 }
