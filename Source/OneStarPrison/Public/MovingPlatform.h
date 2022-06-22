@@ -29,12 +29,12 @@ public:
 	UPROPERTY(EditAnywhere)
 		USoundBase* MovingSound;
 
-	UPROPERTY(EditAnywhere, Replicated)
+	UPROPERTY(EditAnywhere)
 		UAudioComponent* AudioComponent;
 
 	UFUNCTION(Server, Reliable)
 		void ServerPlaySound(bool _IsPaused);
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, Unreliable)
 		void ClientPlaySound(bool _IsPaused);
 
 	UPROPERTY(VisibleAnywhere)
@@ -61,9 +61,9 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		FVector ClosedPosition = FVector(0, 0, 0);
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 		bool IsMoving = false;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		float MoveSpeed = 20.0f;
 
 	UPROPERTY(VisibleAnywhere)
