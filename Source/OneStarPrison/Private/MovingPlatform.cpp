@@ -40,6 +40,7 @@ void AMovingPlatform::BeginPlay()
 		if (Platform)
 		{
 			AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, MovingSound, Platform->GetActorLocation());
+			AudioComponent->SetPaused(true);
 		}
 	}
 	
