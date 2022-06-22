@@ -320,15 +320,18 @@ void APlayerCharacter::PickupAndDrop()
 {
 	ServerRPCPickupAndDrop();
 
-	APickupableKey* key = Cast<APickupableKey>(PickedUpItem);
+	if (PickedUpItem)
+	{
+		APickupableKey* key = Cast<APickupableKey>(PickedUpItem);
 
-	if (key)
-	{
-		IsGrabbing = true;
-	}
-	else
-	{
-		IsPickingUp = true;
+		if (key)
+		{
+			IsGrabbing = true;
+		}
+		else
+		{
+			IsPickingUp = true;
+		}
 	}
 }
 
@@ -529,8 +532,10 @@ void APlayerCharacter::CheckPickup_Implementation()
 					{
 						if (CurrentPickupWidget)
 						{
-							CurrentPickupWidget->AddToPlayerScreen();
-
+							if (!CurrentPickupWidget->IsVisible())
+							{
+								CurrentPickupWidget->AddToPlayerScreen();
+							}
 						}
 						break;
 					}

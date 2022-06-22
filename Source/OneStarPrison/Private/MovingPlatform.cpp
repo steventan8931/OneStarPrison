@@ -38,7 +38,9 @@ void AMovingPlatform::BeginPlay()
 	if (MovingSound)
 	{
 		AudioComponent = UGameplayStatics::SpawnSound2D(this, MovingSound);
+		AudioComponent->Stop();
 	}
+	
 }
 
 void AMovingPlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -99,7 +101,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 				Platform->SetActorLocation(newPos);
 			}
 
-			GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello %d"), FVector::Distance(Platform->GetActorLocation(), OpenPosition)));
+			//GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello %d"), FVector::Distance(Platform->GetActorLocation(), OpenPosition)));
 
 			if (FVector::Distance(Platform->GetActorLocation(), OpenPosition) < 25)
 			{
