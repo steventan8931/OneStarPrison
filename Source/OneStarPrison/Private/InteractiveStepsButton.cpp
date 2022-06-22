@@ -96,7 +96,7 @@ void AInteractiveStepsButton::OnOverlapBegin(class UPrimitiveComponent* Overlapp
 			if (playerActor)
 			{
 				OverlappingPlayer = playerActor;
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
+				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 				OverlappingPlayer->CanInteract = true;
 			}
 		}

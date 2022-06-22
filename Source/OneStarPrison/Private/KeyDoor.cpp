@@ -77,7 +77,7 @@ void AKeyDoor::Tick(float DeltaTime)
 
 					OverlappingPlayer->CanInteract = false;
 
-					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
+					//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
 				}
 			}
 		}
@@ -110,7 +110,7 @@ void AKeyDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class A
 			if (playerActor)
 			{
 				OverlappingPlayer = playerActor;
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
+				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
 				
 			}
 		}
@@ -128,7 +128,7 @@ void AKeyDoor::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AAc
 			if (OverlappingPlayer != nullptr)
 			{
 				OverlappingPlayer->CanInteract = false;
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Player left"));
+				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Player left"));
 				OverlappingPlayer = nullptr;
 			}
 		}

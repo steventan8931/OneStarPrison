@@ -384,7 +384,7 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 
 				if (GEngine)
 				{
-					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, *Hit.GetActor()->GetName());
+					//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, *Hit.GetActor()->GetName());
 				}
 
 				//Stop after picking up an item
@@ -430,7 +430,7 @@ void APlayerCharacter::ClientShowThrowWidget_Implementation()
 
 		if (ThrowWidgetClass != nullptr)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
+			//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
 
 			if (CurrentThrowWidget)
 			{

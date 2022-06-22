@@ -74,7 +74,7 @@ void ADoubleDoor::Tick(float DeltaTime)
 				}
 
 
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
+				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
 			
 			}
 		}
@@ -101,7 +101,7 @@ void ADoubleDoor::Tick(float DeltaTime)
 
 						//OverlappingPlayer->CanInteract = false;
 
-						GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
+						//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
 					}
 				}
 			}
@@ -136,7 +136,7 @@ void ADoubleDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, clas
 			{
 				NumOfOverlappingPlayers++;
 				OverlappingPlayer = playerActor;
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("One Player added"));
+				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("One Player added"));
 
 			}
 		}
@@ -148,7 +148,7 @@ void ADoubleDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, clas
 			{
 				NumOfOverlappingPlayers++;
 				OverlappingPlayer2 = playerActor;
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("One Player added"));
+				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("One Player added"));
 			}
 		}
 	}
@@ -173,7 +173,7 @@ void ADoubleDoor::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class 
 			}
 
 				NumOfOverlappingPlayers--;
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("One Player left"));
+				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("One Player left"));
 		}
 			//OverlappingPlayer->CanInteract = false;
 

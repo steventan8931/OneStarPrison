@@ -43,7 +43,7 @@ void AMovingPlatform::BeginPlay()
 			if (AudioComponent)
 			{
 				//AudioComponent->SetIsReplicated(true);
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("moving"));
+				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("moving"));
 			}
 
 		}
@@ -165,7 +165,6 @@ void AMovingPlatform::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
 			if (playerActor)
 			{
 				OverlappingPlayer = playerActor;
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 				OverlappingPlayer->CanInteract = true;
 
 			}
