@@ -144,7 +144,10 @@ void AMovingPlatform::Tick(float DeltaTime)
 
 				}
 			}
-
+			else
+			{
+				ServerPlaySound(false);
+			}
 
 		}
 
