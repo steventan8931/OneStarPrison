@@ -91,7 +91,6 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, IsInteracting);
 	DOREPLIFETIME(APlayerCharacter, CanInteract);
 	DOREPLIFETIME(APlayerCharacter, PickedUpItem);
-	DOREPLIFETIME(APlayerCharacter, rot);
 	DOREPLIFETIME(APlayerCharacter, CurrentThrowWidget);
 	DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
 	DOREPLIFETIME(APlayerCharacter, IsPickingUp);
@@ -124,7 +123,11 @@ void APlayerCharacter::Tick(float DeltaTime)
 			
 			rot = FRotator(0, GetControlRotation().Yaw, 0);
 
-			SetActorRotation(rot, ETeleportType::ResetPhysics);
+			if (HasAuthority())
+			{
+				SetActorRotation(rot, ETeleportType::ResetPhysics);
+			}
+
 			FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
 			velocity.Normalize();
 			FPredictProjectilePathParams params;
@@ -495,6 +498,8 @@ void APlayerCharacter::CheckPickup_Implementation()
 {
 	if (PickedUpItem)
 	{
+		IsPickingUp = false;
+		IsGrabbing = false;
 		if (CurrentPickupWidget)
 		{
 			if (CurrentPickupWidget->IsVisible())

@@ -29,6 +29,8 @@ public:
 	UPROPERTY(EditAnywhere)
 		int PulleyWeightage = 5;
 
+	bool HasBeenPushed = false;
+
 	UPROPERTY(VisibleAnywhere)
 		FTransform StartingTransform;
 };
