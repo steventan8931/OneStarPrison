@@ -106,11 +106,7 @@ void APulleyCollector::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 		{
 			if (!pickupable->Mesh->IsSimulatingPhysics())
 			{
-				if (MovingSound)
-				{
-					UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
-				}
-
+				ServerPlaySound();
 			}
 
 			pickupable->Mesh->SetSimulatePhysics(true);
@@ -143,5 +139,18 @@ void APulleyCollector::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, c
 			}
 
 		}
+	}
+}
+
+void APulleyCollector::ServerPlaySound_Implementation()
+{
+	ClientPlaySound();
+}
+
+void APulleyCollector::ClientPlaySound_Implementation()
+{
+	if (MovingSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
 	}
 }

@@ -86,24 +86,6 @@ void APulleyDouble::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 {
 	if (OtherActor && (OtherActor != this))
 	{
-
-		//if (!HoldsRockPile)
-		//{
-		//	APickupable* pickupable = Cast<APickupable>(OtherActor);
-
-		//	if (pickupable)
-		//	{
-		//		if (OtherPlatform)
-		//		{
-		//			pickupable->ProjectileMovement->Velocity = FVector(0, 0, 0);
-		//			pickupable->Mesh->SetSimulatePhysics(true);
-		//			RockCount++;
-		//		}
-
-		//	}
-
-		//}
-
 		APushable* pushable = Cast<APushable>(OtherActor);
 
 		if (pushable)
@@ -112,11 +94,8 @@ void APulleyDouble::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 			{
 				if (!pushable->HasBeenPushed)
 				{
-					if (MovingSound)
-					{
-						UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
-						pushable->HasBeenPushed = true;
-					}
+					ServerPlaySound();
+					pushable->HasBeenPushed = true;
 				}
 
 
@@ -148,5 +127,18 @@ void APulleyDouble::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, clas
 			}
 
 		}
+	}
+}
+
+void APulleyDouble::ServerPlaySound_Implementation()
+{
+	ClientPlaySound();
+}
+
+void APulleyDouble::ClientPlaySound_Implementation()
+{
+	if (MovingSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
 	}
 }
