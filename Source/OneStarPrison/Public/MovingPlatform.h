@@ -29,8 +29,13 @@ public:
 	UPROPERTY(EditAnywhere)
 		USoundBase* MovingSound;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		UAudioComponent* AudioComponent;
+
+	UFUNCTION(Server, Reliable)
+		void ServerPlaySound(bool _IsPaused);
+	UFUNCTION(NetMulticast, Reliable)
+		void ClientPlaySound(bool _IsPaused);
 
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
@@ -47,13 +52,13 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		class ACrankliftPlatform* Platform;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		FVector OpenPosition = FVector(0, 0, 0);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		FVector ClosedPosition = FVector(0, 0, 0);
 
 	UPROPERTY()

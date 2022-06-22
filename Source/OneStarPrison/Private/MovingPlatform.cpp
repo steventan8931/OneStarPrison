@@ -40,10 +40,14 @@ void AMovingPlatform::BeginPlay()
 		if (Platform)
 		{
 			AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, MovingSound, Platform->GetActorLocation());
-			AudioComponent->SetPaused(true);
+			if (AudioComponent)
+			{
+				AudioComponent->SetIsReplicated(true);
+			}
+
 		}
 	}
-	
+	ServerPlaySound(false);
 }
 
 void AMovingPlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -52,6 +56,10 @@ void AMovingPlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& Ou
 
 	DOREPLIFETIME(AMovingPlatform, HandleOpenRotation);
 	DOREPLIFETIME(AMovingPlatform, HandleClosedRotation);
+	DOREPLIFETIME(AMovingPlatform, Platform);
+	DOREPLIFETIME(AMovingPlatform, OpenPosition);
+	DOREPLIFETIME(AMovingPlatform, ClosedPosition);
+	DOREPLIFETIME(AMovingPlatform, AudioComponent);
 }
 
 // Called every frame
@@ -61,13 +69,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 
 	if (Platform)
 	{
-		if (AudioComponent)
-		{
-			if (!AudioComponent->IsPlaying())
-			{
-				AudioComponent->Play();
-			}
-		}
+		ServerPlaySound(false);
 
 		if (OverlappingPlayer != nullptr)
 		{
@@ -78,7 +80,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 					if(!AudioComponent->IsPlaying())
 					{
 						AudioComponent->Play();
-						AudioComponent->SetPaused(false);
+						ServerPlaySound(false);
 					}
 				}
 
@@ -107,22 +109,15 @@ void AMovingPlatform::Tick(float DeltaTime)
 
 				if (FVector::Distance(Platform->GetActorLocation(), OpenPosition) < 25)
 				{
-					if (AudioComponent)
-					{
-						AudioComponent->SetPaused(true);
-						//AudioComponent->Stop();
-					}
+					ServerPlaySound(true);
 				}
 				else
 				{
-					if (AudioComponent)
-					{
-						AudioComponent->SetPaused(false);
-					}
+					ServerPlaySound(false);
 				}
 			}
 
-			//GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello %d"), FVector::Distance(Platform->GetActorLocation(), OpenPosition)));
+
 
 		}
 		else
@@ -135,17 +130,11 @@ void AMovingPlatform::Tick(float DeltaTime)
 
 				if (FVector::Distance(Platform->GetActorLocation(), ClosedPosition) < 25)
 				{
-					if (AudioComponent)
-					{
-						AudioComponent->SetPaused(true);
-					}
+					ServerPlaySound(true);
 				}
 				else
 				{
-					if (AudioComponent)
-					{
-						AudioComponent->SetPaused(false);		
-					}
+					ServerPlaySound(false);
 
 				}
 			}
@@ -196,3 +185,16 @@ void AMovingPlatform::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cl
 	}
 }
 
+void AMovingPlatform::ServerPlaySound_Implementation(bool _IsPaused)
+{
+	ClientPlaySound(_IsPaused);
+}
+
+void AMovingPlatform::ClientPlaySound_Implementation(bool _IsPaused)
+{
+	if (AudioComponent)
+	{
+		AudioComponent->SetPaused(_IsPaused);
+
+	}
+}

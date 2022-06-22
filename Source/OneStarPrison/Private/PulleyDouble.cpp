@@ -120,7 +120,7 @@ void APulleyDouble::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, clas
 			{
 				if (MovingSound)
 				{
-					UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
+					ServerPlaySound();
 					pushable->HasBeenPushed = true;
 				}
 				RockCount -= pushable->PulleyWeightage;
