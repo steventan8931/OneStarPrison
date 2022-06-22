@@ -72,14 +72,14 @@ void ADoubleDoorCastle::OpenDoor(float _DeltaTime)
 {
 	if (LMesh->GetComponentRotation() != LOpenRotation)
 	{
-		FRotator newRot = FMath::Lerp(LMesh->GetComponentRotation(), LOpenRotation, _DeltaTime);
-		LMesh->SetWorldRotation(newRot);
+		FRotator newRotL = FMath::Lerp(LMesh->GetRelativeRotation(), LOpenRotation, _DeltaTime);
+		LMesh->SetRelativeRotation(newRotL);
 	}
 
 	if (RMesh->GetComponentRotation() != ROpenRotation)
 	{
-		FRotator newRot = FMath::Lerp(RMesh->GetComponentRotation(), ROpenRotation, _DeltaTime);
-		RMesh->SetWorldRotation(newRot);
+		FRotator newRotR = FMath::Lerp(RMesh->GetRelativeRotation(), ROpenRotation, _DeltaTime);
+		RMesh->SetRelativeRotation(newRotR);
 	}
 }
 
