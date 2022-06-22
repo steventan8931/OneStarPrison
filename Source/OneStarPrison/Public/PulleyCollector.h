@@ -26,6 +26,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		USoundBase* MovingSound;
 
+	UPROPERTY(EditAnywhere)
+		UAudioComponent* AudioComponent;
+
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
 

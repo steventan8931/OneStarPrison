@@ -8,6 +8,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 APulleyCollector::APulleyCollector()
@@ -35,6 +36,15 @@ void APulleyCollector::BeginPlay()
 	
 	StartingHeight = GetActorLocation().Z;
 	UpdateTargetPos();
+
+	if (MovingSound)
+	{
+		if (Platform)
+		{
+			AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, MovingSound, GetActorLocation());
+			AudioComponent->Stop();
+		}
+	}
 }
 
 // Called every frame
@@ -96,7 +106,14 @@ void APulleyCollector::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 			{
 				if (MovingSound)
 				{
-					UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
+					if (AudioComponent)
+					{
+						if (!AudioComponent->IsPlaying())
+						{
+							AudioComponent->Play();
+						}
+					}
+					//UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
 				}
 				RockCount++;
 				UpdateTargetPos();
