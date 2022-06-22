@@ -50,6 +50,7 @@ void ADeathTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 		if (pushable)
 		{
 			pushable->Mesh->SetSimulatePhysics(false);
+			pushable->HasBeenPushed = false;
 			pushable->SetActorTransform(pushable->StartingTransform);
 			pushable->Mesh->SetSimulatePhysics(true);
 		}

@@ -110,10 +110,15 @@ void APulleyDouble::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 		{
 			if (OtherPlatform)
 			{
-				if (MovingSound)
+				if (!pushable->HasBeenPushed)
 				{
-					UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
+					if (MovingSound)
+					{
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
+						pushable->HasBeenPushed = true;
+					}
 				}
+
 
 				RockCount += pushable->PulleyWeightage;
 			}
@@ -127,24 +132,18 @@ void APulleyDouble::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, clas
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		//if (!HoldsRockPile)
-		//{
-		//	APickupable* pickupable = Cast<APickupable>(OtherActor);
 
-		//	if (pickupable)
-		//	{
-		//		if (OtherPlatform)
-		//		{
-		//			RockCount--;
-		//		}
-		//	}
-		//}
 		APushable* pushable = Cast<APushable>(OtherActor);
 
 		if (pushable)
 		{
 			if (OtherPlatform)
 			{
+				if (MovingSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
+					pushable->HasBeenPushed = true;
+				}
 				RockCount -= pushable->PulleyWeightage;
 			}
 

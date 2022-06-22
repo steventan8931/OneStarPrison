@@ -42,7 +42,12 @@ void APulleyCollector::BeginPlay()
 		if (Platform)
 		{
 			AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, MovingSound, GetActorLocation());
-			AudioComponent->Stop();
+			if (AudioComponent)
+			{
+				//AudioComponent->Play();
+				//dioComponent->SetPaused(true);
+			}
+
 		}
 	}
 }
@@ -99,22 +104,21 @@ void APulleyCollector::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 
 		if (pickupable)
 		{
+			if (!pickupable->Mesh->IsSimulatingPhysics())
+			{
+				if (MovingSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
+				}
+
+			}
+
 			pickupable->Mesh->SetSimulatePhysics(true);
 
 			pickupable->ProjectileMovement->Deactivate();
 			if (Platform)
 			{
-				if (MovingSound)
-				{
-					if (AudioComponent)
-					{
-						if (!AudioComponent->IsPlaying())
-						{
-							AudioComponent->Play();
-						}
-					}
-					//UGameplayStatics::PlaySoundAtLocation(GetWorld(), MovingSound, GetActorLocation());
-				}
+
 				RockCount++;
 				UpdateTargetPos();
 			}
