@@ -113,7 +113,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 				Platform->SetActorLocation(newPos);
 
 
-				if (FVector::Distance(Platform->GetActorLocation(), OpenPosition) < 100)
+				if (FVector::Distance(Platform->GetActorLocation(), OpenPosition) < 500)
 				{
 					ServerPlaySound(true);
 				}
@@ -134,7 +134,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 				FVector newPos = FMath::Lerp(Platform->GetActorLocation(), ClosedPosition, DeltaTime * MoveSpeed);
 				Platform->SetActorLocation(newPos);
 
-				if (FVector::Distance(Platform->GetActorLocation(), ClosedPosition) < 100)
+				if (FVector::Distance(Platform->GetActorLocation(), ClosedPosition) < 500)
 				{
 					ServerPlaySound(true);
 				}
