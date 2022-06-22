@@ -87,11 +87,16 @@ void AKeyDoor::Tick(float DeltaTime)
 
 void AKeyDoor::OpenDoor(float _DeltaTime)
 {
-	if (GetActorLocation() != OpenPosition)
+	if (Mesh->GetComponentLocation() != OpenPosition)
 	{
-		FVector newPos = FMath::Lerp(GetActorLocation(), OpenPosition, _DeltaTime);
-		SetActorLocation(newPos);
+		FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), OpenPosition, _DeltaTime);
+		Mesh->SetWorldLocation(newPos);
 	}
+	//if (GetActorLocation() != OpenPosition)
+	//{
+	//	FVector newPos = FMath::Lerp(GetActorLocation(), OpenPosition, _DeltaTime);
+	//	SetActorLocation(newPos);
+	//}
 }
 
 void AKeyDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)

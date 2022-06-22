@@ -112,11 +112,16 @@ void ADoubleDoor::Tick(float DeltaTime)
 
 void ADoubleDoor::OpenDoor(float _DeltaTime)
 {
-	if (GetActorLocation() != OpenPosition)
+	if (Mesh->GetComponentLocation() != OpenPosition)
 	{
-		FVector newPos = FMath::Lerp(GetActorLocation(), OpenPosition, _DeltaTime);
-		SetActorLocation(newPos);
+		FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), OpenPosition, _DeltaTime);
+		Mesh->SetWorldLocation(newPos);
 	}
+	//if (GetActorLocation() != OpenPosition)
+	//{
+	//	FVector newPos = FMath::Lerp(GetActorLocation(), OpenPosition, _DeltaTime);
+	//	SetActorLocation(newPos);
+	//}
 }
 
 void ADoubleDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
