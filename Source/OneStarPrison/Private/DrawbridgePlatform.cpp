@@ -2,6 +2,7 @@
 
 
 #include "DrawbridgePlatform.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 ADrawbridgePlatform::ADrawbridgePlatform()
@@ -21,18 +22,12 @@ void ADrawbridgePlatform::BeginPlay()
 	
 }
 
-void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+void ADrawbridgePlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(APlayerCharacter, IsInteracting);
-	DOREPLIFETIME(APlayerCharacter, CanInteract);
-	DOREPLIFETIME(APlayerCharacter, PickedUpItem);
-	DOREPLIFETIME(APlayerCharacter, CurrentThrowWidget);
-	DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
-	DOREPLIFETIME(APlayerCharacter, IsPickingUp);
-	DOREPLIFETIME(APlayerCharacter, IsGrabbing);
-
+	DOREPLIFETIME(ADrawbridgePlatform, OpenRotation);
+	DOREPLIFETIME(ADrawbridgePlatform, ClosedRotation);
 }
 
 // Called every frame
