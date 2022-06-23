@@ -469,6 +469,8 @@ void APlayerCharacter::ServerRPCThrow_Implementation()
 
 void APlayerCharacter::ClientRPCThrow_Implementation()
 {
+	IsPickingUp = false;
+	IsGrabbing = false;
 	if (PickedUpItem && IsHoldingDownThrow)
 	{
 		IsHoldingDownThrow = false;
