@@ -54,7 +54,7 @@ void APickupPile::RPCCheckForPickUp_Implementation()
 
 AActor* APickupPile::SpawnActor()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("SPAWNED"));
+	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("SPAWNED"));
 
 	return(GetWorld()->SpawnActor<AActor>(ActorToSpawn, GetActorTransform()));
 }

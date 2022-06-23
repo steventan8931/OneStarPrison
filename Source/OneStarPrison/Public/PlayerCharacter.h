@@ -184,7 +184,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float DeathTimer = 1.0f;
 
-	float DeathTimerCounter = 1.0f;
+	float DeathTimerCounter = 0.0f;
 
 	//Checks if dead then respawn player
 	void CheckDeath(float _DeltaTime);
