@@ -123,6 +123,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 			
 			rot = FRotator(0, GetControlRotation().Yaw, 0);
 
+			
 			if (HasAuthority())
 			{
 				SetActorRotation(rot, ETeleportType::ResetPhysics);
@@ -405,7 +406,7 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation(APickupable* _Picku
 
 	PickedUpItem = _Pickup;
 
-	APickupableKey* key = Cast<APickupableKey>(_Pickup);
+	APickupableKey* key = Cast<APickupableKey>(PickedUpItem);
 
 	if (key)
 	{
