@@ -28,7 +28,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<class AActor>ActorToSpawn;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		float SpawnRate = 5.0f;
 
 	UPROPERTY(EditAnywhere, Replicated)

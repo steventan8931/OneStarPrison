@@ -30,6 +30,7 @@ void ADeathRockSpawner::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ADeathRockSpawner, EndPosition);
+	DOREPLIFETIME(ADeathRockSpawner, SpawnRate);
 	DOREPLIFETIME(ADeathRockSpawner, SpawnTimer);
 }
 
