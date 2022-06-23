@@ -2,6 +2,7 @@
 
 
 #include "DrawbridgePlatform.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 ADrawbridgePlatform::ADrawbridgePlatform()
@@ -19,6 +20,14 @@ void ADrawbridgePlatform::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void ADrawbridgePlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ADrawbridgePlatform, OpenRotation);
+	DOREPLIFETIME(ADrawbridgePlatform, ClosedRotation);
 }
 
 // Called every frame

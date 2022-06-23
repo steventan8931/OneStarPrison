@@ -19,6 +19,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	//Replication
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -29,10 +31,10 @@ public:
 	UPROPERTY(EditAnywhere)
 		bool IsOpen = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		FRotator OpenRotation = FRotator(0, 0, 0);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		FRotator ClosedRotation = FRotator(0, 0, 0);
 
 	void OpenPlatform(float _DeltaTime);
