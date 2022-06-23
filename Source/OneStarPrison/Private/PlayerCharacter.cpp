@@ -162,7 +162,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 				{
 						spline->SetStaticMesh(SplineMesh);
 				}
-
+				spline->SetOnlyOwnerSee(true);
 				spline->SetMaterial(0,SplineMeshMaterial);
 				spline->SetStartScale(FVector2D(0.1f, 0.1f),true);
 				spline->SetEndScale(FVector2D(0.1f, 0.1f), true);
