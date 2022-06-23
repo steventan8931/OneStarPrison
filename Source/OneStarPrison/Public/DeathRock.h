@@ -25,7 +25,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* Mesh;
 
 	UPROPERTY(VisibleAnywhere, Replicated)
@@ -34,7 +34,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		float MoveSpeed = 0.5f;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DeathTime = 0.0f;
 	float DeathTimer = 0.0f;
 	
