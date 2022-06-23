@@ -88,11 +88,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		bool IsGrabbing = false;
 
+
 	//Grab Pickupable items and drop
 	void PickupAndDrop();
 	UFUNCTION(Server, Reliable)
 		void ServerRPCPickupAndDrop();
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, Unreliable)
 		void ClientRPCPickupAndDrop(APickupable* _Pickup);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		bool IsPickingUp = false;
