@@ -4,7 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "MannequinArmor.h"
 #include "Mannequin.generated.h"
+
+USTRUCT(BlueprintType)
+struct FMannaequinStruct
+{
+	GENERATED_BODY()
+
+		UPROPERTY(EditAnywhere)
+		bool HelmetEquipped = false;
+
+	UPROPERTY(EditAnywhere)
+		bool ArmorEquipped = false;
+
+	UPROPERTY(EditAnywhere)
+		bool FootwearEquipped = false;
+};
 
 UCLASS()
 class ONESTARPRISON_API AMannequin : public AActor
@@ -26,12 +42,33 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* Mesh;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
+		class UBoxComponent* BoxCollision;
+
+	UPROPERTY(VisibleAnywhere)
 		class USceneComponent* HelmetPosition;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 		class USceneComponent* ArmorPosition;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 		class USceneComponent* FootwearPosition;
+
+	class APlayerCharacter* OverlappingPlayer = nullptr;
+
+	UPROPERTY(VisibleAnywhere)
+		FMannaequinStruct EquippedArmor;
+
+	UPROPERTY(EditAnywhere)
+		TArray<AMannequinArmor*> EquippedArray;
+
+	bool CheckArmorEquipped();
+
+	//Overlap Functions
+	UFUNCTION()
+		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	//Overlap Functions
+	UFUNCTION()
+		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };
