@@ -26,7 +26,7 @@ ABreakable::ABreakable()
 	RootComponent = Mesh;
 
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
-	BoxCollision->SetBoxExtent(FVector(200, 200, 200));
+	BoxCollision->SetBoxExtent(FVector(100, 100, 100));
 	BoxCollision->SetCollisionProfileName(TEXT("Trigger"));
 	BoxCollision->SetupAttachment(RootComponent);
 
@@ -115,7 +115,7 @@ void ABreakable::UpdateMaterial()
 			if (BreakSound)
 			{
 				UGameplayStatics::PlaySoundAtLocation(GetWorld(), BreakSound, GetActorLocation());
-				GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, FString::Printf(TEXT("BREAK SOUND PLAY = %i"), CurrentHealth));
+				//GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, FString::Printf(TEXT("BREAK SOUND PLAY = %i"), CurrentHealth));
 
 				if (ActorToSpawn)
 				{
@@ -129,7 +129,7 @@ void ABreakable::UpdateMaterial()
 		return;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Current Health = %i"), CurrentHealth));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Current Health = %i"), CurrentHealth));
 
 	for (int Index = 0; Index != ListOfMaterialsAtHealth.Num(); ++Index)
 	{
