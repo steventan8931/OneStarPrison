@@ -21,4 +21,7 @@ class ONESTARPRISON_API AMannequinArmor : public APickupable
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TEnumAsByte<EMannaquinPart> MannequinPart;
+
+	UPROPERTY(EditAnywhere)
+		int MannequinNumber = 0;
 };

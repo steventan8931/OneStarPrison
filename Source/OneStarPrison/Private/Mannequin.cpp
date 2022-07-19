@@ -48,21 +48,25 @@ void AMannequin::Tick(float DeltaTime)
 	{
 		if (CheckArmorEquipped())
 		{
-			if (OverlappingPlayer->IsInteracting)
+			if (!CheckCorrectArmor())
 			{
-				for (int i = 0; i < EquippedArray.Num(); i++)
+				if (OverlappingPlayer->IsInteracting)
 				{
-					EquippedArray[i]->Mesh->SetCollisionProfileName("IgnoreOnlyPawn");
-					EquippedArray[i]->Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-					EquippedArray[i]->Launch(FVector(3, 3, 3));
-					EquippedArray[i]->Player = nullptr;
-				}
+					for (int i = 0; i < EquippedArray.Num(); i++)
+					{
+						EquippedArray[i]->Mesh->SetCollisionProfileName("IgnoreOnlyPawn");
+						EquippedArray[i]->Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+						EquippedArray[i]->Launch(FVector(3, 3, 3));
+						EquippedArray[i]->Player = nullptr;
+					}
 
-				EquippedArray.Empty();
-				EquippedArmor.HelmetEquipped = false;
-				EquippedArmor.ArmorEquipped = false;
-				EquippedArmor.FootwearEquipped = false;
+					EquippedArray.Empty();
+					EquippedArmor.HelmetEquipped = false;
+					EquippedArmor.ArmorEquipped = false;
+					EquippedArmor.FootwearEquipped = false;
+				}
 			}
+
 		}
 
 		if (OverlappingPlayer->PickedUpItem)
@@ -129,6 +133,18 @@ bool AMannequin::CheckArmorEquipped()
 	return true;
 }
 
+bool AMannequin::CheckCorrectArmor()
+{
+	for (int i = 0; i < EquippedArray.Num(); i++)
+	{
+		if (EquippedArray[i]->MannequinNumber != MannequinNumber)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 void AMannequin::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && (OtherActor != this))
@@ -140,7 +156,7 @@ void AMannequin::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 			if (playerActor)
 			{
 				OverlappingPlayer = playerActor;
-				if (playerActor->PickedUpItem || CheckArmorEquipped())
+				if (playerActor->PickedUpItem || (!CheckCorrectArmor() && CheckArmorEquipped()))
 				{
 					OverlappingPlayer->CanInteract = true;
 				}

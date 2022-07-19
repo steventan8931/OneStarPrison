@@ -62,7 +62,14 @@ public:
 	UPROPERTY(EditAnywhere)
 		TArray<AMannequinArmor*> EquippedArray;
 
+	UPROPERTY(EditAnywhere)
+		int MannequinNumber = 0;
+
+	//Check if all armor has been added
 	bool CheckArmorEquipped();
+
+	//Check if correct armor is equipped
+	bool CheckCorrectArmor();
 
 	//Overlap Functions
 	UFUNCTION()
@@ -72,3 +79,4 @@ public:
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };
+
