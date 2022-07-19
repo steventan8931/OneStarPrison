@@ -10,6 +10,12 @@
 
 #include "Pickupable.h"
 
+#include "Kismet/GameplayStatics.h"
+
+//Particles
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+
 // Sets default values
 ABreakable::ABreakable()
 {
@@ -24,13 +30,16 @@ ABreakable::ABreakable()
 	BoxCollision->SetCollisionProfileName(TEXT("Trigger"));
 	BoxCollision->SetupAttachment(RootComponent);
 
+	Particles = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Particles"));
+	Particles->SetupAttachment(RootComponent);
+
 }
 
 // Called when the game starts or when spawned
 void ABreakable::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ABreakable::OnOverlapBegin);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ABreakable::OnOverlapEnd);
 
@@ -52,6 +61,16 @@ void ABreakable::BeginPlay()
 void ABreakable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (Particles->IsVisible())
+	{
+		ParticleTimer += DeltaTime;
+		
+		if (ParticleTimer >= ParticleLifeTime)
+		{
+			ParticleTimer = 0.0f;
+			Particles->SetVisibility(false);
+		}
+	}
 
 	if (OverlappingPlayer != nullptr)
 	{
@@ -69,7 +88,13 @@ void ABreakable::Tick(float DeltaTime)
 
 	if (CurrentHealth <= 0)
 	{
-		Destroy();
+		DestroyTimer += DeltaTime;
+
+		if (DestroyTimer >= TimeToDestroy)
+		{
+			Destroy();
+		}
+
 	}
 
 }
@@ -78,7 +103,30 @@ void ABreakable::UpdateMaterial()
 {
 	if (CurrentHealth > 0)
 	{
+		if (HitSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, GetActorLocation());
+			Particles->SetVisibility(true);
+			ParticleTimer = 0.0f;
+		}
 		CurrentHealth -= DamagePerHit;
+		if (CurrentHealth <= 0)
+		{
+			if (BreakSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), BreakSound, GetActorLocation());
+				GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, FString::Printf(TEXT("BREAK SOUND PLAY = %i"), CurrentHealth));
+
+				if (ActorToSpawn)
+				{
+					SpawnActor();
+				}
+			}
+		}
+	}
+	else
+	{
+		return;
 	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Current Health = %i"), CurrentHealth));
@@ -93,6 +141,8 @@ void ABreakable::UpdateMaterial()
 			}
 		}
 	}
+
+	Particles->Activate(false);
 
 }
 
@@ -109,7 +159,7 @@ void ABreakable::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 				if (playerActor)
 				{
 					OverlappingPlayer = playerActor;
-					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
+					//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 					OverlappingPlayer->CanInteract = true;
 				}
 			}
@@ -136,13 +186,22 @@ void ABreakable::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class A
 		{
 			if (OverlappingPlayer != nullptr)
 			{
-				OverlappingPlayer->CanInteract = false;
+				if (playerActor == OverlappingPlayer)
+				{
+					OverlappingPlayer->CanInteract = false;
 
-				OverlappingPlayer = nullptr;
+					OverlappingPlayer = nullptr;
+				}
 
 			}
 		}
 
 	}
+}
+
+
+AActor* ABreakable::SpawnActor()
+{
+	return(GetWorld()->SpawnActor<AActor>(ActorToSpawn, GetActorTransform()));
 }
 
