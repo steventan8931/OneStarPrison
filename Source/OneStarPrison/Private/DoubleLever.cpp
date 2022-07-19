@@ -64,12 +64,16 @@ void ADoubleLever::Tick(float DeltaTime)
 	{
 		if (OverlappingPlayer->IsInteracting)
 		{
-			IsOpen = true;
-			if (OpenSound)
+			if (!IsOpen)
 			{
-				UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+				IsOpen = true;
+				if (OpenSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+				}
+				OverlappingPlayer->IsInteracting = false;
 			}
-			OverlappingPlayer->IsInteracting = false;
+
 		}
 	}
 
