@@ -3,6 +3,7 @@
 
 #include "MannequinManager.h"
 #include "Mannequin.h"
+#include "Door.h"
 
 // Sets default values
 AMannequinManager::AMannequinManager()
@@ -23,10 +24,18 @@ void AMannequinManager::BeginPlay()
 void AMannequinManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (IsOpen)
+	{
+		for (int i = 0; i < Doors.Num(); i++)
+		{
+			Doors[i]->IsOpen = true;
+		}
+	}
 
 	if (CheckMatchingMannequin())
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello s")));
+		IsOpen = true;
 	}
 }
 

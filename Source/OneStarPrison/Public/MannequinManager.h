@@ -26,9 +26,13 @@ public:
 	UPROPERTY(EditAnywhere)
 		TArray<AMannequin*> Mannequins;
 
+	UPROPERTY(EditAnywhere)
+		TArray<ADoor*> Doors;
+
 	UPROPERTY(VisibleAnywhere)
 		bool IsOpen = false;
 
 	//Check if both mannequins match
 	bool CheckMatchingMannequin();
+
 };
