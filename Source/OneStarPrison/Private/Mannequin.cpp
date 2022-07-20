@@ -158,7 +158,12 @@ void AMannequin::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 				OverlappingPlayer = playerActor;
 				if (playerActor->PickedUpItem || (!CheckCorrectArmor() && CheckArmorEquipped()))
 				{
-					OverlappingPlayer->CanInteract = true;
+					AMannequinArmor* armor = Cast<AMannequinArmor>(playerActor->PickedUpItem);
+
+					if (armor)
+					{
+						OverlappingPlayer->CanInteract = true;
+					}
 				}
 			}
 		}
