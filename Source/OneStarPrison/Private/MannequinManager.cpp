@@ -20,26 +20,39 @@ void AMannequinManager::BeginPlay()
 	
 }
 
+void AMannequinManager::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMannequinManager, Mannequins);
+	DOREPLIFETIME(AMannequinManager, Doors);
+}
+
 // Called every frame
 void AMannequinManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	CheckMatchingMannequin();
+
 	if (IsOpen)
 	{
+		//GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello s")));
+
 		for (int i = 0; i < Doors.Num(); i++)
 		{
 			Doors[i]->IsOpen = true;
 		}
 	}
 
-	if (CheckMatchingMannequin())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello s")));
-		IsOpen = true;
-	}
 }
 
-bool AMannequinManager::CheckMatchingMannequin()
+void AMannequinManager::CheckMatchingMannequin_Implementation()
+{
+	RPCCheckMatchingMannequin();
+}
+
+void AMannequinManager::RPCCheckMatchingMannequin_Implementation()
 {
 	for (int i = 0; i < Mannequins.Num(); i++)
 	{
@@ -51,16 +64,19 @@ bool AMannequinManager::CheckMatchingMannequin()
 			}
 			else
 			{
-				return false;
+				IsOpen = false;
+				return;
 			}
 		}
 		else
 		{
-			return false;
+			IsOpen = false;
+			return;
 		}
 
 	}
 
-	return true;
+	IsOpen = true;
+
 }
 

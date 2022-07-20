@@ -20,7 +20,7 @@ AInteractiveStepsButton::AInteractiveStepsButton()
 	RootComponent = Mesh;
 
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
-	BoxCollision->SetBoxExtent(FVector(200, 200, 200));
+	BoxCollision->SetBoxExtent(FVector(100, 100, 100));
 	BoxCollision->SetCollisionProfileName(TEXT("Trigger"));
 	BoxCollision->SetupAttachment(RootComponent);
 
