@@ -31,14 +31,16 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		TArray<ADoor*> Doors;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		bool IsOpen = false;
 
 	//Check if both mannequins match
-	UFUNCTION(NetMulticast, Unreliable)
+	UFUNCTION(Client, Unreliable)
 		void CheckMatchingMannequin();
 
 	UFUNCTION(Server, Unreliable)
 		void RPCCheckMatchingMannequin();
+
+	bool SoundPlayed = false;
 
 };

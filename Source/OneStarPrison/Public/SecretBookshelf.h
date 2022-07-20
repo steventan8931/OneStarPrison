@@ -4,72 +4,56 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "MannequinArmor.h"
-#include "Mannequin.generated.h"
-
-USTRUCT(BlueprintType)
-struct FMannaequinStruct
-{
-	GENERATED_BODY()
-
-		UPROPERTY(EditAnywhere)
-		bool HelmetEquipped = false;
-
-	UPROPERTY(EditAnywhere)
-		bool ArmorEquipped = false;
-
-	UPROPERTY(EditAnywhere)
-		bool FootwearEquipped = false;
-};
+#include "PickupableBook.h"
+#include "SecretBookshelf.generated.h"
 
 UCLASS()
-class ONESTARPRISON_API AMannequin : public AActor
+class ONESTARPRISON_API ASecretBookshelf : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AMannequin();
+	ASecretBookshelf();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	//Replication
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
+		USoundBase* CompleteSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* Mesh;
 
 	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
 
 	UPROPERTY(VisibleAnywhere)
-		class USceneComponent* HelmetPosition;
+		class USceneComponent* Book1Position;
 
 	UPROPERTY(VisibleAnywhere)
-		class USceneComponent* ArmorPosition;
+		class USceneComponent* Book2Position;
 
-	UPROPERTY(VisibleAnywhere)
-		class USceneComponent* FootwearPosition;
+	UPROPERTY(EditAnywhere, Replicated)
+		FVector OpenPosition = FVector(0, 0, 0);
 
 	class APlayerCharacter* OverlappingPlayer = nullptr;
 
-	UPROPERTY(VisibleAnywhere)
-		FMannaequinStruct EquippedArmor;
+	UPROPERTY(EditAnywhere)
+		bool Book1Inserted = false;
 
 	UPROPERTY(EditAnywhere)
-		TArray<AMannequinArmor*> EquippedArray;
+		bool Book2Inserted = false;
 
-	UPROPERTY(EditAnywhere)
-		int MannequinNumber = 0;
-
-	//Check if all armor has been added
-	bool CheckArmorEquipped();
-
-	//Check if correct armor is equipped
-	bool CheckCorrectArmor();
+	//Check if book is inserted
+	bool CheckInsertedBook();
 
 	//Overlap Functions
 	UFUNCTION()
@@ -79,4 +63,3 @@ public:
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };
-

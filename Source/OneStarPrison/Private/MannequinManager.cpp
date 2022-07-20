@@ -17,7 +17,7 @@ AMannequinManager::AMannequinManager()
 void AMannequinManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 void AMannequinManager::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -26,6 +26,7 @@ void AMannequinManager::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 
 	DOREPLIFETIME(AMannequinManager, Mannequins);
 	DOREPLIFETIME(AMannequinManager, Doors);
+	DOREPLIFETIME(AMannequinManager, IsOpen);
 }
 
 // Called every frame
@@ -33,23 +34,40 @@ void AMannequinManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CheckMatchingMannequin();
-
 	if (IsOpen)
 	{
-		//GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello s")));
-
 		for (int i = 0; i < Doors.Num(); i++)
 		{
 			Doors[i]->IsOpen = true;
+
+			if (!SoundPlayed)
+			{
+				Doors[i]->PlaySound();
+				SoundPlayed = true;
+			}
 		}
+
+		return;
+
 	}
+
+	CheckMatchingMannequin();
 
 }
 
 void AMannequinManager::CheckMatchingMannequin_Implementation()
 {
 	RPCCheckMatchingMannequin();
+
+	//Play open sound once 
+	if (IsOpen)
+	{
+		for (int i = 0; i < Doors.Num(); i++)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello s")));
+
+		}
+	}
 }
 
 void AMannequinManager::RPCCheckMatchingMannequin_Implementation()
@@ -77,6 +95,5 @@ void AMannequinManager::RPCCheckMatchingMannequin_Implementation()
 	}
 
 	IsOpen = true;
-
 }
 

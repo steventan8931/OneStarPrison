@@ -25,7 +25,7 @@ void ADoubleLeverManager::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ADoubleLeverManager, Doors);
+	DOREPLIFETIME(ADoubleLeverManager, Levers);
 }
 
 // Called every frame
@@ -37,7 +37,7 @@ void ADoubleLeverManager::Tick(float DeltaTime)
 
 	if (IsOpen)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello s")));
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello s")));
 	}
 }
 
@@ -48,9 +48,9 @@ void ADoubleLeverManager::CheckLeversOpen_Implementation()
 
 void ADoubleLeverManager::RPCCheckLeversOpen_Implementation()
 {
-	for (int i = 0; i < Doors.Num(); i++)
+	for (int i = 0; i < Levers.Num(); i++)
 	{
-		if (!Doors[i]->IsOpen)
+		if (!Levers[i]->IsOpen)
 		{
 			IsOpen = false;
 			return;

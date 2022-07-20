@@ -26,7 +26,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, Replicated)
-		TArray<ADoubleLever*> Doors;
+		TArray<ADoubleLever*> Levers;
 
 	UFUNCTION(NetMulticast, Unreliable)
 	void CheckLeversOpen();
