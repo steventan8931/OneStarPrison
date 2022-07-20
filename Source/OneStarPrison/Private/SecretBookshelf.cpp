@@ -97,6 +97,17 @@ void ASecretBookshelf::Tick(float DeltaTime)
 						{
 							UGameplayStatics::PlaySoundAtLocation(GetWorld(), CompleteSound, GetActorLocation());
 						}
+						if (InsertSound)
+						{
+							UGameplayStatics::PlaySoundAtLocation(GetWorld(), InsertSound, GetActorLocation());
+						}
+					}
+					else
+					{
+						if (InsertSound)
+						{
+							UGameplayStatics::PlaySoundAtLocation(GetWorld(), InsertSound, GetActorLocation());
+						}
 					}
 
 					OverlappingPlayer->IsInteracting = false;
