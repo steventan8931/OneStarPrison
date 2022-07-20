@@ -42,6 +42,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		USoundBase* EquipSound;
 
+	UPROPERTY(EditAnywhere)
+		USoundBase* RemoveSound;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* Mesh;
 
