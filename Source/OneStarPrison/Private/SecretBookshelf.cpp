@@ -42,6 +42,7 @@ void ASecretBookshelf::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ASecretBookshelf, OpenPosition);
+	DOREPLIFETIME(ASecretBookshelf, BothBooksInserted);
 }
 
 // Called every frame
@@ -49,9 +50,19 @@ void ASecretBookshelf::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (CheckInsertedBook())
+	CheckInsertedBook();
+
+	if (BothBooksInserted)
 	{
 		//GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello s")));
+		if (!SoundPlayed)
+		{
+			if (CompleteSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), CompleteSound, GetActorLocation());
+			}
+			SoundPlayed = true;
+		}
 
 		if (Mesh->GetComponentLocation() != OpenPosition)
 		{
@@ -73,64 +84,57 @@ void ASecretBookshelf::Tick(float DeltaTime)
 			{
 				if (OverlappingPlayer->IsInteracting)
 				{
+					book->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
 					switch (book->Code)
 					{
 					case 0:
 						Book1Inserted = true;
-						book->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 						book->SetActorLocation(Book1Position->GetComponentLocation());
-						OverlappingPlayer->CanInteract = false;
-						OverlappingPlayer->PickedUpItem = nullptr;
 						break;
 					case 1:
 						Book2Inserted = true;
-						book->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 						book->SetActorLocation(Book2Position->GetComponentLocation());
-						OverlappingPlayer->CanInteract = false;
-						OverlappingPlayer->PickedUpItem = nullptr;
 						break;
 					}
 
-					if (CheckInsertedBook())
+					if (InsertSound)
 					{
-						if (CompleteSound)
-						{
-							UGameplayStatics::PlaySoundAtLocation(GetWorld(), CompleteSound, GetActorLocation());
-						}
-						if (InsertSound)
-						{
-							UGameplayStatics::PlaySoundAtLocation(GetWorld(), InsertSound, GetActorLocation());
-						}
-					}
-					else
-					{
-						if (InsertSound)
-						{
-							UGameplayStatics::PlaySoundAtLocation(GetWorld(), InsertSound, GetActorLocation());
-						}
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), InsertSound, GetActorLocation());
 					}
 
+					OverlappingPlayer->CanInteract = false;
+					OverlappingPlayer->PickedUpItem = nullptr;
 					OverlappingPlayer->IsInteracting = false;
 				}
 
 			}
 		}
 	}
+
+
 }
 
-bool ASecretBookshelf::CheckInsertedBook()
+void ASecretBookshelf::CheckInsertedBook_Implementation()
+{
+	RPCCheckInsertedBook();
+}
+
+void ASecretBookshelf::RPCCheckInsertedBook_Implementation()
 {
 	if (!Book1Inserted)
 	{
-		return false;
+		BothBooksInserted = false;
+		return;
 	}
 
 	if (!Book2Inserted)
 	{
-		return false;
+		BothBooksInserted = false;
+		return;
 	}
 
-	return true;
+	BothBooksInserted = true;
 }
 
 void ASecretBookshelf::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

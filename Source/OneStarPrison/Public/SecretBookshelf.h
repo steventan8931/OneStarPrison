@@ -55,8 +55,17 @@ public:
 	UPROPERTY(EditAnywhere)
 		bool Book2Inserted = false;
 
+	UPROPERTY(Replicated)
+		bool BothBooksInserted = false;
+
+	bool SoundPlayed = false;
+
 	//Check if book is inserted
-	bool CheckInsertedBook();
+	UFUNCTION(Client, Unreliable)
+	void CheckInsertedBook();
+	//Check if book is inserted
+	UFUNCTION(Server, Unreliable)
+	void RPCCheckInsertedBook();
 
 	//Overlap Functions
 	UFUNCTION()
