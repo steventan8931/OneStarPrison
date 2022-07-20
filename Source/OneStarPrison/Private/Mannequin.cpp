@@ -4,6 +4,7 @@
 #include "Mannequin.h"
 #include "Components/BoxComponent.h"
 #include "PlayerCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AMannequin::AMannequin()
@@ -77,33 +78,35 @@ void AMannequin::Tick(float DeltaTime)
 			{
 				if (OverlappingPlayer->IsInteracting)
 				{
+					armor->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
 					switch (armor->MannequinPart)
 					{
 					case EMannaquinPart::Helmet:
 						EquippedArmor.HelmetEquipped = true;
-						armor->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
 						armor->SetActorLocation(HelmetPosition->GetComponentLocation());
-						OverlappingPlayer->CanInteract = false;
-						OverlappingPlayer->PickedUpItem = nullptr;
 						EquippedArray.Add(armor);
 						break;
 					case EMannaquinPart::Armor:
 						EquippedArmor.ArmorEquipped = true;
-						armor->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 						armor->SetActorLocation(ArmorPosition->GetComponentLocation());
-						OverlappingPlayer->CanInteract = false;
-						OverlappingPlayer->PickedUpItem = nullptr;
 						EquippedArray.Add(armor);
 						break;
 					case EMannaquinPart::Footwear:
 						EquippedArmor.FootwearEquipped = true;
-						armor->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 						armor->SetActorLocation(FootwearPosition->GetComponentLocation());
-						OverlappingPlayer->CanInteract = false;
-						OverlappingPlayer->PickedUpItem = nullptr;
 						EquippedArray.Add(armor);
 						break;
 					}
+
+					if (EquipSound)
+					{
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), EquipSound, GetActorLocation());
+					}
+
+					OverlappingPlayer->CanInteract = false;
+					OverlappingPlayer->PickedUpItem = nullptr;
 					OverlappingPlayer->IsInteracting = false;
 				}
 
