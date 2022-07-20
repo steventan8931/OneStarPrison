@@ -54,7 +54,7 @@ void ASecretBookshelf::Tick(float DeltaTime)
 
 	if (BothBooksInserted)
 	{
-		//GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello s")));
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello s")));
 		if (!SoundPlayed)
 		{
 			if (CompleteSound)

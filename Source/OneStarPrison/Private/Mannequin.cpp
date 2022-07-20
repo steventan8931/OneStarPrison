@@ -39,6 +39,15 @@ void AMannequin::BeginPlay()
 	
 }
 
+void AMannequin::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMannequin, CorrectArmor);
+	DOREPLIFETIME(AMannequin, MannequinEquiped);
+}
+
+
 // Called every frame
 void AMannequin::Tick(float DeltaTime)
 {
@@ -47,9 +56,13 @@ void AMannequin::Tick(float DeltaTime)
 
 	if (OverlappingPlayer)
 	{
-		if (CheckArmorEquipped())
+		CheckArmorEquipped();
+
+		if (MannequinEquiped)
 		{
-			if (!CheckCorrectArmor())
+			CheckCorrectArmor();
+
+			if (!CorrectArmor)
 			{
 				if (OverlappingPlayer->IsInteracting)
 				{
@@ -60,6 +73,8 @@ void AMannequin::Tick(float DeltaTime)
 						EquippedArray[i]->Launch(FVector(3, 3, 3));
 						EquippedArray[i]->Player = nullptr;
 					}
+
+					GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello s")));
 
 					if (EquipSound)
 					{
@@ -120,37 +135,53 @@ void AMannequin::Tick(float DeltaTime)
 
 }
 
-bool AMannequin::CheckArmorEquipped()
+void AMannequin::CheckArmorEquipped_Implementation()
+{
+	RPCCheckArmorEquipped();
+}
+
+void AMannequin::RPCCheckArmorEquipped_Implementation()
 {
 	if (!EquippedArmor.ArmorEquipped)
 	{
-		return false;
+		MannequinEquiped = false;
+		return;
 	}
 
 	if (!EquippedArmor.FootwearEquipped)
 	{
-		return false;
+		MannequinEquiped = false;
+		return;
 	}
 
 	if (!EquippedArmor.HelmetEquipped)
 	{
-		return false;
+		MannequinEquiped = false;
+		return;
 	}
 
-	return true;
+	MannequinEquiped = true;
 }
 
-bool AMannequin::CheckCorrectArmor()
+void AMannequin::CheckCorrectArmor_Implementation()
+{
+	RPCCheckCorrectArmor();
+}
+
+void AMannequin::RPCCheckCorrectArmor_Implementation()
 {
 	for (int i = 0; i < EquippedArray.Num(); i++)
 	{
 		if (EquippedArray[i]->MannequinNumber != MannequinNumber)
 		{
-			return false;
+			CorrectArmor = false;
+			return;
 		}
 	}
-	return true;
+
+	CorrectArmor = true;
 }
+
 
 void AMannequin::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -194,7 +225,10 @@ void AMannequin::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 					}
 				}
 
-				if ((!CheckCorrectArmor() && CheckArmorEquipped()))
+				CheckCorrectArmor();
+				CheckArmorEquipped();
+
+				if ((!CorrectArmor && MannequinEquiped))
 				{
 					OverlappingPlayer->CanInteract = true;
 				}

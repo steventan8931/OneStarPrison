@@ -74,9 +74,11 @@ void AMannequinManager::RPCCheckMatchingMannequin_Implementation()
 {
 	for (int i = 0; i < Mannequins.Num(); i++)
 	{
-		if (Mannequins[i]->CheckArmorEquipped())
+		Mannequins[i]->CheckArmorEquipped();
+		if (Mannequins[i]->MannequinEquiped)
 		{
-			if (Mannequins[i]->CheckCorrectArmor())
+			Mannequins[i]->CheckCorrectArmor();
+			if (Mannequins[i]->CorrectArmor)
 			{
 
 			}
