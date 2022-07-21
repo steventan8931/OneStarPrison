@@ -36,9 +36,8 @@ void APickupableBook::Tick(float DeltaTime)
 		}
 
 
-		if (Timer > 1.0f)
+		if (Timer > TimeBeforeItRespawns)
 		{
-
 			TakenFromDisplay = false;
 			if (ParentActor)
 			{

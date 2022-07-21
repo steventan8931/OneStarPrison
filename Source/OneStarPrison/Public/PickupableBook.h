@@ -23,15 +23,4 @@ protected:
 public:
 	UPROPERTY(EditAnywhere)
 	int Code = 0;
-
-	UPROPERTY(EditAnywhere)
-		bool OnDisplay = false;
-
-	bool TakenFromDisplay = false;
-
-	AActor* ParentActor;
-
-	FTransform cacheTransform;
-
-	float Timer = 0.0f;
 };

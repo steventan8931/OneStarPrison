@@ -24,6 +24,7 @@ protected:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
 public:	
 
 	UPROPERTY(EditAnywhere)
@@ -47,4 +48,19 @@ public:
 		void OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	void Launch(FVector _Velocity);
+
+	//For pickupable display (book)
+	UPROPERTY(EditAnywhere)
+		bool OnDisplay = false;
+
+	bool TakenFromDisplay = false;
+
+	AActor* ParentActor;
+
+	FTransform cacheTransform;
+
+	float Timer = 0.0f;
+
+	UPROPERTY(EditAnywhere)
+		float TimeBeforeItRespawns = 5.0f;
 };

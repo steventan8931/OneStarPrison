@@ -35,10 +35,10 @@ public:
 	float StartingHeight = 0.0f;
 
 	UPROPERTY(EditAnywhere)
-		float FloatScale = 20.0f;
+		float FloatScale = 15.0f;
 
 	UPROPERTY(EditAnywhere)
-		float RotateScale = 2.0f;
+		float RotateScale = 1.0f;
 
 
 	float RunningTime = 0.0f;

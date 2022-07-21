@@ -49,27 +49,30 @@ void APickupableDisplay::Tick(float DeltaTime)
 
 		if (pickupable)
 		{
-			if (!pickupable->Player)
+			if (!pickupable->Player && !pickupable->TakenFromDisplay)
 			{
 				float DeltaHeight = (FMath::Sin(RunningTime + DeltaTime) - FMath::Sin(RunningTime));
 
-				FVector newLoc = PickupableToDisplay->GetRelativeLocation();
+				FVector newLoc = pickupable->Mesh->GetRelativeLocation();
 				newLoc.Z += DeltaHeight * FloatScale;
 
 				RunningTime += DeltaTime;
 
-				FRotator newRot = PickupableToDisplay->GetRelativeRotation();
+				FRotator newRot = pickupable->Mesh->GetRelativeRotation();
 				newRot.Yaw += RotateScale;
-
-				GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("moving")));
 				
 				pickupable->Mesh->SetRelativeLocation(newLoc);
 				pickupable->Mesh->SetRelativeRotation(newRot);
 
 				//PickupableToDisplay->SetRelativeLocation(newLoc);
 				//PickupableToDisplay->SetRelativeRotation(newRot);
-			}
 
+				Particles->SetVisibility(true);
+			}
+			else
+			{
+				Particles->SetVisibility(false);
+			}
 
 		}
 
