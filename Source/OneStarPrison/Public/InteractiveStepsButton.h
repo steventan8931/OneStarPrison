@@ -25,6 +25,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
+	bool SoundPlayed = false;
+	float SoundPlayDelay = 0.5f;
+	float SoundTimer = 0.5f;
+
+
+	UPROPERTY(EditAnywhere)
+		class USoundBase* OnSound;
+
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
 
