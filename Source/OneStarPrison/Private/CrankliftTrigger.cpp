@@ -7,6 +7,8 @@
 #include "CrankliftPlatform.h"
 
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+#include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 ACrankliftTrigger::ACrankliftTrigger()
@@ -33,6 +35,27 @@ ACrankliftTrigger::ACrankliftTrigger()
 void ACrankliftTrigger::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (MovingSound)
+	{
+		if (Platform)
+		{
+			AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, MovingSound, Platform->GetActorLocation());
+
+			if (AudioComponent)
+			{
+				//AudioComponent->SetIsReplicated(true);
+				//if (!HasAuthority())
+				//{
+				//	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("moving"));
+				//};
+				ServerPlaySound(true);
+				AudioComponent->SetPaused(true);
+			}
+
+		}
+	}
+
 }
 
 void ACrankliftTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -41,7 +64,12 @@ void ACrankliftTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 
 	DOREPLIFETIME(ACrankliftTrigger, HandleOpenRotation);
 	DOREPLIFETIME(ACrankliftTrigger, HandleClosedRotation);
+	DOREPLIFETIME(ACrankliftTrigger, AudioComponent);
 
+	DOREPLIFETIME(ACrankliftTrigger, MaxHeight);
+	DOREPLIFETIME(ACrankliftTrigger, MinHeight);
+	DOREPLIFETIME(ACrankliftTrigger, IsMovingUp);
+	DOREPLIFETIME(ACrankliftTrigger, Platform);
 }
 
 // Called every frame
@@ -56,6 +84,20 @@ void ACrankliftTrigger::Tick(float DeltaTime)
 		{
 			if (OverlappingPlayer->IsInteracting)
 			{
+				if (AudioComponent)
+				{
+					if (!AudioComponent->IsPlaying())
+					{
+						//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("not playing"));
+
+						ServerPlaySound(false);
+					}
+					else
+					{
+						//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("playing"));
+					}
+				}
+
 				IsMovingUp = true;
 			}
 			else
@@ -74,7 +116,21 @@ void ACrankliftTrigger::Tick(float DeltaTime)
 			{
 				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
 				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z + cacheDeltaTime * MoveSpeed));
+
+				if ((MaxHeight - Platform->GetActorLocation().Z) < 100)
+				{
+					ServerPlaySound(true);
+				}
+				else
+				{
+					ServerPlaySound(false);
+				}
 			}
+			else
+			{
+				ServerPlaySound(true);
+			}
+
 		}
 		else
 		{
@@ -82,8 +138,21 @@ void ACrankliftTrigger::Tick(float DeltaTime)
 			{
 				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
 				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z - cacheDeltaTime * MoveSpeed));
-			}
 
+				if ((Platform->GetActorLocation().Z - MinHeight) < 100)
+				{
+					ServerPlaySound(true);
+				}
+				else
+				{
+					ServerPlaySound(false);
+
+				}
+			}
+			else
+			{
+				ServerPlaySound(true);
+			}
 		}
 	}
 }
@@ -99,7 +168,7 @@ void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 			if (playerActor)
 			{
 				OverlappingPlayer = playerActor;
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
+				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 				OverlappingPlayer->CanInteract = true;
 			}
 		}
@@ -112,10 +181,30 @@ void ACrankliftTrigger::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, 
 	{
 		if (OverlappingPlayer != nullptr)
 		{
-			OverlappingPlayer->CanInteract = false;
-			IsMovingUp = false;
-			OverlappingPlayer = nullptr;
+			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+			if (playerActor)
+			{
+				if (playerActor == OverlappingPlayer)
+				{
+					OverlappingPlayer->CanInteract = false;
+					IsMovingUp = false;
+					OverlappingPlayer = nullptr;
+				}
+			}
 		}
 
+	}
+}
+
+void ACrankliftTrigger::ServerPlaySound_Implementation(bool _IsPaused)
+{
+	ClientPlaySound(_IsPaused);
+}
+
+void ACrankliftTrigger::ClientPlaySound_Implementation(bool _IsPaused)
+{
+	if (AudioComponent)
+	{
+		AudioComponent->SetPaused(_IsPaused);
 	}
 }
