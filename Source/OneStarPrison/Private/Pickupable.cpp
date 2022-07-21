@@ -6,7 +6,6 @@
 #include "PlayerCharacter.h"
 
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APickupable::APickupable()

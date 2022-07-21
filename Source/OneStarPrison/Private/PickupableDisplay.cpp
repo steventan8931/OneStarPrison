@@ -8,7 +8,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 
-#include "Pickupable.h"
+#include "PickupableBook.h"
 
 // Sets default values
 APickupableDisplay::APickupableDisplay()
@@ -45,7 +45,7 @@ void APickupableDisplay::Tick(float DeltaTime)
 
 	if (PickupableToDisplay)
 	{
-		APickupable* pickupable = Cast<APickupable>(PickupableToDisplay->GetChildActor());
+		APickupableBook* pickupable = Cast<APickupableBook>(PickupableToDisplay->GetChildActor());
 
 		if (pickupable)
 		{
