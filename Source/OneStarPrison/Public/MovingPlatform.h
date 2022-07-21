@@ -29,10 +29,10 @@ public:
 	UPROPERTY(EditAnywhere)
 		USoundBase* MovingSound;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		UAudioComponent* AudioComponent;
 
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, Unreliable)
 		void ServerPlaySound(bool _IsPaused);
 	UFUNCTION(NetMulticast, Unreliable)
 		void ClientPlaySound(bool _IsPaused);
@@ -68,6 +68,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
+
+	bool FirstFrame = true;
 
 	//Overlap Functions
 	UFUNCTION()
