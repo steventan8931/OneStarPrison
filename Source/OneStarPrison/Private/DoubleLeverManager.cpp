@@ -26,6 +26,8 @@ void ADoubleLeverManager::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ADoubleLeverManager, Levers);
+	DOREPLIFETIME(ADoubleLeverManager, Doors);
+	DOREPLIFETIME(ADoubleLeverManager, IsOpen);
 }
 
 // Called every frame
@@ -33,12 +35,26 @@ void ADoubleLeverManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CheckLeversOpen();
 
 	if (IsOpen)
 	{
-		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello s")));
+		for (int i = 0; i < Doors.Num(); i++)
+		{
+			Doors[i]->IsOpen = true;
+
+			if (!SoundPlayed)
+			{
+				Doors[i]->PlaySound();
+				SoundPlayed = true;
+			}
+		}
+
+		return;
+
 	}
+
+	CheckLeversOpen();
+
 }
 
 void ADoubleLeverManager::CheckLeversOpen_Implementation()

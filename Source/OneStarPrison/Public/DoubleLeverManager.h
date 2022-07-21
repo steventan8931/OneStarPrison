@@ -28,12 +28,18 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		TArray<ADoubleLever*> Levers;
 
+	UPROPERTY(EditAnywhere, Replicated)
+		TArray<ADoor*> Doors;
+
 	UFUNCTION(NetMulticast, Unreliable)
 	void CheckLeversOpen();
 
 	UFUNCTION(Server, Unreliable)
 	void RPCCheckLeversOpen();
 
-	UPROPERTY(VisibleAnywhere)
-	bool IsOpen = false;
+	UPROPERTY(VisibleAnywhere, Replicated)
+		bool IsOpen = false;
+
+	bool SoundPlayed = false;
+
 };
