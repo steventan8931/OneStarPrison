@@ -19,7 +19,6 @@ ADoor::ADoor()
 void ADoor::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ADoor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -27,6 +26,8 @@ void ADoor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeP
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ADoor, OpenPosition);
+	DOREPLIFETIME(ADoor, ClosedPosition);
+	DOREPLIFETIME(ADoor, IsOpen);
 }
 
 // Called every frame
@@ -37,7 +38,10 @@ void ADoor::Tick(float DeltaTime)
 	if (IsOpen)
 	{
 		OpenDoor(DeltaTime);
-		return;
+	}
+	else
+	{
+		CloseDoor(DeltaTime);
 	}
 }
 
@@ -48,7 +52,15 @@ void ADoor::OpenDoor(float _DeltaTime)
 		FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), OpenPosition, _DeltaTime);
 		Mesh->SetWorldLocation(newPos);
 	}
+}
 
+void ADoor::CloseDoor(float _DeltaTime)
+{
+	if (Mesh->GetComponentLocation() != ClosedPosition)
+	{
+		FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), ClosedPosition, _DeltaTime);
+		Mesh->SetWorldLocation(newPos);
+	}
 }
 
 void ADoor::PlaySound()

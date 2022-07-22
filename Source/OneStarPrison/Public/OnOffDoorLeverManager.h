@@ -4,17 +4,30 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "OnOffLever.h"
 #include "Door.h"
-#include "MannequinManager.generated.h"
+#include "OnOffDoorLeverManager.generated.h"
+
+USTRUCT(BlueprintType)
+struct FOnOffLeverDoors
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+		class AOnOffLever* Lever;
+
+	UPROPERTY(EditAnywhere)
+		TArray<ADoor*> Doors;
+};
 
 UCLASS()
-class ONESTARPRISON_API AMannequinManager : public AActor
+class ONESTARPRISON_API AOnOffDoorLeverManager : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AMannequinManager();
+	AOnOffDoorLeverManager();
 
 protected:
 	// Called when the game starts or when spawned
@@ -27,21 +40,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, Replicated)
-		TArray<AMannequin*> Mannequins;
-
-	UPROPERTY(EditAnywhere, Replicated)
-		TArray<ADoor*> Doors;
+		TArray<FOnOffLeverDoors> OnOffLeverDoors;
 
 	//Check if both mannequins match
-	UFUNCTION(Client, Unreliable)
-		void CheckMatchingMannequin();
+	UFUNCTION(NetMulticast, Unreliable)
+		void UpdateDoors();
 
-	UFUNCTION(Server, Unreliable)
-		void RPCCheckMatchingMannequin();
+	UFUNCTION(Server, Reliable)
+		void RPCUpdateDoors();
 
-	UPROPERTY(VisibleAnywhere, Replicated)
-		bool IsOpen = false;
-
-	bool SoundPlayed = false;
-
+	bool FirstFrame = true;
 };

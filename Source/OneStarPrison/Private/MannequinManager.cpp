@@ -3,7 +3,6 @@
 
 #include "MannequinManager.h"
 #include "Mannequin.h"
-#include "Door.h"
 
 // Sets default values
 AMannequinManager::AMannequinManager()

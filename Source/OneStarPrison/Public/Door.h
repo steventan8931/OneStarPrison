@@ -28,7 +28,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		USoundBase* OpenSound;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		bool IsOpen = false;
 
 	UPROPERTY(VisibleAnywhere)
@@ -37,11 +37,14 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		FVector OpenPosition = FVector(0, 0, 0);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		FVector ClosedPosition = FVector(0, 0, 0);
 
 	//Transition From Current Position to Open Position
 	void OpenDoor(float _DeltaTime);
+
+	//Transition From Current Position to Closed Position
+	void CloseDoor(float _DeltaTime);
 
 	//Play open soudn
 	void PlaySound();
