@@ -124,7 +124,7 @@ public:
 	UPROPERTY(EditAnywhere)
 		float ThrowSpeed = 1.0f;
 	//Current Player Index
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 	int PlayerIndex = 0;
 
 	UPROPERTY(BlueprintReadWrite)
