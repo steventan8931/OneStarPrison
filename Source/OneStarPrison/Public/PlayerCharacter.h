@@ -78,7 +78,7 @@ public:
 	void StopInteract();
 	UPROPERTY(VisibleAnywhere, Replicated)
 	bool CanInteract = false;
-	UPROPERTY(Replicated)
+	UPROPERTY(BlueprintReadWrite,Replicated)
 	bool IsInteracting = false;
 
 	UFUNCTION(Server, Reliable)
