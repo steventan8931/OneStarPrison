@@ -3,7 +3,6 @@
 
 #include "MannequinManager.h"
 #include "Mannequin.h"
-#include "Door.h"
 
 // Sets default values
 AMannequinManager::AMannequinManager()
@@ -17,50 +16,85 @@ AMannequinManager::AMannequinManager()
 void AMannequinManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+}
+
+void AMannequinManager::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMannequinManager, Mannequins);
+	DOREPLIFETIME(AMannequinManager, Doors);
+	DOREPLIFETIME(AMannequinManager, IsOpen);
 }
 
 // Called every frame
 void AMannequinManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	if (IsOpen)
 	{
 		for (int i = 0; i < Doors.Num(); i++)
 		{
 			Doors[i]->IsOpen = true;
+
+			if (!SoundPlayed)
+			{
+				Doors[i]->PlaySound();
+				SoundPlayed = true;
+			}
 		}
+
+		return;
+
 	}
 
-	if (CheckMatchingMannequin())
+	CheckMatchingMannequin();
+
+}
+
+void AMannequinManager::CheckMatchingMannequin_Implementation()
+{
+	RPCCheckMatchingMannequin();
+
+	//Play open sound once 
+	if (IsOpen)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello s")));
-		IsOpen = true;
+		for (int i = 0; i < Doors.Num(); i++)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello s")));
+
+		}
 	}
 }
 
-bool AMannequinManager::CheckMatchingMannequin()
+void AMannequinManager::RPCCheckMatchingMannequin_Implementation()
 {
 	for (int i = 0; i < Mannequins.Num(); i++)
 	{
-		if (Mannequins[i]->CheckArmorEquipped())
+		Mannequins[i]->CheckArmorEquipped();
+		if (Mannequins[i]->MannequinEquiped)
 		{
-			if (Mannequins[i]->CheckCorrectArmor())
+			Mannequins[i]->CheckCorrectArmor();
+			if (Mannequins[i]->CorrectArmor)
 			{
 
 			}
 			else
 			{
-				return false;
+				IsOpen = false;
+				return;
 			}
 		}
 		else
 		{
-			return false;
+			IsOpen = false;
+			return;
 		}
 
 	}
 
-	return true;
+	IsOpen = true;
 }
 

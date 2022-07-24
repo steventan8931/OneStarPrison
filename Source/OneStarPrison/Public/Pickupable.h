@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h"
 #include "Pickupable.generated.h"
 
 UCLASS()
@@ -21,9 +22,11 @@ protected:
 
 	////Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
-public:	
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+public:	
 
 	UPROPERTY(EditAnywhere)
 		USoundBase* PickupSound;
@@ -46,4 +49,6 @@ public:
 		void OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	void Launch(FVector _Velocity);
+
+
 };

@@ -4,6 +4,7 @@
 #include "Mannequin.h"
 #include "Components/BoxComponent.h"
 #include "PlayerCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AMannequin::AMannequin()
@@ -38,6 +39,15 @@ void AMannequin::BeginPlay()
 	
 }
 
+void AMannequin::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMannequin, CorrectArmor);
+	DOREPLIFETIME(AMannequin, MannequinEquiped);
+}
+
+
 // Called every frame
 void AMannequin::Tick(float DeltaTime)
 {
@@ -46,9 +56,13 @@ void AMannequin::Tick(float DeltaTime)
 
 	if (OverlappingPlayer)
 	{
-		if (CheckArmorEquipped())
+		CheckArmorEquipped();
+
+		if (MannequinEquiped)
 		{
-			if (!CheckCorrectArmor())
+			CheckCorrectArmor();
+
+			if (!CorrectArmor)
 			{
 				if (OverlappingPlayer->IsInteracting)
 				{
@@ -58,6 +72,13 @@ void AMannequin::Tick(float DeltaTime)
 						EquippedArray[i]->Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 						EquippedArray[i]->Launch(FVector(3, 3, 3));
 						EquippedArray[i]->Player = nullptr;
+					}
+
+					GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello s")));
+
+					if (EquipSound)
+					{
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), EquipSound, GetActorLocation());
 					}
 
 					EquippedArray.Empty();
@@ -77,33 +98,34 @@ void AMannequin::Tick(float DeltaTime)
 			{
 				if (OverlappingPlayer->IsInteracting)
 				{
+					armor->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
 					switch (armor->MannequinPart)
 					{
 					case EMannaquinPart::Helmet:
 						EquippedArmor.HelmetEquipped = true;
-						armor->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 						armor->SetActorLocation(HelmetPosition->GetComponentLocation());
-						OverlappingPlayer->CanInteract = false;
-						OverlappingPlayer->PickedUpItem = nullptr;
 						EquippedArray.Add(armor);
 						break;
 					case EMannaquinPart::Armor:
 						EquippedArmor.ArmorEquipped = true;
-						armor->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 						armor->SetActorLocation(ArmorPosition->GetComponentLocation());
-						OverlappingPlayer->CanInteract = false;
-						OverlappingPlayer->PickedUpItem = nullptr;
 						EquippedArray.Add(armor);
 						break;
 					case EMannaquinPart::Footwear:
 						EquippedArmor.FootwearEquipped = true;
-						armor->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 						armor->SetActorLocation(FootwearPosition->GetComponentLocation());
-						OverlappingPlayer->CanInteract = false;
-						OverlappingPlayer->PickedUpItem = nullptr;
 						EquippedArray.Add(armor);
 						break;
 					}
+
+					if (EquipSound)
+					{
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), EquipSound, GetActorLocation());
+					}
+
+					OverlappingPlayer->CanInteract = false;
+					OverlappingPlayer->PickedUpItem = nullptr;
 					OverlappingPlayer->IsInteracting = false;
 				}
 
@@ -113,37 +135,53 @@ void AMannequin::Tick(float DeltaTime)
 
 }
 
-bool AMannequin::CheckArmorEquipped()
+void AMannequin::CheckArmorEquipped_Implementation()
+{
+	RPCCheckArmorEquipped();
+}
+
+void AMannequin::RPCCheckArmorEquipped_Implementation()
 {
 	if (!EquippedArmor.ArmorEquipped)
 	{
-		return false;
+		MannequinEquiped = false;
+		return;
 	}
 
 	if (!EquippedArmor.FootwearEquipped)
 	{
-		return false;
+		MannequinEquiped = false;
+		return;
 	}
 
 	if (!EquippedArmor.HelmetEquipped)
 	{
-		return false;
+		MannequinEquiped = false;
+		return;
 	}
 
-	return true;
+	MannequinEquiped = true;
 }
 
-bool AMannequin::CheckCorrectArmor()
+void AMannequin::CheckCorrectArmor_Implementation()
+{
+	RPCCheckCorrectArmor();
+}
+
+void AMannequin::RPCCheckCorrectArmor_Implementation()
 {
 	for (int i = 0; i < EquippedArray.Num(); i++)
 	{
 		if (EquippedArray[i]->MannequinNumber != MannequinNumber)
 		{
-			return false;
+			CorrectArmor = false;
+			return;
 		}
 	}
-	return true;
+
+	CorrectArmor = true;
 }
+
 
 void AMannequin::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -156,7 +194,41 @@ void AMannequin::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 			if (playerActor)
 			{
 				OverlappingPlayer = playerActor;
-				if (playerActor->PickedUpItem || (!CheckCorrectArmor() && CheckArmorEquipped()))
+				if (playerActor->PickedUpItem)
+				{
+					AMannequinArmor* armor = Cast<AMannequinArmor>(playerActor->PickedUpItem);
+
+					if (armor)
+					{
+						switch (armor->MannequinPart)
+						{
+						case EMannaquinPart::Helmet:
+							if (EquippedArmor.HelmetEquipped)
+							{
+								return;
+							}
+							break;
+						case EMannaquinPart::Armor:
+							if (EquippedArmor.ArmorEquipped)
+							{
+								return;
+							}
+							break;
+						case EMannaquinPart::Footwear:
+							if (EquippedArmor.FootwearEquipped)
+							{
+								return;
+							}
+							break;
+						}
+						OverlappingPlayer->CanInteract = true;
+					}
+				}
+
+				CheckCorrectArmor();
+				CheckArmorEquipped();
+
+				if ((!CorrectArmor && MannequinEquiped))
 				{
 					OverlappingPlayer->CanInteract = true;
 				}

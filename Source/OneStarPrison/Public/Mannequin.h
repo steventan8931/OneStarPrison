@@ -35,11 +35,19 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
+		USoundBase* EquipSound;
+
+	UPROPERTY(EditAnywhere)
+		USoundBase* RemoveSound;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* Mesh;
 
 	UPROPERTY(VisibleAnywhere)
@@ -62,14 +70,26 @@ public:
 	UPROPERTY(EditAnywhere)
 		TArray<AMannequinArmor*> EquippedArray;
 
+	UPROPERTY(Replicated)
+		bool MannequinEquiped = false;
+
+	UPROPERTY(Replicated)
+		bool CorrectArmor = false;
+
 	UPROPERTY(EditAnywhere)
 		int MannequinNumber = 0;
 
 	//Check if all armor has been added
-	bool CheckArmorEquipped();
+	UFUNCTION(Client, Unreliable)
+	void CheckArmorEquipped();
+	UFUNCTION(Server, Unreliable)
+	void RPCCheckArmorEquipped();
 
 	//Check if correct armor is equipped
-	bool CheckCorrectArmor();
+	UFUNCTION(Client, Unreliable)
+	void CheckCorrectArmor();
+	UFUNCTION(Server, Unreliable)
+	void RPCCheckCorrectArmor();
 
 	//Overlap Functions
 	UFUNCTION()

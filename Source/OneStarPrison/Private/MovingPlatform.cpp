@@ -40,15 +40,21 @@ void AMovingPlatform::BeginPlay()
 		if (Platform)
 		{
 			AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, MovingSound, Platform->GetActorLocation());
+
 			if (AudioComponent)
 			{
 				//AudioComponent->SetIsReplicated(true);
-				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("moving"));
+				//if (!HasAuthority())
+				//{
+				//	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("moving"));
+				//};
+				ServerPlaySound(true);
+				AudioComponent->SetPaused(true);
 			}
 
 		}
 	}
-	ServerPlaySound(false);
+
 }
 
 void AMovingPlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -65,7 +71,7 @@ void AMovingPlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& Ou
 	DOREPLIFETIME(AMovingPlatform, MoveSpeed);
 	
 		
-	//DOREPLIFETIME(AMovingPlatform, AudioComponent);
+	DOREPLIFETIME(AMovingPlatform, AudioComponent);
 }
 
 // Called every frame
@@ -75,8 +81,6 @@ void AMovingPlatform::Tick(float DeltaTime)
 
 	if (Platform)
 	{
-		ServerPlaySound(false);
-
 		if (OverlappingPlayer != nullptr)
 		{
 			if (OverlappingPlayer->IsInteracting)
@@ -85,8 +89,13 @@ void AMovingPlatform::Tick(float DeltaTime)
 				{
 					if(!AudioComponent->IsPlaying())
 					{
-						AudioComponent->Play();
+						//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("not playing"));
+	
 						ServerPlaySound(false);
+					}
+					else
+					{
+						//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("playing"));
 					}
 				}
 
@@ -113,7 +122,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 				Platform->SetActorLocation(newPos);
 
 
-				if (FVector::Distance(Platform->GetActorLocation(), OpenPosition) < 500)
+				if (FVector::Distance(Platform->GetActorLocation(), OpenPosition) < 100)
 				{
 					ServerPlaySound(true);
 				}
@@ -122,7 +131,10 @@ void AMovingPlatform::Tick(float DeltaTime)
 					ServerPlaySound(false);
 				}
 			}
-
+			else
+			{
+				ServerPlaySound(true);
+			}
 
 
 		}
@@ -134,8 +146,8 @@ void AMovingPlatform::Tick(float DeltaTime)
 				FVector newPos = FMath::Lerp(Platform->GetActorLocation(), ClosedPosition, DeltaTime * MoveSpeed);
 				Platform->SetActorLocation(newPos);
 
-				if (FVector::Distance(Platform->GetActorLocation(), ClosedPosition) < 500)
-				{
+				if (FVector::Distance(Platform->GetActorLocation(), ClosedPosition) < 100)
+				{	
 					ServerPlaySound(true);
 				}
 				else
@@ -146,11 +158,16 @@ void AMovingPlatform::Tick(float DeltaTime)
 			}
 			else
 			{
-				ServerPlaySound(false);
+				ServerPlaySound(true);
 			}
 
 		}
 
+		if (FirstFrame)
+		{
+			ServerPlaySound(true);
+			FirstFrame = false;
+		}
 	}
 }
 

@@ -19,15 +19,27 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere)
-		TArray<ADoubleLever*> Doors;
+	UPROPERTY(EditAnywhere, Replicated)
+		TArray<ADoubleLever*> Levers;
 
-	bool CheckLeversOpen();
+	UPROPERTY(EditAnywhere, Replicated)
+		TArray<ADoor*> Doors;
 
-	UPROPERTY(VisibleAnywhere)
-	bool IsOpen = false;
+	UFUNCTION(NetMulticast, Unreliable)
+	void CheckLeversOpen();
+
+	UFUNCTION(Server, Unreliable)
+	void RPCCheckLeversOpen();
+
+	UPROPERTY(VisibleAnywhere, Replicated)
+		bool IsOpen = false;
+
+	bool SoundPlayed = false;
+
 };

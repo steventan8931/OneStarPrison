@@ -95,7 +95,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
 	DOREPLIFETIME(APlayerCharacter, IsPickingUp);
 	DOREPLIFETIME(APlayerCharacter, IsGrabbing);
-
+	DOREPLIFETIME(APlayerCharacter, PlayerIndex);
 }
 
 // Called every frame

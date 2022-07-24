@@ -3,11 +3,12 @@
 
 #include "DoubleLeverManager.h"
 #include "DoubleLever.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 ADoubleLeverManager::ADoubleLeverManager()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
@@ -16,7 +17,17 @@ ADoubleLeverManager::ADoubleLeverManager()
 void ADoubleLeverManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+}
+
+
+void ADoubleLeverManager::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ADoubleLeverManager, Levers);
+	DOREPLIFETIME(ADoubleLeverManager, Doors);
+	DOREPLIFETIME(ADoubleLeverManager, IsOpen);
 }
 
 // Called every frame
@@ -24,21 +35,43 @@ void ADoubleLeverManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (CheckLeversOpen())
+
+	if (IsOpen)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello s")));
+		for (int i = 0; i < Doors.Num(); i++)
+		{
+			Doors[i]->IsOpen = true;
+
+			if (!SoundPlayed)
+			{
+				Doors[i]->PlaySound();
+				SoundPlayed = true;
+			}
+		}
+
+		return;
+
 	}
+
+	CheckLeversOpen();
+
 }
 
-bool ADoubleLeverManager::CheckLeversOpen()
+void ADoubleLeverManager::CheckLeversOpen_Implementation()
 {
-	for (int i = 0; i < Doors.Num(); i++)
+	RPCCheckLeversOpen();
+}
+
+void ADoubleLeverManager::RPCCheckLeversOpen_Implementation()
+{
+	for (int i = 0; i < Levers.Num(); i++)
 	{
-		if (!Doors[i]->IsOpen)
+		if (!Levers[i]->IsOpen)
 		{
-			return false;
+			IsOpen = false;
+			return;
 		}
 	}
 
-	return true;
+	IsOpen = true;
 }

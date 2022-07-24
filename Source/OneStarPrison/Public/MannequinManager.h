@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Door.h"
 #include "MannequinManager.generated.h"
 
 UCLASS()
@@ -19,20 +20,28 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		TArray<AMannequin*> Mannequins;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		TArray<ADoor*> Doors;
 
-	UPROPERTY(VisibleAnywhere)
+	//Check if both mannequins match
+	UFUNCTION(Client, Unreliable)
+		void CheckMatchingMannequin();
+
+	UFUNCTION(Server, Unreliable)
+		void RPCCheckMatchingMannequin();
+
+	UPROPERTY(VisibleAnywhere, Replicated)
 		bool IsOpen = false;
 
-	//Check if both mannequins match
-	bool CheckMatchingMannequin();
+	bool SoundPlayed = false;
 
 };

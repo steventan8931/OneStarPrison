@@ -55,30 +55,30 @@ void AKeyDoor::Tick(float DeltaTime)
 		APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
 		if (key)
 		{
-			OverlappingPlayer->CanInteract = true;
+			if (key->KeyCode == KeyCode)
+			{
+				OverlappingPlayer->CanInteract = true;
+			}
 
 			if (OverlappingPlayer->IsInteracting)
 			{
-
-				if (key)
+				if (IsKeyOneTimeUse)
 				{
-					if (IsKeyOneTimeUse)
-					{
-						OverlappingPlayer->PickedUpItem->Destroy();
-						OverlappingPlayer->PickedUpItem = nullptr;
-					}
-
-					if (OpenSound)
-					{
-						UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
-					}
-
-					IsOpen = true;
-
-					OverlappingPlayer->CanInteract = false;
-
-					//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
+					OverlappingPlayer->PickedUpItem->Destroy();
+					OverlappingPlayer->PickedUpItem = nullptr;
 				}
+
+				if (OpenSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+				}
+
+				IsOpen = true;
+
+				OverlappingPlayer->CanInteract = false;
+
+				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
+			
 			}
 		}
 

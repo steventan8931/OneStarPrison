@@ -19,26 +19,49 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	//Replication
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere)
+		USoundBase* MovingSound;
+
+	UPROPERTY(EditAnywhere, Replicated)
+		UAudioComponent* AudioComponent;
+
+	UFUNCTION(Server, Unreliable)
+		void ServerPlaySound(bool _IsPaused);
+	UFUNCTION(NetMulticast, Unreliable)
+		void ClientPlaySound(bool _IsPaused);
 
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
 
 	UPROPERTY(VisibleAnywhere)
+		class UStaticMeshComponent* MovableMesh;
+
+	UPROPERTY(EditAnywhere, Replicated)
+		FRotator HandleOpenRotation = FRotator(0, 0, -50);
+
+	UPROPERTY(EditAnywhere, Replicated)
+		FRotator HandleClosedRotation = FRotator(0, 0, 50);
+
+	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		class ACrankliftPlatform* Platform;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		float MaxHeight = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		float MinHeight = 0;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		bool IsMovingUp = false;
 
 	float cacheDeltaTime = 0.0f;

@@ -6,7 +6,6 @@
 #include "PlayerCharacter.h"
 
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APickupable::APickupable()
@@ -65,7 +64,7 @@ void APickupable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 		APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
 		if (!player)
 		{
-			IsInAir = true;
+			IsInAir = false;
 			Mesh->SetSimulatePhysics(true);
 			ProjectileMovement->Deactivate();
 		}
