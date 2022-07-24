@@ -51,7 +51,7 @@ void ABreakable::BeginPlay()
 		{
 			if (ListOfMaterialsAtHealth[Index].Material != nullptr)
 			{
-				Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
+				//Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
 			}
 		}
 	}
@@ -119,7 +119,12 @@ void ABreakable::UpdateMaterial()
 
 				if (ActorToSpawn)
 				{
-					SpawnActor();
+					SpawnActor(ActorToSpawn);
+				}
+
+				if (DeprisToSpawn)
+				{
+					SpawnActor(DeprisToSpawn);
 				}
 			}
 		}
@@ -137,7 +142,7 @@ void ABreakable::UpdateMaterial()
 		{
 			if (ListOfMaterialsAtHealth[Index].Material != nullptr)
 			{
-				Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
+				//Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
 			}
 		}
 	}
@@ -200,8 +205,8 @@ void ABreakable::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class A
 }
 
 
-AActor* ABreakable::SpawnActor()
+AActor* ABreakable::SpawnActor(TSubclassOf<class AActor> _Actor)
 {
-	return(GetWorld()->SpawnActor<AActor>(ActorToSpawn, GetActorTransform()));
+	return(GetWorld()->SpawnActor<AActor>(_Actor, GetActorTransform()));
 }
 

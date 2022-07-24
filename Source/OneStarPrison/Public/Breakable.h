@@ -82,7 +82,10 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class AActor>ActorToSpawn;
 
-	AActor* SpawnActor();
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class AActor>DeprisToSpawn;
+
+	AActor* SpawnActor(TSubclassOf<class AActor> _Actor);
 
 	//Overlap Functions
 	UFUNCTION()
