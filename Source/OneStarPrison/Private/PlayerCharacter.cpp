@@ -95,7 +95,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
 	DOREPLIFETIME(APlayerCharacter, IsPickingUp);
 	DOREPLIFETIME(APlayerCharacter, IsGrabbing);
-
+	DOREPLIFETIME(APlayerCharacter, PlayerIndex);
 }
 
 // Called every frame
@@ -123,6 +123,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 			
 			rot = FRotator(0, GetControlRotation().Yaw, 0);
 
+			
 			if (HasAuthority())
 			{
 				SetActorRotation(rot, ETeleportType::ResetPhysics);
@@ -405,7 +406,7 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation(APickupable* _Picku
 
 	PickedUpItem = _Pickup;
 
-	APickupableKey* key = Cast<APickupableKey>(_Pickup);
+	APickupableKey* key = Cast<APickupableKey>(PickedUpItem);
 
 	if (key)
 	{
@@ -468,6 +469,8 @@ void APlayerCharacter::ServerRPCThrow_Implementation()
 
 void APlayerCharacter::ClientRPCThrow_Implementation()
 {
+	IsPickingUp = false;
+	IsGrabbing = false;
 	if (PickedUpItem && IsHoldingDownThrow)
 	{
 		IsHoldingDownThrow = false;

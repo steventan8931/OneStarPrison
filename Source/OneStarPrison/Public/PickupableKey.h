@@ -14,6 +14,7 @@ class ONESTARPRISON_API APickupableKey : public APickupable
 {
 	GENERATED_BODY()
 	
-protected:
-
+public:
+	UPROPERTY(EditAnywhere)
+		int KeyCode = 0;
 };

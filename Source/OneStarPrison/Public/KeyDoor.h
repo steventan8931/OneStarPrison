@@ -26,6 +26,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere)
+		int KeyCode = 0;
+
+	UPROPERTY(EditAnywhere)
 		USoundBase* OpenSound;
 
 	UPROPERTY(VisibleAnywhere)

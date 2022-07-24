@@ -9,6 +9,7 @@
 #include "Components/BoxComponent.h"
 
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AInteractiveStepsButton::AInteractiveStepsButton()
@@ -20,7 +21,7 @@ AInteractiveStepsButton::AInteractiveStepsButton()
 	RootComponent = Mesh;
 
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
-	BoxCollision->SetBoxExtent(FVector(200, 200, 200));
+	BoxCollision->SetBoxExtent(FVector(100, 100, 100));
 	BoxCollision->SetCollisionProfileName(TEXT("Trigger"));
 	BoxCollision->SetupAttachment(RootComponent);
 
@@ -66,12 +67,48 @@ void AInteractiveStepsButton::Tick(float DeltaTime)
 					StepsManager->IsStepOpen = true;
 					StepsManager->SetOpenStep(LinkedSteps);
 					StepsManager->OpenDoor(DeltaTime);
+
+					if (!SoundPlayed)
+					{
+						if (SoundTimer >= SoundPlayDelay)
+						{
+							if (OnSound)
+							{
+								UGameplayStatics::PlaySoundAtLocation(GetWorld(), OnSound, GetActorLocation());
+							}
+							SoundTimer = 0.0f;
+						}
+						SoundPlayed = true;
+					}
+					else
+					{
+						SoundTimer += DeltaTime;
+					}
+
 				}
 				else
 				{
 					MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
 					StepsManager->IsStepOpen = false;
 					//StepsManager->SetOpenStep(LinkedSteps);
+
+					if (SoundPlayed)
+					{
+						if (SoundTimer >= SoundPlayDelay)
+						{
+							if (OnSound)
+							{
+								UGameplayStatics::PlaySoundAtLocation(GetWorld(), OnSound, GetActorLocation());
+							}
+							SoundTimer = 0.0f;
+						}
+
+						SoundPlayed = false;
+					}
+					else
+					{
+						SoundTimer += DeltaTime;
+					}
 				}
 			}
 			else
