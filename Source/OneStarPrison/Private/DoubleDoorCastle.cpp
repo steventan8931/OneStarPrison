@@ -43,6 +43,14 @@ void ADoubleDoorCastle::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 	DOREPLIFETIME(ADoubleDoorCastle, LOpenRotation);
 	DOREPLIFETIME(ADoubleDoorCastle, ROpenRotation);
 	DOREPLIFETIME(ADoubleDoorCastle, NumOfOverlappingPlayers);
+
+	DOREPLIFETIME(ADoubleDoorCastle, KeysRequired);
+	DOREPLIFETIME(ADoubleDoorCastle, KeysInserted);
+
+	DOREPLIFETIME(ADoubleDoorCastle, OverlappingPlayer);
+	DOREPLIFETIME(ADoubleDoorCastle, OverlappingPlayer2);
+
+	DOREPLIFETIME(ADoubleDoorCastle, IsOpen);
 }
 
 
@@ -54,6 +62,13 @@ void ADoubleDoorCastle::Tick(float DeltaTime)
 	if (IsOpen)
 	{
 		OpenDoor(DeltaTime);
+		return;
+	}
+
+	if (KeysRequired > 0)
+	{
+		CheckKeyDoor(OverlappingPlayer);
+		CheckKeyDoor(OverlappingPlayer2);
 		return;
 	}
 
@@ -80,6 +95,44 @@ void ADoubleDoorCastle::OpenDoor(float _DeltaTime)
 	{
 		FRotator newRotR = FMath::Lerp(RMesh->GetRelativeRotation(), ROpenRotation, _DeltaTime);
 		RMesh->SetRelativeRotation(newRotR);
+	}
+}
+
+void ADoubleDoorCastle::CheckKeyDoor_Implementation(APlayerCharacter* _Player)
+{
+	RPCCheckKeyDoor(_Player);
+}
+
+void ADoubleDoorCastle::RPCCheckKeyDoor_Implementation(APlayerCharacter* _Player)
+{
+	if (_Player)
+	{
+		if (_Player->PickedUpItem)
+		{
+			APickupableKey* key = Cast<APickupableKey>(_Player->PickedUpItem);
+
+			if (key)
+			{
+				_Player->CanInteract = true;
+			}
+
+			if (_Player->IsInteracting)
+			{
+				_Player->PickedUpItem->Destroy();
+				_Player->PickedUpItem = nullptr;
+				_Player->CanInteract = false;
+				KeysInserted++;
+			}
+		}
+		if (KeysInserted >= KeysRequired)
+		{
+			IsOpen = true;
+			if (OpenSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+			}
+		}
+
 	}
 }
 
@@ -122,11 +175,36 @@ void ADoubleDoorCastle::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, 
 		{
 			if (OverlappingPlayer == playerActor)
 			{
+				if (KeysRequired > 0)
+				{
+					if (OverlappingPlayer->PickedUpItem)
+					{
+						APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
+						if (key)
+						{
+							OverlappingPlayer->CanInteract = false;
+						}
+
+					}
+				}
 				OverlappingPlayer = nullptr;
 			}
 			if (OverlappingPlayer2 == playerActor)
 			{
 				OverlappingPlayer2 = nullptr;
+
+				if (KeysRequired > 0)
+				{
+					if (OverlappingPlayer2->PickedUpItem)
+					{
+						APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer2->PickedUpItem);
+						if (key)
+						{
+							OverlappingPlayer2->CanInteract = false;
+						}
+
+					}
+				}
 			}
 
 			NumOfOverlappingPlayers--;
