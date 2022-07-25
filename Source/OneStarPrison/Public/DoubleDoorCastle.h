@@ -36,7 +36,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		bool IsOpen = false;
 
 	UPROPERTY(EditAnywhere, Replicated)
@@ -45,13 +45,19 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		FRotator ROpenRotation = FRotator(0, 0, 0);
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		class APlayerCharacter* OverlappingPlayer2 = nullptr;
 
 	UPROPERTY(Replicated)
 		int NumOfOverlappingPlayers = 0;
+
+	UPROPERTY(EditAnywhere, Replicated)
+		int KeysRequired = 0;
+
+	UPROPERTY(EditAnywhere, Replicated)
+		int KeysInserted = 0;
 
 	//Overlap Functions
 	UFUNCTION()
@@ -63,4 +69,11 @@ public:
 
 	//Transition From Current Position to Open Position
 	void OpenDoor(float _DeltaTime);
+
+	//Check Key
+	UFUNCTION(NetMulticast, Unreliable)
+	void CheckKeyDoor(APlayerCharacter* _Player);
+	//Check Key
+	UFUNCTION(Server, Unreliable)
+	void RPCCheckKeyDoor(APlayerCharacter* _Player);
 };
