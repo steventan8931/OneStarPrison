@@ -40,6 +40,13 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		FVector ClosedPosition = FVector(0, 0, 0);
 
+	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation")
+		bool IsRotationDoor = false;
+	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation")
+		FRotator OpenRotation = FRotator(0, 0, 0);
+	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation")
+		FRotator ClosedRotation = FRotator(0, 0, 0);
+
 	//Transition From Current Position to Open Position
 	void OpenDoor(float _DeltaTime);
 
