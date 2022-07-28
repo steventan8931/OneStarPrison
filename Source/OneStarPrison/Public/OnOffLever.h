@@ -52,7 +52,7 @@ public:
 	UPROPERTY(Replicated)
 	int IndexInManager = 0;
 
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(EditAnywhere, Replicated)
 		bool IsOpen = false;
 
 	UPROPERTY(EditAnywhere)

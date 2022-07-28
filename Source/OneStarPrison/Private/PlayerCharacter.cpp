@@ -96,6 +96,8 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, IsPickingUp);
 	DOREPLIFETIME(APlayerCharacter, IsGrabbing);
 	DOREPLIFETIME(APlayerCharacter, PlayerIndex);
+
+	DOREPLIFETIME(APlayerCharacter, CanMove);
 }
 
 // Called every frame
@@ -200,6 +202,15 @@ void APlayerCharacter::Tick(float DeltaTime)
 		SplineComponentArray.Empty();
 	}
 	
+	if (IsInteracting)
+	{
+		CanMove = false;
+	}
+	else
+	{
+		CanMove = true;
+	}
+
 	IsPickingUp = false;
 	IsGrabbing = false;
 	CheckDeath(DeltaTime);
@@ -211,6 +222,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
+	
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
@@ -242,6 +254,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
+	if (!CanMove)
+	{
+		return;
+	}
 	Jump();
 }
 
@@ -264,6 +280,11 @@ void APlayerCharacter::LookUpAtRate(float Rate)
 
 void APlayerCharacter::MoveForward(float Value)
 {
+	if (!CanMove)
+	{
+		return;
+	}
+
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
 		// find out which way is forward
@@ -278,6 +299,11 @@ void APlayerCharacter::MoveForward(float Value)
 
 void APlayerCharacter::MoveRight(float Value)
 {
+	if (!CanMove)
+	{
+		return;
+	}
+
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
 		// find out which way is right

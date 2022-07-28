@@ -61,14 +61,14 @@ void AOnOffDoorLeverManager::RPCUpdateDoors_Implementation()
 	{
 		if(OnOffLeverDoors[i].Lever->IsOpen)
 		{
-			for (int j = 0; j < OnOffLeverDoors.Num(); j++)
+			for (int j = 0; j < OnOffLeverDoors[i].Doors.Num(); j++)
 			{
 				OnOffLeverDoors[i].Doors[j]->IsOpen = true;
 			}
 		}
 		else
 		{
-			for (int j = 0; j < OnOffLeverDoors.Num(); j++)
+			for (int j = 0; j < OnOffLeverDoors[i].Doors.Num(); j++)
 			{
 				OnOffLeverDoors[i].Doors[j]->IsOpen = false;
 			}
