@@ -43,6 +43,25 @@ void ATrapRoomTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (Triggered)
+	{
+		if (OverlappingPlayer)
+		{
+			if (OverlappingPlayer->HitByWallCount >= 2)
+			{
+				for (int i = 0; i < RoomWalls.Num(); i++)
+				{
+					RoomWalls[i]->IsOpen = false;
+				}
+
+				OverlappingPlayer->IsDead = true;
+				OverlappingPlayer->DeathTimerCounter = OverlappingPlayer->DeathTimer / 2;
+				OverlappingPlayer = false;
+				Triggered = false;
+
+			}
+		}
+	}
 }
 
 void ATrapRoomTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -52,9 +71,11 @@ void ATrapRoomTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 		if (playerActor)
 		{
+			OverlappingPlayer = playerActor;
+
 			if (!Triggered)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, TEXT("tTriggerd"));
+				GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, TEXT("Triggerd"));
 				if (TriggerSound)
 				{
 					UGameplayStatics::PlaySoundAtLocation(GetWorld(), TriggerSound, GetActorLocation());

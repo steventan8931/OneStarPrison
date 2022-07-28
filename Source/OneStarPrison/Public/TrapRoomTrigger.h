@@ -34,6 +34,9 @@ public:
 		TArray<ATrapRoomWalls*> RoomWalls;
 
 	UPROPERTY(VisibleAnywhere, Replicated)
+		APlayerCharacter* OverlappingPlayer;
+
+	UPROPERTY(EditAnywhere, Replicated)
 	bool Triggered = false;
 
 	UPROPERTY(VisibleAnywhere)

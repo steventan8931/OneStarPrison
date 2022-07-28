@@ -483,6 +483,7 @@ void APlayerCharacter::CheckDeath(float _DeltaTime)
 		{
 			SetActorLocation(RespawnCheckpoint);
 			DeathTimerCounter = 0.0f;
+			HitByWallCount = 0;
 			IsDead = false;
 		}
 	}
