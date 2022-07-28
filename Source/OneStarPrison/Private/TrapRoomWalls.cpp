@@ -46,6 +46,10 @@ void ATrapRoomWalls::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (IsOpen)
+	{
+		OpenDoor(DeltaTime);
+	}
 }
 
 void ATrapRoomWalls::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

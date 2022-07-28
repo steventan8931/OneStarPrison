@@ -6,6 +6,7 @@
 #include "PlayerCharacter.h"
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 #include "Kismet/GameplayStatics.h"
+#include "TrapRoomWalls.h"
 
 // Sets default values
 ATrapRoomTrigger::ATrapRoomTrigger()
@@ -33,7 +34,8 @@ void ATrapRoomTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ATrapRoomTrigger, Triggered);
-
+	DOREPLIFETIME(ATrapRoomTrigger, RoomWalls);
+	
 }
 
 // Called every frame
@@ -58,6 +60,13 @@ void ATrapRoomTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 					UGameplayStatics::PlaySoundAtLocation(GetWorld(), TriggerSound, GetActorLocation());
 				}
 				Triggered = true;
+
+				for (int i = 0; i < RoomWalls.Num(); i++)
+				{
+					RoomWalls[i]->IsOpen = true;
+					RoomWalls[i]->PlaySound();
+
+				}
 			}
 
 		}

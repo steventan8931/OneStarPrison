@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "TrapRoomWalls.h"
 #include "TrapRoomTrigger.generated.h"
 
 UCLASS()
@@ -28,6 +29,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		USoundBase* TriggerSound;
+
+	UPROPERTY(EditAnywhere, Replicated)
+		TArray<ATrapRoomWalls*> RoomWalls;
 
 	UPROPERTY(VisibleAnywhere, Replicated)
 	bool Triggered = false;
