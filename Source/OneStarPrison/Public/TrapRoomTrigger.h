@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "TrapRoomWalls.h"
+#include "Breakable.h"
 #include "TrapRoomTrigger.generated.h"
 
 UCLASS()
@@ -48,4 +49,15 @@ public:
 	//Overlap Functions
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	//Reseting
+	UPROPERTY(EditAnywhere, Replicated)
+		TArray<ABreakable*> BreakableBarrels;
+	UPROPERTY(Replicated)
+		TArray<FTransform> BarrelTransforms;
+		TSubclassOf<class AActor>ActorToSpawn;
+
+		TSubclassOf<class AActor> ActorHiddenInBarrel;
+
+	AActor* SpawnActor(FTransform _Transform);
 };

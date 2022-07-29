@@ -16,6 +16,8 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 
+#include "TrapRoomTrigger.h"
+
 // Sets default values
 ABreakable::ABreakable()
 {

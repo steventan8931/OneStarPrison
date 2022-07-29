@@ -28,6 +28,20 @@ void ATrapRoomTrigger::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	for (int i = 0; i < BreakableBarrels.Num(); i++)
+	{
+		if (BreakableBarrels[i])
+		{
+			BarrelTransforms.Add(BreakableBarrels[i]->GetTransform());
+			ActorToSpawn = BreakableBarrels[i]->GetClass();
+
+			if (BreakableBarrels[i]->ActorToSpawn)
+			{
+				ActorHiddenInBarrel = BreakableBarrels[i]->ActorToSpawn;
+			}
+		}
+
+	}
 }
 
 void ATrapRoomTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -38,6 +52,8 @@ void ATrapRoomTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(ATrapRoomTrigger, RoomWalls);
 	DOREPLIFETIME(ATrapRoomTrigger, DoubleDoorManager);
 
+	DOREPLIFETIME(ATrapRoomTrigger, BreakableBarrels);
+	DOREPLIFETIME(ATrapRoomTrigger, BarrelTransforms);
 }
 
 // Called every frame
@@ -56,8 +72,46 @@ void ATrapRoomTrigger::Tick(float DeltaTime)
 					RoomWalls[i]->IsOpen = false;
 				}
 
+				for (int i = 0; i < BreakableBarrels.Num(); i++)
+				{
+					if (BreakableBarrels[i])
+					{
+						BreakableBarrels[i]->Destroy();
+					}
+				}
+				BreakableBarrels.Empty();
+
+				if (ActorToSpawn)
+				{
+
+					if (HasAuthority())
+					{
+						for (int i = 0; i < BarrelTransforms.Num(); i++)
+						{
+							ABreakable* barrel = Cast<ABreakable>(SpawnActor(BarrelTransforms[i]));
+
+							if (barrel)
+							{
+								BreakableBarrels.Add(barrel);
+							}
+
+						}
+
+						int KeyBarrel = FMath::RandRange(0, BreakableBarrels.Num() - 1);
+
+						BreakableBarrels[KeyBarrel]->ActorToSpawn = ActorHiddenInBarrel;
+					}
+
+
+				}
+
 				OverlappingPlayer->IsDead = true;
 				OverlappingPlayer->DeathTimerCounter = OverlappingPlayer->DeathTimer / 2;
+				if (OverlappingPlayer->PickedUpItem)
+				{
+					OverlappingPlayer->PickedUpItem->Destroy();
+					OverlappingPlayer->PickedUpItem = nullptr;
+				}
 				OverlappingPlayer = false;
 				Triggered = false;
 			}
@@ -103,3 +157,10 @@ void ATrapRoomTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 		}
 	}
 }
+
+
+AActor* ATrapRoomTrigger::SpawnActor(FTransform _Transform)
+{
+	return(GetWorld()->SpawnActor<AActor>(ActorToSpawn, _Transform));
+}
+
