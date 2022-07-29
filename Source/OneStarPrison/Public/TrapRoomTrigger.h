@@ -35,12 +35,15 @@ public:
 		TArray<ATrapRoomWalls*> RoomWalls;
 
 	UPROPERTY(VisibleAnywhere, Replicated)
-		APlayerCharacter* OverlappingPlayer;
+		class APlayerCharacter* OverlappingPlayer;
+
+	UPROPERTY(VisibleAnywhere, Replicated)
+		class APlayerCharacter* OverlappingPlayer2;
 
 	UPROPERTY(EditAnywhere, Replicated)
 		class ADoubleLeverManager* DoubleDoorManager;
 
-	UPROPERTY(EditAnywhere, Replicated)
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
 	bool Triggered = false;
 
 	UPROPERTY(VisibleAnywhere)
@@ -56,8 +59,13 @@ public:
 	UPROPERTY(Replicated)
 		TArray<FTransform> BarrelTransforms;
 		TSubclassOf<class AActor>ActorToSpawn;
-
 		TSubclassOf<class AActor> ActorHiddenInBarrel;
 
 	AActor* SpawnActor(FTransform _Transform);
+
+	void CheckPlayerHit(APlayerCharacter* _Player);
+	void RespawnPlayers(APlayerCharacter* _Player);
+
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
+	bool IsPlayerHit = false;
 };

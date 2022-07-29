@@ -54,6 +54,11 @@ void ATrapRoomTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 
 	DOREPLIFETIME(ATrapRoomTrigger, BreakableBarrels);
 	DOREPLIFETIME(ATrapRoomTrigger, BarrelTransforms);
+
+	DOREPLIFETIME(ATrapRoomTrigger, OverlappingPlayer);
+	DOREPLIFETIME(ATrapRoomTrigger, OverlappingPlayer2);
+
+	
 }
 
 // Called every frame
@@ -63,60 +68,66 @@ void ATrapRoomTrigger::Tick(float DeltaTime)
 
 	if (Triggered)
 	{
+
 		if (OverlappingPlayer)
 		{
-			if (OverlappingPlayer->HitByWallCount >= 2)
+			CheckPlayerHit(OverlappingPlayer);
+		}
+		if (OverlappingPlayer2)
+		{
+			CheckPlayerHit(OverlappingPlayer2);
+		}
+
+		if (IsPlayerHit)
+		{
+			RespawnPlayers(OverlappingPlayer);
+			RespawnPlayers(OverlappingPlayer2);
+
+			for (int i = 0; i < RoomWalls.Num(); i++)
 			{
-				for (int i = 0; i < RoomWalls.Num(); i++)
+				RoomWalls[i]->IsOpen = false;
+			}
+
+			for (int i = 0; i < BreakableBarrels.Num(); i++)
+			{
+				if (BreakableBarrels[i])
 				{
-					RoomWalls[i]->IsOpen = false;
+					BreakableBarrels[i]->Destroy();
 				}
+			}
 
-				for (int i = 0; i < BreakableBarrels.Num(); i++)
+			BreakableBarrels.Empty();
+
+			if (ActorToSpawn)
+			{
+
+				if (HasAuthority())
 				{
-					if (BreakableBarrels[i])
+					for (int i = 0; i < BarrelTransforms.Num(); i++)
 					{
-						BreakableBarrels[i]->Destroy();
-					}
-				}
-				BreakableBarrels.Empty();
+						ABreakable* barrel = Cast<ABreakable>(SpawnActor(BarrelTransforms[i]));
 
-				if (ActorToSpawn)
-				{
-
-					if (HasAuthority())
-					{
-						for (int i = 0; i < BarrelTransforms.Num(); i++)
+						if (barrel)
 						{
-							ABreakable* barrel = Cast<ABreakable>(SpawnActor(BarrelTransforms[i]));
-
-							if (barrel)
-							{
-								BreakableBarrels.Add(barrel);
-							}
-
+							BreakableBarrels.Add(barrel);
 						}
 
-						int KeyBarrel = FMath::RandRange(0, BreakableBarrels.Num() - 1);
-
-						BreakableBarrels[KeyBarrel]->ActorToSpawn = ActorHiddenInBarrel;
 					}
 
+					int KeyBarrel = FMath::RandRange(0, BreakableBarrels.Num() - 1);
 
+					BreakableBarrels[KeyBarrel]->ActorToSpawn = ActorHiddenInBarrel;
 				}
 
-				OverlappingPlayer->IsDead = true;
-				OverlappingPlayer->DeathTimerCounter = OverlappingPlayer->DeathTimer / 2;
-				if (OverlappingPlayer->PickedUpItem)
-				{
-					OverlappingPlayer->PickedUpItem->Destroy();
-					OverlappingPlayer->PickedUpItem = nullptr;
-				}
-				OverlappingPlayer = false;
-				Triggered = false;
 			}
+
+			IsPlayerHit = false;
+			Triggered = false;
+
 		}
+
 	}
+	
 }
 
 void ATrapRoomTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -126,11 +137,27 @@ void ATrapRoomTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 		if (playerActor)
 		{
-			OverlappingPlayer = playerActor;
+			if (!OverlappingPlayer)
+			{
+				OverlappingPlayer = playerActor;
+				GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, TEXT("player 1"));
+			}
+			else
+			{
+				if (!OverlappingPlayer2)
+				{
+					if (playerActor != OverlappingPlayer)
+					{
+						OverlappingPlayer2 = playerActor;
+						GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, TEXT("player 2"));
+					}
+
+				}
+			}
 
 			if (!Triggered)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, TEXT("Triggerd"));
+
 				if (TriggerSound)
 				{
 					UGameplayStatics::PlaySoundAtLocation(GetWorld(), TriggerSound, GetActorLocation());
@@ -162,5 +189,32 @@ void ATrapRoomTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 AActor* ATrapRoomTrigger::SpawnActor(FTransform _Transform)
 {
 	return(GetWorld()->SpawnActor<AActor>(ActorToSpawn, _Transform));
+}
+
+void ATrapRoomTrigger::CheckPlayerHit(APlayerCharacter* _Player)
+{
+	if (_Player)
+	{
+		if (_Player->HitByWallCount >= 2)
+		{
+			IsPlayerHit = true;
+		}
+	}
+}
+
+void ATrapRoomTrigger::RespawnPlayers(APlayerCharacter* _Player)
+{
+	if (_Player)
+	{
+		_Player->IsDead = true;
+		_Player->DeathTimerCounter = _Player->DeathTimer / 2;
+		_Player->HitByWallCount = 0;
+		if (_Player->PickedUpItem)
+		{
+			_Player->PickedUpItem->Destroy();
+			_Player->PickedUpItem = nullptr;
+		}
+		_Player = nullptr;	
+	}
 }
 

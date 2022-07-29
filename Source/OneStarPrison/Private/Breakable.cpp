@@ -206,7 +206,6 @@ void ABreakable::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class A
 	}
 }
 
-
 AActor* ABreakable::SpawnActor(TSubclassOf<class AActor> _Actor)
 {
 	return(GetWorld()->SpawnActor<AActor>(_Actor, GetActorTransform()));
