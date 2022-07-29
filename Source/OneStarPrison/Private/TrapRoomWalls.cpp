@@ -64,7 +64,6 @@ void ATrapRoomWalls::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		if (playerActor)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("hit by wall"));
-			//playerActor->IsDead = true;
 			playerActor->HitByWallCount += 1;
 		}
 
@@ -75,7 +74,7 @@ void ATrapRoomWalls::OpenDoor(float _DeltaTime)
 {
 	if (Mesh->GetComponentLocation() != OpenPosition)
 	{
-		FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), OpenPosition, _DeltaTime);
+		FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), OpenPosition, _DeltaTime * MoveSpeed);
 		Mesh->SetWorldLocation(newPos);
 	}
 }

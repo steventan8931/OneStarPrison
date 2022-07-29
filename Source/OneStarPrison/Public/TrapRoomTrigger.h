@@ -37,6 +37,9 @@ public:
 		APlayerCharacter* OverlappingPlayer;
 
 	UPROPERTY(EditAnywhere, Replicated)
+		class ADoubleLeverManager* DoubleDoorManager;
+
+	UPROPERTY(EditAnywhere, Replicated)
 	bool Triggered = false;
 
 	UPROPERTY(VisibleAnywhere)
