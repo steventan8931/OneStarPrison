@@ -37,6 +37,12 @@ public:
 	UFUNCTION(Server, Unreliable)
 	void RPCCheckLeversOpen();
 
+	UFUNCTION(NetMulticast, Unreliable)
+		void ResetDoors();
+
+	UFUNCTION(Server, Unreliable)
+		void RPCResetDoors();
+
 	UPROPERTY(VisibleAnywhere, Replicated)
 		bool IsOpen = false;
 

@@ -17,6 +17,11 @@ void AMannequinManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	for (int i = 0; i < Keys.Num(); i++)
+	{
+		Keys[i]->Mesh->SetVisibility(false);
+		Keys[i]->Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 }
 
 void AMannequinManager::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -26,6 +31,9 @@ void AMannequinManager::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 	DOREPLIFETIME(AMannequinManager, Mannequins);
 	DOREPLIFETIME(AMannequinManager, Doors);
 	DOREPLIFETIME(AMannequinManager, IsOpen);
+	DOREPLIFETIME(AMannequinManager, Keys);
+
+
 }
 
 // Called every frame
@@ -95,6 +103,11 @@ void AMannequinManager::RPCCheckMatchingMannequin_Implementation()
 
 	}
 
+	for (int i = 0; i < Keys.Num(); i++)
+	{
+		Keys[i]->Mesh->SetVisibility(true);
+		Keys[i]->Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
 	IsOpen = true;
 }
 

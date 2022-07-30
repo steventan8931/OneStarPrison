@@ -75,3 +75,25 @@ void ADoubleLeverManager::RPCCheckLeversOpen_Implementation()
 
 	IsOpen = true;
 }
+
+void ADoubleLeverManager::ResetDoors_Implementation()
+{
+	RPCResetDoors();
+}
+
+void ADoubleLeverManager::RPCResetDoors_Implementation()
+{
+	for (int i = 0; i < Doors.Num(); i++)
+	{
+		Doors[i]->IsOpen = false;
+		Doors[i]->PlaySound();
+	}
+
+	for (int i = 0; i < Levers.Num(); i++)
+	{
+		Levers[i]->IsOpen = false;
+	}
+
+	SoundPlayed = false;
+	IsOpen = false;
+}

@@ -28,6 +28,11 @@ void ADoor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeP
 	DOREPLIFETIME(ADoor, OpenPosition);
 	DOREPLIFETIME(ADoor, ClosedPosition);
 	DOREPLIFETIME(ADoor, IsOpen);
+
+	DOREPLIFETIME(ADoor, OpenRotation);
+	DOREPLIFETIME(ADoor, ClosedRotation);
+	DOREPLIFETIME(ADoor, IsRotationDoor);
+
 }
 
 // Called every frame
@@ -47,20 +52,44 @@ void ADoor::Tick(float DeltaTime)
 
 void ADoor::OpenDoor(float _DeltaTime)
 {
-	if (Mesh->GetComponentLocation() != OpenPosition)
+	if (IsRotationDoor)
 	{
-		FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), OpenPosition, _DeltaTime);
-		Mesh->SetWorldLocation(newPos);
+		if (Mesh->GetComponentRotation() != OpenRotation)
+		{
+			FRotator newRot = FMath::Lerp(Mesh->GetComponentRotation(), OpenRotation, _DeltaTime);
+			Mesh->SetWorldRotation(newRot);
+		}
 	}
+	else
+	{
+		if (Mesh->GetComponentLocation() != OpenPosition)
+		{
+			FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), OpenPosition, _DeltaTime);
+			Mesh->SetWorldLocation(newPos);
+		}
+	}
+
 }
 
 void ADoor::CloseDoor(float _DeltaTime)
 {
-	if (Mesh->GetComponentLocation() != ClosedPosition)
+	if (IsRotationDoor)
 	{
-		FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), ClosedPosition, _DeltaTime);
-		Mesh->SetWorldLocation(newPos);
+		if (Mesh->GetComponentRotation() != ClosedRotation)
+		{
+			FRotator newRot = FMath::Lerp(Mesh->GetComponentRotation(), ClosedRotation, _DeltaTime);
+			Mesh->SetWorldRotation(newRot);
+		}
 	}
+	else
+	{
+		if (Mesh->GetComponentLocation() != ClosedPosition)
+		{
+			FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), ClosedPosition, _DeltaTime);
+			Mesh->SetWorldLocation(newPos);
+		}
+	}
+
 }
 
 void ADoor::PlaySound()

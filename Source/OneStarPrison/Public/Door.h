@@ -28,10 +28,10 @@ public:
 	UPROPERTY(EditAnywhere)
 		USoundBase* OpenSound;
 
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
 		bool IsOpen = false;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* Mesh;
 
 	UPROPERTY(EditAnywhere, Replicated)
@@ -39,6 +39,13 @@ public:
 
 	UPROPERTY(EditAnywhere, Replicated)
 		FVector ClosedPosition = FVector(0, 0, 0);
+
+	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation", BlueprintReadWrite)
+		bool IsRotationDoor = false;
+	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation", BlueprintReadWrite)
+		FRotator OpenRotation = FRotator(0, 0, 0);
+	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation", BlueprintReadWrite)
+		FRotator ClosedRotation = FRotator(0, 0, 0);
 
 	//Transition From Current Position to Open Position
 	void OpenDoor(float _DeltaTime);
