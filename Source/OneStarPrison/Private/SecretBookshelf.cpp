@@ -41,7 +41,7 @@ void ASecretBookshelf::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ASecretBookshelf, OpenPosition);
+	DOREPLIFETIME(ASecretBookshelf, OpenRotation);
 	DOREPLIFETIME(ASecretBookshelf, BothBooksInserted);
 }
 
@@ -64,10 +64,10 @@ void ASecretBookshelf::Tick(float DeltaTime)
 			SoundPlayed = true;
 		}
 
-		if (Mesh->GetComponentLocation() != OpenPosition)
+		if (Mesh->GetComponentRotation() != OpenRotation)
 		{
-			FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), OpenPosition, DeltaTime);
-			Mesh->SetWorldLocation(newPos);
+			FRotator newRot = FMath::Lerp(Mesh->GetComponentRotation(), OpenRotation, DeltaTime);
+			Mesh->SetWorldRotation(newRot);
 		}
 
 		return;

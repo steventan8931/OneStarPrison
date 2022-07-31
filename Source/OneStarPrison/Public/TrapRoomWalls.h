@@ -33,6 +33,9 @@ public:
 		bool IsOpen = false;
 
 	UPROPERTY(EditAnywhere, Replicated)
+		float MoveSpeed = 1.0f;
+
+	UPROPERTY(EditAnywhere, Replicated)
 		FVector OpenPosition = FVector(0, 0, 0);
 
 	UPROPERTY(EditAnywhere, Replicated)

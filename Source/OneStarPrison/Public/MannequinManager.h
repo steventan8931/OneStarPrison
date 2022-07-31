@@ -32,6 +32,9 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		TArray<ADoor*> Doors;
 
+	UPROPERTY(EditAnywhere, Replicated)
+		TArray<APickupable*> Keys;
+
 	//Check if both mannequins match
 	UFUNCTION(Client, Unreliable)
 		void CheckMatchingMannequin();

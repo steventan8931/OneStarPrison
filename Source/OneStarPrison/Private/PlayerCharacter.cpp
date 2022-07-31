@@ -98,6 +98,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, PlayerIndex);
 
 	DOREPLIFETIME(APlayerCharacter, CanMove);
+
 }
 
 // Called every frame
@@ -481,8 +482,16 @@ void APlayerCharacter::CheckDeath(float _DeltaTime)
 
 		if (DeathTimerCounter > DeathTimer)
 		{
-			SetActorLocation(RespawnCheckpoint);
+			if (HasAuthority())
+			{
+				SetActorLocation(RespawnCheckpoint);
+			}
+			else
+			{
+				SetActorLocation(RespawnCheckpoint + FVector(5,5,5));
+			}
 			DeathTimerCounter = 0.0f;
+			HitByWallCount = 0;
 			IsDead = false;
 		}
 	}

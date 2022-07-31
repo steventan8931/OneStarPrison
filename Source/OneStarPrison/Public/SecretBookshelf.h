@@ -45,7 +45,7 @@ public:
 		class USceneComponent* Book2Position;
 
 	UPROPERTY(EditAnywhere, Replicated)
-		FVector OpenPosition = FVector(0, 0, 0);
+		FRotator OpenRotation = FRotator(0, 0, 0);
 
 	class APlayerCharacter* OverlappingPlayer = nullptr;
 

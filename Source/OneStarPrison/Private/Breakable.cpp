@@ -16,6 +16,8 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 
+#include "TrapRoomTrigger.h"
+
 // Sets default values
 ABreakable::ABreakable()
 {
@@ -203,7 +205,6 @@ void ABreakable::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class A
 
 	}
 }
-
 
 AActor* ABreakable::SpawnActor(TSubclassOf<class AActor> _Actor)
 {

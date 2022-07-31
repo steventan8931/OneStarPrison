@@ -46,6 +46,14 @@ void ATrapRoomWalls::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (IsOpen)
+	{
+		OpenDoor(DeltaTime);
+	}
+	else
+	{
+		CloseDoor(DeltaTime);
+	}
 }
 
 void ATrapRoomWalls::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -55,8 +63,8 @@ void ATrapRoomWalls::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 		if (playerActor)
 		{
-			//GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, TEXT("Dead"));
-			playerActor->IsDead = true;
+			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("hit by wall"));
+			playerActor->HitByWallCount += 1;
 		}
 
 	}
@@ -66,18 +74,14 @@ void ATrapRoomWalls::OpenDoor(float _DeltaTime)
 {
 	if (Mesh->GetComponentLocation() != OpenPosition)
 	{
-		FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), OpenPosition, _DeltaTime);
+		FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), OpenPosition, _DeltaTime * MoveSpeed);
 		Mesh->SetWorldLocation(newPos);
 	}
 }
 
 void ATrapRoomWalls::CloseDoor(float _DeltaTime)
 {
-	if (Mesh->GetComponentLocation() != ClosedPosition)
-	{
-		FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), ClosedPosition, _DeltaTime);
-		Mesh->SetWorldLocation(newPos);
-	}
+	Mesh->SetWorldLocation(ClosedPosition);
 }
 
 void ATrapRoomWalls::PlaySound()

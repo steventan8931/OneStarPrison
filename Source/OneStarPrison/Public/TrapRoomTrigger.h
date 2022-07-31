@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "TrapRoomWalls.h"
+#include "Breakable.h"
 #include "TrapRoomTrigger.generated.h"
 
 UCLASS()
@@ -29,7 +31,19 @@ public:
 	UPROPERTY(EditAnywhere)
 		USoundBase* TriggerSound;
 
+	UPROPERTY(EditAnywhere, Replicated)
+		TArray<ATrapRoomWalls*> RoomWalls;
+
 	UPROPERTY(VisibleAnywhere, Replicated)
+		class APlayerCharacter* OverlappingPlayer;
+
+	UPROPERTY(VisibleAnywhere, Replicated)
+		class APlayerCharacter* OverlappingPlayer2;
+
+	UPROPERTY(EditAnywhere, Replicated)
+		class ADoubleLeverManager* DoubleDoorManager;
+
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
 	bool Triggered = false;
 
 	UPROPERTY(VisibleAnywhere)
@@ -38,4 +52,20 @@ public:
 	//Overlap Functions
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	//Reseting
+	UPROPERTY(EditAnywhere, Replicated)
+		TArray<ABreakable*> BreakableBarrels;
+	UPROPERTY(Replicated)
+		TArray<FTransform> BarrelTransforms;
+		TSubclassOf<class AActor>ActorToSpawn;
+		TSubclassOf<class AActor> ActorHiddenInBarrel;
+
+	AActor* SpawnActor(FTransform _Transform);
+
+	void CheckPlayerHit(APlayerCharacter* _Player);
+	void RespawnPlayers(APlayerCharacter* _Player);
+
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
+	bool IsPlayerHit = false;
 };

@@ -184,6 +184,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsDead = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int HitByWallCount = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float DeathTimer = 1.0f;
