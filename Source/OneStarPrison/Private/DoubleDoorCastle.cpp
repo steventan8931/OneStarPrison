@@ -173,39 +173,47 @@ void ADoubleDoorCastle::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, 
 
 		if (playerActor)
 		{
-			if (OverlappingPlayer == playerActor)
+			if (OverlappingPlayer)
 			{
-				if (KeysRequired > 0)
+				if (OverlappingPlayer == playerActor)
 				{
-					if (OverlappingPlayer->PickedUpItem)
+					if (KeysRequired > 0)
 					{
-						APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
-						if (key)
+						if (OverlappingPlayer->PickedUpItem)
 						{
-							OverlappingPlayer->CanInteract = false;
+							APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
+							if (key)
+							{
+								OverlappingPlayer->CanInteract = false;
+							}
+
 						}
-
 					}
-				}
-				OverlappingPlayer = nullptr;
-			}
-			if (OverlappingPlayer2 == playerActor)
-			{
-				OverlappingPlayer2 = nullptr;
-
-				if (KeysRequired > 0)
-				{
-					if (OverlappingPlayer2->PickedUpItem)
-					{
-						APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer2->PickedUpItem);
-						if (key)
-						{
-							OverlappingPlayer2->CanInteract = false;
-						}
-
-					}
+					OverlappingPlayer = nullptr;
 				}
 			}
+
+			if (OverlappingPlayer2)
+			{
+				if (OverlappingPlayer2 == playerActor)
+				{
+					if (KeysRequired > 0)
+					{
+						if (OverlappingPlayer2->PickedUpItem)
+						{
+							APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer2->PickedUpItem);
+							if (key)
+							{
+								OverlappingPlayer2->CanInteract = false;
+							}
+
+						}
+					}
+
+					OverlappingPlayer2 = nullptr;
+				}
+			}
+
 
 			NumOfOverlappingPlayers--;
 		}
