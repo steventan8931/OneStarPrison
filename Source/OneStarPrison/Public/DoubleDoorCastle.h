@@ -28,6 +28,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		USoundBase* OpenSound;
 
+	UPROPERTY(EditAnywhere)
+		USoundBase* InsertSound;
+
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* LMesh;
 	UPROPERTY(VisibleAnywhere)
