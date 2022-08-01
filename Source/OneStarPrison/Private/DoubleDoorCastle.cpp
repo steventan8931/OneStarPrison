@@ -113,7 +113,7 @@ void ADoubleDoorCastle::RPCCheckKeyDoor_Implementation(APlayerCharacter* _Player
 
 			if (key)
 			{
-				_Player->CanInteract = true;
+				_Player->CanInteract = true;		
 			}
 
 			if (_Player->IsInteracting)
@@ -121,6 +121,10 @@ void ADoubleDoorCastle::RPCCheckKeyDoor_Implementation(APlayerCharacter* _Player
 				_Player->PickedUpItem->Destroy();
 				_Player->PickedUpItem = nullptr;
 				_Player->CanInteract = false;
+				if (InsertSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), InsertSound, GetActorLocation());
+				}
 				KeysInserted++;
 			}
 		}
@@ -173,39 +177,47 @@ void ADoubleDoorCastle::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, 
 
 		if (playerActor)
 		{
-			if (OverlappingPlayer == playerActor)
+			if (OverlappingPlayer)
 			{
-				if (KeysRequired > 0)
+				if (OverlappingPlayer == playerActor)
 				{
-					if (OverlappingPlayer->PickedUpItem)
+					if (KeysRequired > 0)
 					{
-						APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
-						if (key)
+						if (OverlappingPlayer->PickedUpItem)
 						{
-							OverlappingPlayer->CanInteract = false;
+							APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
+							if (key)
+							{
+								OverlappingPlayer->CanInteract = false;
+							}
+
 						}
-
 					}
-				}
-				OverlappingPlayer = nullptr;
-			}
-			if (OverlappingPlayer2 == playerActor)
-			{
-				OverlappingPlayer2 = nullptr;
-
-				if (KeysRequired > 0)
-				{
-					if (OverlappingPlayer2->PickedUpItem)
-					{
-						APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer2->PickedUpItem);
-						if (key)
-						{
-							OverlappingPlayer2->CanInteract = false;
-						}
-
-					}
+					OverlappingPlayer = nullptr;
 				}
 			}
+
+			if (OverlappingPlayer2)
+			{
+				if (OverlappingPlayer2 == playerActor)
+				{
+					if (KeysRequired > 0)
+					{
+						if (OverlappingPlayer2->PickedUpItem)
+						{
+							APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer2->PickedUpItem);
+							if (key)
+							{
+								OverlappingPlayer2->CanInteract = false;
+							}
+
+						}
+					}
+
+					OverlappingPlayer2 = nullptr;
+				}
+			}
+
 
 			NumOfOverlappingPlayers--;
 		}
