@@ -105,19 +105,16 @@ void AMannequin::Tick(float DeltaTime)
 					case EMannaquinPart::Helmet:
 						EquippedArmor.HelmetEquipped = true;
 						armor->SetActorLocation(HelmetPosition->GetComponentLocation());
-						armor->SetActorRotation(HelmetPosition->GetComponentRotation());
 						EquippedArray.Add(armor);
 						break;
 					case EMannaquinPart::Armor:
 						EquippedArmor.ArmorEquipped = true;
 						armor->SetActorLocation(ArmorPosition->GetComponentLocation());
-						armor->SetActorRotation(ArmorPosition->GetComponentRotation());
 						EquippedArray.Add(armor);
 						break;
 					case EMannaquinPart::Footwear:
 						EquippedArmor.FootwearEquipped = true;
 						armor->SetActorLocation(FootwearPosition->GetComponentLocation());
-						armor->SetActorRotation(FootwearPosition->GetComponentRotation());
 						EquippedArray.Add(armor);
 						break;
 					}

@@ -19,12 +19,8 @@ void AMannequinManager::BeginPlay()
 
 	for (int i = 0; i < Keys.Num(); i++)
 	{
-		if (Keys[i])
-		{
-			Keys[i]->Mesh->SetVisibility(false);
-			Keys[i]->Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		}
-
+		Keys[i]->Mesh->SetVisibility(false);
+		Keys[i]->Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 }
 

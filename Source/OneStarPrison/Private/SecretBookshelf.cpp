@@ -21,9 +21,6 @@ ASecretBookshelf::ASecretBookshelf()
 	Book2Position = CreateDefaultSubobject<USceneComponent>(TEXT("Book2Position"));
 	Book2Position->SetupAttachment(Mesh);
 
-	Book3Position = CreateDefaultSubobject<USceneComponent>(TEXT("Book3Position"));
-	Book3Position->SetupAttachment(Mesh);
-
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	BoxCollision->SetBoxExtent(FVector(200, 200, 200));
 	BoxCollision->SetCollisionProfileName(TEXT("Trigger"));
@@ -99,10 +96,6 @@ void ASecretBookshelf::Tick(float DeltaTime)
 						Book2Inserted = true;
 						book->SetActorLocation(Book2Position->GetComponentLocation());
 						break;
-					case 2:
-						Book3Inserted = true;
-						book->SetActorLocation(Book3Position->GetComponentLocation());
-						break;
 					}
 
 					if (InsertSound)
@@ -136,12 +129,6 @@ void ASecretBookshelf::RPCCheckInsertedBook_Implementation()
 	}
 
 	if (!Book2Inserted)
-	{
-		BothBooksInserted = false;
-		return;
-	}
-
-	if (!Book3Inserted)
 	{
 		BothBooksInserted = false;
 		return;
