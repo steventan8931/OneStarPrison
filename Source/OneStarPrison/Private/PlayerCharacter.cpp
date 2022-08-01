@@ -82,6 +82,8 @@ void APlayerCharacter::BeginPlay()
 
 	CurrentInteractWidget = CreateWidget<UUserWidget>(GetWorld(), InteractWidgetClass);
 	CurrentPickupWidget = CreateWidget<UUserWidget>(GetWorld(), PickupWidgetClass);
+
+	cacheArmLength = CameraBoom->TargetArmLength;
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -193,7 +195,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	}
 	else
 	{
-		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, 350, DeltaTime);
+		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, cacheArmLength, DeltaTime);
 
 		SplineComponent->ClearSplinePoints(true);
 		for (int Index = 0; Index != SplineComponentArray.Num(); ++Index)
