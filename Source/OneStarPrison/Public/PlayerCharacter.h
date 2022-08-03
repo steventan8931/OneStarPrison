@@ -209,6 +209,8 @@ public:
 	//Crouching/Sneaking
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Replicated)
 		bool IsCrouching = false;
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+		float CrouchSpeedScale = 0.25f;
 	UFUNCTION(Server, Reliable)
 	void StartCrouching();
 	UFUNCTION(Server, Reliable)

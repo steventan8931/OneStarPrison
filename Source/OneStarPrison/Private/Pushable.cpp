@@ -35,7 +35,7 @@ void APushable::Tick(float DeltaTime)
 
 void APushable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("I Hit: %s"), *OtherActor->GetName()));
 	if ((OtherActor) && (OtherActor != this))
 	{
 		APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
@@ -44,7 +44,7 @@ void APushable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPri
 			if (player->CanPush)
 			{
 				player->IsPushing = true;
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("I Hit: %s"), *OtherActor->GetName()));
+
 			}
 		}
 	}

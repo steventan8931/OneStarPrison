@@ -304,7 +304,7 @@ void APlayerCharacter::MoveForward(float Value)
 		//Walking VS Crouching
 		if (IsCrouching)
 		{
-			AddMovementInput(Direction, Value/4);
+			AddMovementInput(Direction, Value * CrouchSpeedScale);
 		}
 		else
 		{
@@ -333,7 +333,7 @@ void APlayerCharacter::MoveRight(float Value)
 
 		if (IsCrouching)
 		{
-			AddMovementInput(Direction, Value / 4);
+			AddMovementInput(Direction, Value * CrouchSpeedScale);
 		}
 		else
 		{
