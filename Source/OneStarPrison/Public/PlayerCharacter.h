@@ -199,7 +199,7 @@ public:
 	void CheckDeath(float _DeltaTime);
 
 	//Pushing
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 		bool CanPush = false;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
@@ -216,4 +216,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void StopCrouching();
 
+	UPROPERTY(BlueprintReadWrite)
+		bool IsClimbing = false;
+	void CheckClimbing();
 };

@@ -214,6 +214,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 		CanMove = true;
 	}
 
+	//Updates climbing movement
+	CheckClimbing();
+
 	IsPickingUp = false;
 	IsGrabbing = false;
 	CheckDeath(DeltaTime);
@@ -518,6 +521,23 @@ void APlayerCharacter::CheckDeath(float _DeltaTime)
 			HitByWallCount = 0;
 			IsDead = false;
 		}
+	}
+}
+
+void APlayerCharacter::CheckClimbing()
+{
+	if (IsClimbing)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 75.f;
+		GetCharacterMovement()->MaxStepHeight = 100.0f;
+		GetCharacterMovement()->SetWalkableFloorAngle(90.0f);
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 500.f;
+		GetCharacterMovement()->MaxStepHeight = 45.0f;
+		GetCharacterMovement()->SetWalkableFloorAngle(60.0f);
+
 	}
 }
 
