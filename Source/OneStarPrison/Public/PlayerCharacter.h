@@ -198,10 +198,20 @@ public:
 	//Checks if dead then respawn player
 	void CheckDeath(float _DeltaTime);
 
-	UPROPERTY(EditAnywhere)
+	//Pushing
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool CanPush = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 		bool IsPushing = false;
+
+
+	//Crouching/Sneaking
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Replicated)
+		bool IsCrouching = false;
+	UFUNCTION(Server, Reliable)
+	void StartCrouching();
+	UFUNCTION(Server, Reliable)
+	void StopCrouching();
 
 };

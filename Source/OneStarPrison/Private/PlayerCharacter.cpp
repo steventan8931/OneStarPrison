@@ -100,7 +100,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, PlayerIndex);
 
 	DOREPLIFETIME(APlayerCharacter, CanMove);
-
+	DOREPLIFETIME(APlayerCharacter, IsCrouching);
 }
 
 // Called every frame
@@ -253,6 +253,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	//Throw picked up item
 	PlayerInputComponent->BindAction("Pickup / Throw", IE_Released, this, &APlayerCharacter::Throw);
+
+	//Crouching / Sneakinbg
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::StartCrouching);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerCharacter::StopCrouching);
 }
 
 void APlayerCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
@@ -296,7 +300,17 @@ void APlayerCharacter::MoveForward(float Value)
 
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		AddMovementInput(Direction, Value);
+
+		//Walking VS Crouching
+		if (IsCrouching)
+		{
+			AddMovementInput(Direction, Value/4);
+		}
+		else
+		{
+			AddMovementInput(Direction, Value);
+		}
+
 	}
 }
 
@@ -316,7 +330,15 @@ void APlayerCharacter::MoveRight(float Value)
 		// get right vector 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
-		AddMovementInput(Direction, Value);
+
+		if (IsCrouching)
+		{
+			AddMovementInput(Direction, Value / 4);
+		}
+		else
+		{
+			AddMovementInput(Direction, Value);
+		}
 	}
 }
 
@@ -497,6 +519,16 @@ void APlayerCharacter::CheckDeath(float _DeltaTime)
 			IsDead = false;
 		}
 	}
+}
+
+void APlayerCharacter::StartCrouching_Implementation()
+{
+	IsCrouching = true;
+}
+
+void APlayerCharacter::StopCrouching_Implementation()
+{
+	IsCrouching = false;
 }
 
 
