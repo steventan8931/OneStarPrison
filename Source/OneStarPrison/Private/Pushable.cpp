@@ -12,8 +12,9 @@ APushable::APushable()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	RootComponent = Mesh;
 	Mesh->OnComponentHit.AddDynamic(this, &APushable::OnCompHit);
+	//RootComponent = Mesh;
+
 }
 
 // Called when the game starts or when spawned
@@ -35,7 +36,7 @@ void APushable::Tick(float DeltaTime)
 
 void APushable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("I Hit: %s"), *OtherActor->GetName()));
+
 	if ((OtherActor) && (OtherActor != this))
 	{
 		APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
@@ -44,8 +45,10 @@ void APushable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPri
 			if (player->CanPush)
 			{
 				player->IsPushing = true;
-
+				//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, FString::Printf(TEXT("I Hit: %s"), *OtherActor->GetName()));
 			}
+
 		}
 	}
 }
+
