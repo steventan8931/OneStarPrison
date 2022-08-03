@@ -27,7 +27,7 @@ public:
 		class UStaticMeshComponent* Mesh;
 
 	UPROPERTY(EditAnywhere)
-		int PulleyWeightage = 5;
+		int PulleyWeightage = 7;
 
 	bool HasBeenPushed = false;
 

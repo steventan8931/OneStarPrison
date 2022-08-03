@@ -197,4 +197,11 @@ public:
 
 	//Checks if dead then respawn player
 	void CheckDeath(float _DeltaTime);
+
+	UPROPERTY(EditAnywhere)
+		bool CanPush = false;
+
+	UPROPERTY(EditAnywhere)
+		bool IsPushing = false;
+
 };
