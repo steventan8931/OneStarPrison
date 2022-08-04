@@ -222,4 +222,8 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		float ClimbSpeed = 50.0f;
 	void CheckClimbing();
+
+	//Posssesion
+	UFUNCTION(Server, Reliable)
+	void SetVeloctiy(FVector _Velocity);
 };

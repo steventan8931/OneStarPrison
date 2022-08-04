@@ -552,6 +552,11 @@ void APlayerCharacter::CheckClimbing()
 	}
 }
 
+void APlayerCharacter::SetVeloctiy_Implementation(FVector _Velocity)
+{
+	GetCharacterMovement()->Velocity = _Velocity;
+}
+
 void APlayerCharacter::StartCrouching_Implementation()
 {
 	IsCrouching = true;
