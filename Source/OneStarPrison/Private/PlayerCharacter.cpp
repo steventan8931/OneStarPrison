@@ -304,6 +304,17 @@ void APlayerCharacter::MoveForward(float Value)
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello %s"), *Rotation.ToString()));
+
+		if (IsClimbing)
+		{
+			GetCharacterMovement()->bOrientRotationToMovement = false;
+		}
+		else
+		{
+			GetCharacterMovement()->bOrientRotationToMovement = true;
+		}
+
 		//Walking VS Crouching
 		if (IsCrouching)
 		{
@@ -319,7 +330,7 @@ void APlayerCharacter::MoveForward(float Value)
 
 void APlayerCharacter::MoveRight(float Value)
 {
-	if (!CanMove)
+	if (!CanMove || IsClimbing)
 	{
 		return;
 	}
@@ -528,13 +539,13 @@ void APlayerCharacter::CheckClimbing()
 {
 	if (IsClimbing)
 	{
-		GetCharacterMovement()->MaxWalkSpeed = 75.f;
+		GetCharacterMovement()->MaxWalkSpeed = ClimbSpeed;
 		GetCharacterMovement()->MaxStepHeight = 100.0f;
 		GetCharacterMovement()->SetWalkableFloorAngle(90.0f);
 	}
 	else
 	{
-		GetCharacterMovement()->MaxWalkSpeed = 500.f;
+		GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 		GetCharacterMovement()->MaxStepHeight = 45.0f;
 		GetCharacterMovement()->SetWalkableFloorAngle(60.0f);
 

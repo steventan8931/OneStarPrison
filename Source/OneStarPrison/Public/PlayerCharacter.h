@@ -216,7 +216,10 @@ public:
 	UFUNCTION(Server, Reliable)
 	void StopCrouching();
 
+	//Climbing
 	UPROPERTY(BlueprintReadWrite)
 		bool IsClimbing = false;
+	UPROPERTY(EditAnywhere, Replicated)
+		float ClimbSpeed = 50.0f;
 	void CheckClimbing();
 };
