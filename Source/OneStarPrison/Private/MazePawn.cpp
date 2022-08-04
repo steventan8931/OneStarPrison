@@ -4,6 +4,7 @@
 #include "MazePawn.h"
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 #include "PlayerCharacter.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -12,8 +13,6 @@ AMazePawn::AMazePawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	//RootComponent = Camera;
 }
 
 // Called when the game starts or when spawned

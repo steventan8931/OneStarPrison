@@ -36,17 +36,22 @@ void APossessTrigger::Tick(float DeltaTime)
 	{
 		if (OverlappingPlayer->IsInteracting)
 		{
-			APlayerController* controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-
-			controller->Possess(Pawn);
-
-			AMazePawn* mazepawn = Cast<AMazePawn>(Pawn);
-
-			if (mazepawn)
+			if (Pawn)
 			{
-				mazepawn->CurrentPlayer = OverlappingPlayer;
-				GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, TEXT("player set s"));
+				APlayerController* controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+				AMazePawn* mazepawn = Cast<AMazePawn>(Pawn);
+
+				if (mazepawn)
+				{
+					mazepawn->CurrentPlayer = OverlappingPlayer;
+					mazepawn->CurrentCameraTransform = OverlappingPlayer->GetCameraTransform();
+				}
+
+				controller->Possess(Pawn);
 			}
+
+
 			OverlappingPlayer->SetVeloctiy(FVector::ZeroVector);
 			OverlappingPlayer->IsInteracting = false;
 			//OverlappingPlayer->GetCharacterMovement()->LinearVelocity = FVector(0,0,0);

@@ -22,16 +22,12 @@ protected:
 	////Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
-	UPROPERTY(BlueprintReadWrite)
-		class UCameraComponent* CameraComponent;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-
 
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
 		FTransform EndCameraTransform = FTransform::Identity;

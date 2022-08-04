@@ -226,4 +226,5 @@ public:
 	//Posssesion
 	UFUNCTION(Server, Reliable)
 	void SetVeloctiy(FVector _Velocity);
+		FTransform GetCameraTransform();
 };
