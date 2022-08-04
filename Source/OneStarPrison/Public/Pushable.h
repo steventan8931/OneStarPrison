@@ -27,10 +27,13 @@ public:
 		class UStaticMeshComponent* Mesh;
 
 	UPROPERTY(EditAnywhere)
-		int PulleyWeightage = 5;
+		int PulleyWeightage = 7;
 
 	bool HasBeenPushed = false;
 
 	UPROPERTY(VisibleAnywhere)
 		FTransform StartingTransform;
+
+	UFUNCTION()
+		void OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };

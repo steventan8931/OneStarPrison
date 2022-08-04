@@ -12,7 +12,7 @@ class ONESTARPRISON_API APlayerCharacter : public ACharacter
 	GENERATED_BODY()
 
 	/** Camera boom positioning the camera behind the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
 
 	/** Follow camera */
@@ -75,6 +75,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class USceneComponent* ThrowCameraPos;
+	
+	UPROPERTY(BlueprintReadWrite)
+	float cacheArmLength = 0.0f;
 
 	//Interact with object/button press/hold
 	void Interact();
@@ -194,4 +197,34 @@ public:
 
 	//Checks if dead then respawn player
 	void CheckDeath(float _DeltaTime);
+
+	//Pushing
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+		bool CanPush = false;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+		bool IsPushing = false;
+
+
+	//Crouching/Sneaking
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Replicated)
+		bool IsCrouching = false;
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+		float CrouchSpeedScale = 0.25f;
+	UFUNCTION(Server, Reliable)
+	void StartCrouching();
+	UFUNCTION(Server, Reliable)
+	void StopCrouching();
+
+	//Climbing
+	UPROPERTY(BlueprintReadWrite)
+		bool IsClimbing = false;
+	UPROPERTY(EditAnywhere, Replicated)
+		float ClimbSpeed = 50.0f;
+	void CheckClimbing();
+
+	//Posssesion
+	UFUNCTION(Server, Reliable)
+	void SetVeloctiy(FVector _Velocity);
+		FTransform GetCameraTransform();
 };

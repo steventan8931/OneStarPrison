@@ -113,7 +113,7 @@ void ADoubleDoorCastle::RPCCheckKeyDoor_Implementation(APlayerCharacter* _Player
 
 			if (key)
 			{
-				_Player->CanInteract = true;
+				_Player->CanInteract = true;		
 			}
 
 			if (_Player->IsInteracting)
@@ -121,6 +121,10 @@ void ADoubleDoorCastle::RPCCheckKeyDoor_Implementation(APlayerCharacter* _Player
 				_Player->PickedUpItem->Destroy();
 				_Player->PickedUpItem = nullptr;
 				_Player->CanInteract = false;
+				if (InsertSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), InsertSound, GetActorLocation());
+				}
 				KeysInserted++;
 			}
 		}
