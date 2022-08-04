@@ -82,6 +82,8 @@ void APlayerCharacter::BeginPlay()
 
 	CurrentInteractWidget = CreateWidget<UUserWidget>(GetWorld(), InteractWidgetClass);
 	CurrentPickupWidget = CreateWidget<UUserWidget>(GetWorld(), PickupWidgetClass);
+
+	cacheArmLength = CameraBoom->TargetArmLength;
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -98,7 +100,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, PlayerIndex);
 
 	DOREPLIFETIME(APlayerCharacter, CanMove);
-
+	DOREPLIFETIME(APlayerCharacter, IsCrouching);
 }
 
 // Called every frame
@@ -193,7 +195,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	}
 	else
 	{
-		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, 350, DeltaTime);
+		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, cacheArmLength, DeltaTime);
 
 		SplineComponent->ClearSplinePoints(true);
 		for (int Index = 0; Index != SplineComponentArray.Num(); ++Index)
@@ -211,6 +213,9 @@ void APlayerCharacter::Tick(float DeltaTime)
 	{
 		CanMove = true;
 	}
+
+	//Updates climbing movement
+	CheckClimbing();
 
 	IsPickingUp = false;
 	IsGrabbing = false;
@@ -251,6 +256,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	//Throw picked up item
 	PlayerInputComponent->BindAction("Pickup / Throw", IE_Released, this, &APlayerCharacter::Throw);
+
+	//Crouching / Sneakinbg
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::StartCrouching);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerCharacter::StopCrouching);
 }
 
 void APlayerCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
@@ -294,13 +303,34 @@ void APlayerCharacter::MoveForward(float Value)
 
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		AddMovementInput(Direction, Value);
+
+		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello %s"), *Rotation.ToString()));
+
+		if (IsClimbing)
+		{
+			GetCharacterMovement()->bOrientRotationToMovement = false;
+		}
+		else
+		{
+			GetCharacterMovement()->bOrientRotationToMovement = true;
+		}
+
+		//Walking VS Crouching
+		if (IsCrouching)
+		{
+			AddMovementInput(Direction, Value * CrouchSpeedScale);
+		}
+		else
+		{
+			AddMovementInput(Direction, Value);
+		}
+
 	}
 }
 
 void APlayerCharacter::MoveRight(float Value)
 {
-	if (!CanMove)
+	if (!CanMove || IsClimbing)
 	{
 		return;
 	}
@@ -314,7 +344,15 @@ void APlayerCharacter::MoveRight(float Value)
 		// get right vector 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
-		AddMovementInput(Direction, Value);
+
+		if (IsCrouching)
+		{
+			AddMovementInput(Direction, Value * CrouchSpeedScale);
+		}
+		else
+		{
+			AddMovementInput(Direction, Value);
+		}
 	}
 }
 
@@ -496,6 +534,45 @@ void APlayerCharacter::CheckDeath(float _DeltaTime)
 		}
 	}
 }
+
+void APlayerCharacter::CheckClimbing()
+{
+	if (IsClimbing)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = ClimbSpeed;
+		GetCharacterMovement()->MaxStepHeight = 100.0f;
+		GetCharacterMovement()->SetWalkableFloorAngle(90.0f);
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 500.0f;
+		GetCharacterMovement()->MaxStepHeight = 45.0f;
+		GetCharacterMovement()->SetWalkableFloorAngle(60.0f);
+
+	}
+}
+
+FTransform APlayerCharacter::GetCameraTransform()
+{
+	return FTransform(CameraBoom->GetComponentTransform());
+}
+
+void APlayerCharacter::SetVeloctiy_Implementation(FVector _Velocity)
+{
+	GetCharacterMovement()->Velocity = _Velocity;
+}
+
+void APlayerCharacter::StartCrouching_Implementation()
+{
+	IsCrouching = true;
+}
+
+void APlayerCharacter::StopCrouching_Implementation()
+{
+	IsCrouching = false;
+}
+
+
 
 void APlayerCharacter::ServerRPCThrow_Implementation()
 {
