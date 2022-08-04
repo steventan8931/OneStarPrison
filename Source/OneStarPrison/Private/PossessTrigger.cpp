@@ -71,8 +71,6 @@ void APossessTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
 			{
 				OverlappingPlayer = playerActor;
 				OverlappingPlayer->CanInteract = true;
-				GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, TEXT("Hello s"));
-
 			}
 		}
 	}

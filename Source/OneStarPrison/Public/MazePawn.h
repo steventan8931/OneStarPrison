@@ -22,6 +22,9 @@ protected:
 	////Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
+	void MoveForward(float Value);
+	void MoveRight(float Value);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -37,6 +40,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		 APlayerCharacter* CurrentPlayer;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool CanMove;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+		class UCameraComponent* Cam;
 
 	void ExitPawn();
 };
