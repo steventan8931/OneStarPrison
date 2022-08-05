@@ -42,11 +42,11 @@ void ADoor::Tick(float DeltaTime)
 
 	if (IsOpen)
 	{
-		OpenDoor(DeltaTime);
+		OpenDoor(DeltaTime * OpenSpeed);
 	}
 	else
 	{
-		CloseDoor(DeltaTime);
+		CloseDoor(DeltaTime * OpenSpeed);
 	}
 }
 

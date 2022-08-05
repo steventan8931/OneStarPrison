@@ -40,6 +40,9 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		FVector ClosedPosition = FVector(0, 0, 0);
 
+	UPROPERTY(EditAnywhere, Replicated)
+		float OpenSpeed = 1.0f;
+
 	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation", BlueprintReadWrite)
 		bool IsRotationDoor = false;
 	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation", BlueprintReadWrite)
