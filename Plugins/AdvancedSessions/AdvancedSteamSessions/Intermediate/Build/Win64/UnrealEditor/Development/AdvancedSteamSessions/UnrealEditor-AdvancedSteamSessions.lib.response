@@ -6,8 +6,8 @@
 /NAME:"UnrealEditor-AdvancedSteamSessions.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Intermediate\Build\Win64\OneStarPrisonEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
-"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.cpp.obj"
-"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.gen.cpp.obj"
-"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Default.rc2.res"
-/OUT:"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\UnrealEditor-AdvancedSteamSessions.lib"
+"D:\Game Development\Unreal Engine\OneStarPrison\Intermediate\Build\Win64\OneStarPrisonEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.cpp.obj"
+"D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.gen.cpp.obj"
+"D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Default.rc2.res"
+/OUT:"D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\UnrealEditor-AdvancedSteamSessions.lib"
