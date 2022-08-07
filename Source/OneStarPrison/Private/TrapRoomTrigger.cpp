@@ -38,10 +38,23 @@ void ATrapRoomTrigger::BeginPlay()
 			if (BreakableBarrels[i]->ActorToSpawn)
 			{
 				ActorHiddenInBarrel = BreakableBarrels[i]->ActorToSpawn;
+				BreakableBarrels[i]->ActorToSpawn = nullptr;
 			}
+		}
+	}
+
+	for (int i = 0; i < BreakableBarrels.Num(); i++)
+	{
+		int KeyBarrel = FMath::RandRange(0, BreakableBarrels.Num() - 1);
+
+		if (BreakableBarrels[KeyBarrel])
+		{
+			BreakableBarrels[KeyBarrel]->ActorToSpawn = ActorHiddenInBarrel;
+			break;
 		}
 
 	}
+
 }
 
 void ATrapRoomTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
