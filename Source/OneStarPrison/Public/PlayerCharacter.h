@@ -6,13 +6,21 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
+UENUM(BlueprintType)
+enum EInteractType
+{
+	LeverPull     UMETA(DisplayName = "LeverPull"),
+	Punch      UMETA(DisplayName = "Punch"),
+	//Grab   UMETA(DisplayName = "Footwear"),
+};
+
 UCLASS()
 class ONESTARPRISON_API APlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 	/** Camera boom positioning the camera behind the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
 
 	/** Follow camera */
@@ -75,11 +83,14 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class USceneComponent* ThrowCameraPos;
+	
+	UPROPERTY(BlueprintReadWrite)
+	float cacheArmLength = 0.0f;
 
 	//Interact with object/button press/hold
 	void Interact();
 	void StopInteract();
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(Replicated)
 	bool CanInteract = false;
 	UPROPERTY(BlueprintReadWrite,Replicated)
 	bool IsInteracting = false;
@@ -90,7 +101,6 @@ public:
 		void RPCStopInteract();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		bool IsGrabbing = false;
-
 
 	//Grab Pickupable items and drop
 	void PickupAndDrop();
@@ -179,19 +189,51 @@ public:
 	UPROPERTY(VisibleAnywhere, Replicated)
 		class APickupable* PickedUpItem = nullptr;
 
+
+
+	//Death
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		FVector RespawnCheckpoint = FVector(0, 0, 0);
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsDead = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int HitByWallCount = 0;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float DeathTimer = 1.0f;
-
 	float DeathTimerCounter = 0.0f;
-
 	//Checks if dead then respawn player
 	void CheckDeath(float _DeltaTime);
+
+	//Pushing
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+		bool CanPush = false;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+		bool IsPushing = false;
+
+
+	//Crouching/Sneaking
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Replicated)
+		bool IsCrouching = false;
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
+		float CrouchSpeedScale = 0.25f;
+	UFUNCTION(Server, Reliable)
+	void StartCrouching();
+	UFUNCTION(Server, Reliable)
+	void StopCrouching();
+
+	//Climbing
+	UPROPERTY(BlueprintReadWrite)
+		bool IsClimbing = false;
+	UPROPERTY(EditAnywhere, Replicated)
+		float ClimbSpeed = 50.0f;
+	void CheckClimbing();
+
+	//Posssesion
+	UFUNCTION(Server, Reliable)
+	void SetVeloctiy(FVector _Velocity);
+		FTransform GetCameraTransform();
+
+		//Interact Type
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+			TEnumAsByte<EInteractType> InteractType;
 };

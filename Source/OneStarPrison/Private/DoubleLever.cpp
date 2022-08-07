@@ -100,6 +100,7 @@ void ADoubleLever::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 			{
 				OverlappingPlayer = playerActor;
 				OverlappingPlayer->CanInteract = true;
+				OverlappingPlayer->InteractType = EInteractType::LeverPull;
 
 			}
 		}

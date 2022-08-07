@@ -44,6 +44,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class USceneComponent* Book2Position;
 
+	UPROPERTY(VisibleAnywhere)
+		class USceneComponent* Book3Position;
+
 	UPROPERTY(EditAnywhere, Replicated)
 		FRotator OpenRotation = FRotator(0, 0, 0);
 
@@ -54,6 +57,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		bool Book2Inserted = false;
+
+	UPROPERTY(EditAnywhere)
+		bool Book3Inserted = false;
 
 	UPROPERTY(Replicated)
 		bool BothBooksInserted = false;

@@ -2,6 +2,8 @@
 
 
 #include "Pushable.h"
+#include "PlayerCharacter.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
 APushable::APushable()
@@ -10,7 +12,9 @@ APushable::APushable()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	RootComponent = Mesh;
+	Mesh->OnComponentHit.AddDynamic(this, &APushable::OnCompHit);
+	//RootComponent = Mesh;
+
 }
 
 // Called when the game starts or when spawned
@@ -19,6 +23,8 @@ void APushable::BeginPlay()
 	Super::BeginPlay();
 	
 	StartingTransform = GetActorTransform();
+
+
 }
 
 // Called every frame
@@ -26,5 +32,23 @@ void APushable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void APushable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+
+	if ((OtherActor) && (OtherActor != this))
+	{
+		APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
+		if (player)
+		{
+			if (player->CanPush)
+			{
+				player->IsPushing = true;
+				//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, FString::Printf(TEXT("I Hit: %s"), *OtherActor->GetName()));
+			}
+
+		}
+	}
 }
 

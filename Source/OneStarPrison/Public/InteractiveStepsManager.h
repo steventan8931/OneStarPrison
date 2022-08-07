@@ -33,6 +33,12 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		TArray<AInteractiveSteps*> CurrentSteps;
 
+	UPROPERTY(EditAnywhere, Replicated)
+		float CloseDelay = 0.0f;
+
+	UPROPERTY(EditAnywhere, Replicated)
+		float CloseTimer = 0.0f;
+
 	UPROPERTY(EditAnywhere)
 		bool IsStepOpen = false;
 

@@ -168,6 +168,7 @@ void ABreakable::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 					OverlappingPlayer = playerActor;
 					//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 					OverlappingPlayer->CanInteract = true;
+					OverlappingPlayer->InteractType = EInteractType::Punch;
 				}
 			}
 			else
