@@ -6,6 +6,14 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
+UENUM(BlueprintType)
+enum EInteractType
+{
+	LeverPull     UMETA(DisplayName = "LeverPull"),
+	Punch      UMETA(DisplayName = "Punch"),
+	//Grab   UMETA(DisplayName = "Footwear"),
+};
+
 UCLASS()
 class ONESTARPRISON_API APlayerCharacter : public ACharacter
 {
@@ -82,7 +90,7 @@ public:
 	//Interact with object/button press/hold
 	void Interact();
 	void StopInteract();
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(Replicated)
 	bool CanInteract = false;
 	UPROPERTY(BlueprintReadWrite,Replicated)
 	bool IsInteracting = false;
@@ -93,7 +101,6 @@ public:
 		void RPCStopInteract();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		bool IsGrabbing = false;
-
 
 	//Grab Pickupable items and drop
 	void PickupAndDrop();
@@ -182,26 +189,24 @@ public:
 	UPROPERTY(VisibleAnywhere, Replicated)
 		class APickupable* PickedUpItem = nullptr;
 
+
+
+	//Death
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		FVector RespawnCheckpoint = FVector(0, 0, 0);
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsDead = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int HitByWallCount = 0;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float DeathTimer = 1.0f;
-
 	float DeathTimerCounter = 0.0f;
-
 	//Checks if dead then respawn player
 	void CheckDeath(float _DeltaTime);
 
 	//Pushing
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 		bool CanPush = false;
-
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 		bool IsPushing = false;
 
@@ -227,4 +232,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void SetVeloctiy(FVector _Velocity);
 		FTransform GetCameraTransform();
+
+		//Interact Type
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+			TEnumAsByte<EInteractType> InteractType;
 };

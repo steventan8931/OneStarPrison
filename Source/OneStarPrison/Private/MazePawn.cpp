@@ -13,6 +13,8 @@ AMazePawn::AMazePawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	Cam = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 }
 
 // Called when the game starts or when spawned
@@ -44,7 +46,11 @@ void AMazePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	//Interacting/Hold Interacting of object
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AMazePawn::ExitPawn);
+
+	PlayerInputComponent->BindAxis("Move Forward / Backward", this, &AMazePawn::MoveRight);
+	PlayerInputComponent->BindAxis("Move Right / Left", this, &AMazePawn::MoveForward);
 }
+
 
 void AMazePawn::ExitPawn()
 {
@@ -52,6 +58,39 @@ void AMazePawn::ExitPawn()
 	if (CurrentPlayer)
 	{
 		controller->Possess(CurrentPlayer);
-	}				GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, TEXT("Hello s"));
+	}
 
+}
+
+void AMazePawn::MoveForward(float Value)
+{
+	if ((Controller != nullptr) && (Value != 0.0f))
+	{
+		// find out which way is forward
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+		// get forward vector
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+
+		//AddMovementInput(Direction, Value);
+		Cam->AddWorldOffset(Direction * Value);
+	}
+}
+
+void AMazePawn::MoveRight(float Value)
+{
+	if ((Controller != nullptr) && (Value != 0.0f))
+	{
+		// find out which way is right
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+		// get right vector 
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		// add movement in that direction
+
+		//AddMovementInput(Direction, Value);	
+		Cam->AddWorldOffset(Direction * Value);
+	}
 }

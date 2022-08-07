@@ -64,6 +64,7 @@ void AOnOffLever::Tick(float DeltaTime)
 		if (OpenTimer >= OpenTime)
 		{
 			OverlappingPlayer->CanInteract = true;
+			OverlappingPlayer->InteractType = EInteractType::LeverPull;
 		}
 
 		if (OverlappingPlayer->IsInteracting)

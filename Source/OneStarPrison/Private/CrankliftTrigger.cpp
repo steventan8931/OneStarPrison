@@ -170,6 +170,7 @@ void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 				OverlappingPlayer = playerActor;
 				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 				OverlappingPlayer->CanInteract = true;
+				OverlappingPlayer->InteractType = EInteractType::LeverPull;
 			}
 		}
 	}

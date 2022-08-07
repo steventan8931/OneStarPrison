@@ -26,7 +26,11 @@ void AInteractiveStepsManager::GetLifetimeReplicatedProps(TArray< FLifetimePrope
 
 	DOREPLIFETIME(AInteractiveStepsManager, ListOfInteractiveSteps);
 	DOREPLIFETIME(AInteractiveStepsManager, CurrentSteps);
+
+	DOREPLIFETIME(AInteractiveStepsManager, CloseTimer);
+	DOREPLIFETIME(AInteractiveStepsManager, CloseDelay);
 }
+
 
 // Called every frame
 void AInteractiveStepsManager::Tick(float DeltaTime)
@@ -36,10 +40,17 @@ void AInteractiveStepsManager::Tick(float DeltaTime)
 	if (IsStepOpen)
 	{
 		OpenDoor(DeltaTime);
+		CloseTimer = 0.0f;
 	}
 	else
 	{
-		CloseDoor(DeltaTime);
+		CloseTimer += DeltaTime;
+		if (CloseTimer >= CloseDelay)
+		{
+			CloseDoor(DeltaTime);
+			CloseTimer = 0.0f;
+		}
+
 	}
 
 }
