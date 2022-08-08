@@ -186,10 +186,8 @@ public:
 		void CheckInteract();
 
 	//Current Pickedup Item
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadWrite)
 		class APickupable* PickedUpItem = nullptr;
-
-
 
 	//Death
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
