@@ -12,7 +12,7 @@ ADoor::ADoor()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(RootComponent);
+	//Mesh->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
