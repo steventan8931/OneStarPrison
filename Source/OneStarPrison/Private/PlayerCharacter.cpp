@@ -101,6 +101,10 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 
 	DOREPLIFETIME(APlayerCharacter, CanMove);
 	DOREPLIFETIME(APlayerCharacter, IsCrouching);
+
+	DOREPLIFETIME(APlayerCharacter, IsClimbing);
+
+	
 }
 
 // Called every frame
@@ -298,22 +302,23 @@ void APlayerCharacter::MoveForward(float Value)
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
 		// find out which way is forward
+
+
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 		// get forward vector
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-
-		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello %s"), *Rotation.ToString()));
+		FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
 		if (IsClimbing)
 		{
-			GetCharacterMovement()->bOrientRotationToMovement = false;
+			Direction = FRotationMatrix(GetActorRotation()).GetUnitAxis(EAxis::X);
 		}
-		else
-		{
-			GetCharacterMovement()->bOrientRotationToMovement = true;
-		}
+
+		//if (!HasAuthority())
+		//{
+		//	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello %s"), *Rotation.ToString()));
+		//}
 
 		//Walking VS Crouching
 		if (IsCrouching)
@@ -395,7 +400,7 @@ void APlayerCharacter::PickupAndDrop()
 
 		if (key)
 		{
-			IsGrabbing = true;
+			IsPickingUp = true;
 		}
 		else
 		{
@@ -535,16 +540,18 @@ void APlayerCharacter::CheckDeath(float _DeltaTime)
 	}
 }
 
-void APlayerCharacter::CheckClimbing()
+void APlayerCharacter::CheckClimbing_Implementation()
 {
 	if (IsClimbing)
 	{
+		GetCharacterMovement()->bOrientRotationToMovement = false;
 		GetCharacterMovement()->MaxWalkSpeed = ClimbSpeed;
 		GetCharacterMovement()->MaxStepHeight = 100.0f;
 		GetCharacterMovement()->SetWalkableFloorAngle(90.0f);
 	}
 	else
 	{
+		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 		GetCharacterMovement()->MaxStepHeight = 45.0f;
 		GetCharacterMovement()->SetWalkableFloorAngle(60.0f);

@@ -48,6 +48,10 @@ void AInteractiveStepsButton::GetLifetimeReplicatedProps(TArray< FLifetimeProper
 
 	DOREPLIFETIME(AInteractiveStepsButton, HandleOpenRotation);
 	DOREPLIFETIME(AInteractiveStepsButton, HandleClosedRotation);
+
+	DOREPLIFETIME(AInteractiveStepsButton, OverlappingPlayer);
+
+	DOREPLIFETIME(AInteractiveStepsButton, BoxCollision);
 }
 
 // Called every frame

@@ -186,10 +186,8 @@ public:
 		void CheckInteract();
 
 	//Current Pickedup Item
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadWrite)
 		class APickupable* PickedUpItem = nullptr;
-
-
 
 	//Death
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -222,10 +220,11 @@ public:
 	void StopCrouching();
 
 	//Climbing
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Replicated)
 		bool IsClimbing = false;
 	UPROPERTY(EditAnywhere, Replicated)
 		float ClimbSpeed = 50.0f;
+	UFUNCTION(NetMulticast, Reliable)
 	void CheckClimbing();
 
 	//Posssesion

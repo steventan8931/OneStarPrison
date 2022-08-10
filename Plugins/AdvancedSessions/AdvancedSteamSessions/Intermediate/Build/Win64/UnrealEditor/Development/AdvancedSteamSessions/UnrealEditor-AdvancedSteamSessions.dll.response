@@ -34,10 +34,17 @@
 /NODEFAULTLIB:"LIBCD"
 /NODEFAULTLIB:"LIBCPD"
 /FUNCTIONPADMIN
+<<<<<<< HEAD
+"C:\Users\AsheK\Documents\GitHub\OneStarPrison\Intermediate\Build\Win64\OneStarPrisonEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"C:\Users\AsheK\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.cpp.obj"
+"C:\Users\AsheK\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.gen.cpp.obj"
+"C:\Users\AsheK\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Default.rc2.res"
+=======
 "H:\Year 3 UE Proj\OneStarPrison\Intermediate\Build\Win64\OneStarPrisonEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
 "H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.cpp.obj"
 "H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Module.AdvancedSteamSessions.gen.cpp.obj"
 "H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\Default.rc2.res"
+>>>>>>> Peter
 "ThirdParty\Steamworks\Steamv151\sdk\redistributable_bin\win64\steam_api64.lib"
 "..\Plugins\Online\OnlineSubsystem\Intermediate\Build\Win64\UnrealEditor\Development\OnlineSubsystem\UnrealEditor-OnlineSubsystem.lib"
 "..\Intermediate\Build\Win64\UnrealEditor\Development\Sockets\UnrealEditor-Sockets.lib"
@@ -47,7 +54,11 @@
 "..\Intermediate\Build\Win64\UnrealEditor\Development\CoreUObject\UnrealEditor-CoreUObject.lib"
 "..\Intermediate\Build\Win64\UnrealEditor\Development\Engine\UnrealEditor-Engine.lib"
 "..\Intermediate\Build\Win64\UnrealEditor\Development\InputCore\UnrealEditor-InputCore.lib"
+<<<<<<< HEAD
+"C:\Users\AsheK\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSessions\UnrealEditor-AdvancedSessions.lib"
+=======
 "H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSessions\UnrealEditor-AdvancedSessions.lib"
+>>>>>>> Peter
 "..\Plugins\Online\OnlineSubsystemSteam\Intermediate\Build\Win64\UnrealEditor\Development\OnlineSubsystemSteam\UnrealEditor-OnlineSubsystemSteam.lib"
 "delayimp.lib"
 "wininet.lib"
@@ -73,7 +84,13 @@
 "setupapi.lib"
 "dwmapi.lib"
 "imm32.lib"
+<<<<<<< HEAD
+/OUT:"C:\Users\AsheK\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Binaries\Win64\UnrealEditor-AdvancedSteamSessions.dll"
+/IMPLIB:"C:\Users\AsheK\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\UnrealEditor-AdvancedSteamSessions.suppressed.lib"
+/PDB:"C:\Users\AsheK\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Binaries\Win64\UnrealEditor-AdvancedSteamSessions.pdb"
+=======
 /OUT:"H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Binaries\Win64\UnrealEditor-AdvancedSteamSessions.dll"
 /IMPLIB:"H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Intermediate\Build\Win64\UnrealEditor\Development\AdvancedSteamSessions\UnrealEditor-AdvancedSteamSessions.suppressed.lib"
 /PDB:"H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Binaries\Win64\UnrealEditor-AdvancedSteamSessions.pdb"
+>>>>>>> Peter
 /ignore:4078

@@ -45,7 +45,7 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		FRotator HandleClosedRotation = FRotator(0, 0, 0);
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		class UBoxComponent* BoxCollision;
 
 	UPROPERTY(EditAnywhere, Replicated)
@@ -54,7 +54,7 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		class AInteractiveStepsManager* StepsManager;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
 
 	//Overlap Functions

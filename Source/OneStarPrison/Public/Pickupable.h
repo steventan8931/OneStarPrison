@@ -36,7 +36,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* Mesh;
 
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadWrite)
 		class APlayerCharacter* Player;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
