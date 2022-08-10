@@ -1,11 +1,4 @@
-<<<<<<< HEAD
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\AdvancedSteamFriendsLibrary.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\AdvancedSteamWorkshopLibrary.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\SteamWSRequestUGCDetailsCallbackProxy.h
-D:\Game Development\Unreal Engine\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\SteamRequestGroupOfficersCallbackProxy.h
-=======
 H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\AdvancedSteamFriendsLibrary.h
 H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\AdvancedSteamWorkshopLibrary.h
-H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\SteamWSRequestUGCDetailsCallbackProxy.h
 H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\SteamRequestGroupOfficersCallbackProxy.h
->>>>>>> Peter
+H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSteamSessions\Source\AdvancedSteamSessions\Classes\SteamWSRequestUGCDetailsCallbackProxy.h
