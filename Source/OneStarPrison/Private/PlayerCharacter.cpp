@@ -101,6 +101,10 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 
 	DOREPLIFETIME(APlayerCharacter, CanMove);
 	DOREPLIFETIME(APlayerCharacter, IsCrouching);
+
+	DOREPLIFETIME(APlayerCharacter, IsClimbing);
+
+	
 }
 
 // Called every frame
@@ -304,16 +308,20 @@ void APlayerCharacter::MoveForward(float Value)
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
-		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello %s"), *Rotation.ToString()));
+		//if (!HasAuthority())
+		//{
+		//	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello %s"), *Rotation.ToString()));
+		//}
 
-		if (IsClimbing)
-		{
-			GetCharacterMovement()->bOrientRotationToMovement = false;
-		}
-		else
-		{
-			GetCharacterMovement()->bOrientRotationToMovement = true;
-		}
+
+		//if (IsClimbing)
+		//{
+
+		//}
+		//else
+		//{
+		//	GetCharacterMovement()->bOrientRotationToMovement = true;
+		//}
 
 		//Walking VS Crouching
 		if (IsCrouching)
@@ -535,16 +543,18 @@ void APlayerCharacter::CheckDeath(float _DeltaTime)
 	}
 }
 
-void APlayerCharacter::CheckClimbing()
+void APlayerCharacter::CheckClimbing_Implementation()
 {
 	if (IsClimbing)
 	{
+		GetCharacterMovement()->bOrientRotationToMovement = false;
 		GetCharacterMovement()->MaxWalkSpeed = ClimbSpeed;
 		GetCharacterMovement()->MaxStepHeight = 100.0f;
 		GetCharacterMovement()->SetWalkableFloorAngle(90.0f);
 	}
 	else
 	{
+		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 		GetCharacterMovement()->MaxStepHeight = 45.0f;
 		GetCharacterMovement()->SetWalkableFloorAngle(60.0f);

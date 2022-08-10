@@ -220,10 +220,11 @@ public:
 	void StopCrouching();
 
 	//Climbing
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Replicated)
 		bool IsClimbing = false;
 	UPROPERTY(EditAnywhere, Replicated)
 		float ClimbSpeed = 50.0f;
+	UFUNCTION(NetMulticast, Reliable)
 	void CheckClimbing();
 
 	//Posssesion
