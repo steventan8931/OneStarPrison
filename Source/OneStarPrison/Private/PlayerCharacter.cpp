@@ -400,7 +400,7 @@ void APlayerCharacter::PickupAndDrop()
 
 		if (key)
 		{
-			IsGrabbing = true;
+			IsPickingUp = true;
 		}
 		else
 		{
