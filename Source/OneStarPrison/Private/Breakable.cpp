@@ -118,16 +118,19 @@ void ABreakable::UpdateMaterial()
 			{
 				UGameplayStatics::PlaySoundAtLocation(GetWorld(), BreakSound, GetActorLocation());
 				//GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, FString::Printf(TEXT("BREAK SOUND PLAY = %i"), CurrentHealth));
-
-				if (ActorToSpawn)
+				if (HasAuthority())
 				{
-					SpawnActor(ActorToSpawn);
+					if (ActorToSpawn)
+					{
+						SpawnActor(ActorToSpawn);
+					}
+
+					if (DeprisToSpawn)
+					{
+						SpawnActor(DeprisToSpawn);
+					}
 				}
 
-				if (DeprisToSpawn)
-				{
-					SpawnActor(DeprisToSpawn);
-				}
 			}
 		}
 	}
