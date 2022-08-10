@@ -302,25 +302,22 @@ void APlayerCharacter::MoveForward(float Value)
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
 		// find out which way is forward
+
+
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 		// get forward vector
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+
+		if (IsClimbing)
+		{
+			Direction = FRotationMatrix(GetActorRotation()).GetUnitAxis(EAxis::X);
+		}
 
 		//if (!HasAuthority())
 		//{
 		//	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello %s"), *Rotation.ToString()));
-		//}
-
-
-		//if (IsClimbing)
-		//{
-
-		//}
-		//else
-		//{
-		//	GetCharacterMovement()->bOrientRotationToMovement = true;
 		//}
 
 		//Walking VS Crouching
