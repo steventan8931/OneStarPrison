@@ -154,7 +154,7 @@ void ATrapRoomTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 			if (!OverlappingPlayer)
 			{
 				OverlappingPlayer = playerActor;
-				GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, TEXT("player 1"));
+				//GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, TEXT("player 1"));
 			}
 			else
 			{
@@ -163,7 +163,7 @@ void ATrapRoomTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 					if (playerActor != OverlappingPlayer)
 					{
 						OverlappingPlayer2 = playerActor;
-						GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, TEXT("player 2"));
+						//GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, TEXT("player 2"));
 					}
 
 				}

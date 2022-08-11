@@ -194,7 +194,7 @@ public:
 		FVector RespawnCheckpoint = FVector(0, 0, 0);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsDead = false;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		int HitByWallCount = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float DeathTimer = 1.0f;

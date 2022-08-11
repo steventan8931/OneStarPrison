@@ -37,6 +37,8 @@ void AKeyDoor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifeti
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AKeyDoor, OpenPosition);
+	DOREPLIFETIME(AKeyDoor, IsKeyOneTimeUse);
+	DOREPLIFETIME(AKeyDoor, IsOpen);
 }
 
 // Called every frame
