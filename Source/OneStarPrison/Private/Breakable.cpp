@@ -35,6 +35,8 @@ ABreakable::ABreakable()
 	Particles = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Particles"));
 	Particles->SetupAttachment(RootComponent);
 
+	Mesh->OnComponentHit.AddDynamic(this, &ABreakable::OnCompHit);
+
 }
 
 // Called when the game starts or when spawned
@@ -215,3 +217,16 @@ AActor* ABreakable::SpawnActor(TSubclassOf<class AActor> _Actor)
 	return(GetWorld()->SpawnActor<AActor>(_Actor, GetActorTransform()));
 }
 
+void ABreakable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("I Hit: %s"), *OtherActor->GetName()));
+	if ((OtherActor) && (OtherActor != this))
+	{
+		APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
+		if (player)
+		{
+			player->CanInteract = true;
+			player->InteractType = EInteractType::Punch;
+		}
+	}
+}

@@ -107,6 +107,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, CurrentPickupWidget);
 	DOREPLIFETIME(APlayerCharacter, CurrentInteractWidget);
 
+	DOREPLIFETIME(APlayerCharacter, HitByWallCount);
 }
 
 // Called every frame
