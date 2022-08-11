@@ -104,7 +104,9 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 
 	DOREPLIFETIME(APlayerCharacter, IsClimbing);
 
-	
+	DOREPLIFETIME(APlayerCharacter, CurrentPickupWidget);
+	DOREPLIFETIME(APlayerCharacter, CurrentInteractWidget);
+
 }
 
 // Called every frame
