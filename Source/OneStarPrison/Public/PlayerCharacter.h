@@ -78,7 +78,7 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	UPROPERTY(EditAnywhere, Replicated)
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
 		bool CanMove = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

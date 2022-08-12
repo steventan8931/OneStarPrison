@@ -25,7 +25,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		USoundBase* OpenSound;
 
 	UPROPERTY(EditAnywhere)
@@ -39,7 +39,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
 
-	UPROPERTY(VisibleAnywhere, Replicated)
+	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadWrite)
 		bool IsOpen = false;
 
 	UPROPERTY(EditAnywhere, Replicated)
@@ -47,6 +47,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Replicated)
 		FRotator ROpenRotation = FRotator(0, 0, 0);
+
+	UPROPERTY(EditAnywhere, Replicated)
+		FRotator LClosedRotation = FRotator(0, 0, 0);
+
+	UPROPERTY(EditAnywhere, Replicated)
+		FRotator RClosedRotation = FRotator(0, 0, 0);
 
 	UPROPERTY(VisibleAnywhere, Replicated)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
@@ -72,6 +78,9 @@ public:
 
 	//Transition From Current Position to Open Position
 	void OpenDoor(float _DeltaTime);
+
+	//Transition From Current Position to Close Position
+	void CloseDoor(float _DeltaTime);
 
 	//Check Key
 	UFUNCTION(NetMulticast, Unreliable)

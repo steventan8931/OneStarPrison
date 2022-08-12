@@ -105,17 +105,32 @@ void AKeyDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class A
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		if (OverlappingPlayer == nullptr)
-		{
-			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
-			if (playerActor)
+		if (playerActor)
+		{
+			if (OverlappingPlayer == nullptr)
 			{
 				OverlappingPlayer = playerActor;
-				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
-				
 			}
+			else
+			{
+				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
+				APickupableKey* key = Cast<APickupableKey>(playerActor->PickedUpItem);
+				if (key)
+				{
+					if (key->KeyCode == KeyCode)
+					{
+						playerActor->CanInteract = true;
+						OverlappingPlayer = playerActor;
+					}
+				}
+			}
+
+
 		}
+
+		
 	}
 }
 

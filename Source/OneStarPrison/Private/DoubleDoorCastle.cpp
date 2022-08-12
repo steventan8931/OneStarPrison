@@ -51,6 +51,9 @@ void ADoubleDoorCastle::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 	DOREPLIFETIME(ADoubleDoorCastle, OverlappingPlayer2);
 
 	DOREPLIFETIME(ADoubleDoorCastle, IsOpen);
+
+	DOREPLIFETIME(ADoubleDoorCastle, LClosedRotation);
+	DOREPLIFETIME(ADoubleDoorCastle, RClosedRotation);
 }
 
 
@@ -63,6 +66,10 @@ void ADoubleDoorCastle::Tick(float DeltaTime)
 	{
 		OpenDoor(DeltaTime);
 		return;
+	}
+	else
+	{
+		CloseDoor(DeltaTime);
 	}
 
 	if (KeysRequired > 0)
@@ -94,6 +101,21 @@ void ADoubleDoorCastle::OpenDoor(float _DeltaTime)
 	if (RMesh->GetComponentRotation() != ROpenRotation)
 	{
 		FRotator newRotR = FMath::Lerp(RMesh->GetRelativeRotation(), ROpenRotation, _DeltaTime);
+		RMesh->SetRelativeRotation(newRotR);
+	}
+}
+
+void ADoubleDoorCastle::CloseDoor(float _DeltaTime)
+{
+	if (LMesh->GetComponentRotation() != LClosedRotation)
+	{
+		FRotator newRotL = FMath::Lerp(LMesh->GetRelativeRotation(), LClosedRotation, _DeltaTime);
+		LMesh->SetRelativeRotation(newRotL);
+	}
+
+	if (RMesh->GetComponentRotation() != RClosedRotation)
+	{
+		FRotator newRotR = FMath::Lerp(RMesh->GetRelativeRotation(), RClosedRotation, _DeltaTime);
 		RMesh->SetRelativeRotation(newRotR);
 	}
 }

@@ -536,6 +536,9 @@ void APlayerCharacter::CheckDeath(float _DeltaTime)
 			{
 				SetActorLocation(RespawnCheckpoint + FVector(5,5,5));
 			}
+
+			CanMove = true;
+
 			DeathTimerCounter = 0.0f;
 			HitByWallCount = 0;
 			IsDead = false;
