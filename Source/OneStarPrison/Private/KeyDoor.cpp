@@ -115,7 +115,7 @@ void AKeyDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class A
 			}
 			else
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
+				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
 				APickupableKey* key = Cast<APickupableKey>(playerActor->PickedUpItem);
 				if (key)
 				{
