@@ -34,13 +34,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* Mesh;
 
-	UPROPERTY(EditAnywhere, Replicated)
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
 		FVector OpenPosition = FVector(0, 0, 0);
 
-	UPROPERTY(EditAnywhere, Replicated)
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
 		FVector ClosedPosition = FVector(0, 0, 0);
 
-	UPROPERTY(EditAnywhere, Replicated)
+	UPROPERTY(EditAnywhere, Replicated,BlueprintReadWrite)
 		float OpenSpeed = 1.0f;
 
 	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation", BlueprintReadWrite)
