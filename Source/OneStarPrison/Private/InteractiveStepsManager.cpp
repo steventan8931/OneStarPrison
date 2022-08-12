@@ -93,7 +93,11 @@ void AInteractiveStepsManager::OpenDoor(float _DeltaTime)
 
 	for (int i = 0; i < ListOfInteractiveSteps.Num(); i++)
 	{
-		ListOfInteractiveSteps[i]->IsOpen = false;		
+		if (ListOfInteractiveSteps[i])
+		{
+			ListOfInteractiveSteps[i]->IsOpen = false;
+		}
+	
 	}
 
 	for (int i = 0; i < CurrentSteps.Num(); i++)
