@@ -37,6 +37,12 @@ public:
 	UPROPERTY(VisibleAnywhere, Replicated)
 		FVector ClosedPosition = FVector(0, 0, 0);
 
+	UPROPERTY(VisibleAnywhere,Replicated)
+		float CloseDelay = 0.0f;
+
+	UPROPERTY(VisibleAnywhere,Replicated)
+		float CloseTimer = 0.0f;
+
 	//Transition From Current Position to Open Position
 	void OpenDoor(float _DeltaTime);
 

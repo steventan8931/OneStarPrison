@@ -18,6 +18,14 @@ void AInteractiveStepsManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	for (int i = 0; i < ListOfInteractiveSteps.Num(); i++)
+	{
+		if (ListOfInteractiveSteps[i])
+		{
+			ListOfInteractiveSteps[i]->CloseDelay = CloseDelay;
+		}
+
+	}
 }
 
 void AInteractiveStepsManager::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -40,15 +48,15 @@ void AInteractiveStepsManager::Tick(float DeltaTime)
 	if (IsStepOpen)
 	{
 		OpenDoor(DeltaTime);
-		CloseTimer = 0.0f;
+		//CloseTimer = 0.0f;
 	}
 	else
 	{
-		CloseTimer += DeltaTime;
-		if (CloseTimer >= CloseDelay)
+		//CloseTimer += DeltaTime;
+		//if (CloseTimer >= CloseDelay)
 		{
 			CloseDoor(DeltaTime);
-			CloseTimer = 0.0f;
+			//CloseTimer = 0.0f;
 		}
 
 	}
@@ -63,25 +71,38 @@ void AInteractiveStepsManager::SetOpenStep(TArray<AInteractiveSteps*>  &_Current
 
 void AInteractiveStepsManager::OpenDoor(float _DeltaTime)
 {
-	for (int Index = 0; Index != ListOfInteractiveSteps.Num(); ++Index)
+	//for (int Index = 0; Index != ListOfInteractiveSteps.Num(); ++Index)
+	//{
+	//	AInteractiveSteps* step = Cast<AInteractiveSteps>(ListOfInteractiveSteps[Index]);
+	//	if (step)
+	//	{
+	//		for (int i = 0; i < CurrentSteps.Num(); i++)
+	//		{
+	//			if (step == CurrentSteps[i])
+	//			{
+	//				step->IsOpen = true;
+	//			}
+	//			else
+	//			{
+	//				step->IsOpen = false;
+	//			}
+	//		}
+
+	//	}		
+	//}
+
+	for (int i = 0; i < ListOfInteractiveSteps.Num(); i++)
 	{
-		AInteractiveSteps* step = Cast<AInteractiveSteps>(ListOfInteractiveSteps[Index]);
-		if (step)
+		if (ListOfInteractiveSteps[i])
 		{
-			for (int i = 0; i < CurrentSteps.Num(); i++)
-			{
-				if (step == CurrentSteps[i])
-				{
-					step->IsOpen = true;
-				}
-				else
-				{
-					//step->IsOpen = false;
-				}
-			}
+			ListOfInteractiveSteps[i]->IsOpen = false;
+		}
+	
+	}
 
-
-		}		
+	for (int i = 0; i < CurrentSteps.Num(); i++)
+	{
+		CurrentSteps[i]->IsOpen = true;
 	}
 }
 

@@ -35,6 +35,8 @@ ABreakable::ABreakable()
 	Particles = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Particles"));
 	Particles->SetupAttachment(RootComponent);
 
+	Mesh->OnComponentHit.AddDynamic(this, &ABreakable::OnCompHit);
+
 }
 
 // Called when the game starts or when spawned
@@ -118,16 +120,19 @@ void ABreakable::UpdateMaterial()
 			{
 				UGameplayStatics::PlaySoundAtLocation(GetWorld(), BreakSound, GetActorLocation());
 				//GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, FString::Printf(TEXT("BREAK SOUND PLAY = %i"), CurrentHealth));
-
-				if (ActorToSpawn)
+				if (HasAuthority())
 				{
-					SpawnActor(ActorToSpawn);
+					if (ActorToSpawn)
+					{
+						SpawnActor(ActorToSpawn);
+					}
+
+					if (DeprisToSpawn)
+					{
+						SpawnActor(DeprisToSpawn);
+					}
 				}
 
-				if (DeprisToSpawn)
-				{
-					SpawnActor(DeprisToSpawn);
-				}
 			}
 		}
 	}
@@ -212,3 +217,16 @@ AActor* ABreakable::SpawnActor(TSubclassOf<class AActor> _Actor)
 	return(GetWorld()->SpawnActor<AActor>(_Actor, GetActorTransform()));
 }
 
+void ABreakable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("I Hit: %s"), *OtherActor->GetName()));
+	if ((OtherActor) && (OtherActor != this))
+	{
+		APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
+		if (player)
+		{
+			player->CanInteract = true;
+			player->InteractType = EInteractType::Punch;
+		}
+	}
+}

@@ -37,10 +37,10 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		bool IsOpen = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		bool IsKeyOneTimeUse = false;
 
 	UPROPERTY(EditAnywhere, Replicated)

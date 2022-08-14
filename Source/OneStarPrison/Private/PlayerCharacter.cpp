@@ -104,7 +104,10 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 
 	DOREPLIFETIME(APlayerCharacter, IsClimbing);
 
-	
+	DOREPLIFETIME(APlayerCharacter, CurrentPickupWidget);
+	DOREPLIFETIME(APlayerCharacter, CurrentInteractWidget);
+
+	DOREPLIFETIME(APlayerCharacter, HitByWallCount);
 }
 
 // Called every frame
@@ -289,7 +292,32 @@ void APlayerCharacter::TurnAtRate(float Rate)
 void APlayerCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
-	AddControllerPitchInput(Rate * TurnRateGamepad * GetWorld()->GetDeltaSeconds());
+
+
+
+	if (CameraBoom->bDoCollisionTest)
+	{
+		//Normal Camera
+		AddControllerPitchInput(Rate * TurnRateGamepad * GetWorld()->GetDeltaSeconds());
+	}
+	else
+	{
+		//Maze Camera 
+		//Dont allow camera to go below the ground
+		if (GetControlRotation().Pitch > 270 && GetControlRotation().Pitch <= 360)
+		{
+			AddControllerPitchInput(Rate * TurnRateGamepad * GetWorld()->GetDeltaSeconds());
+		}
+		else
+		{
+
+			FRotator newRot = GetControlRotation();
+			newRot.Pitch = 360;
+			Controller->SetControlRotation(newRot);
+		}
+	}
+
+
 }
 
 void APlayerCharacter::MoveForward(float Value)
@@ -533,6 +561,9 @@ void APlayerCharacter::CheckDeath(float _DeltaTime)
 			{
 				SetActorLocation(RespawnCheckpoint + FVector(5,5,5));
 			}
+
+			CanMove = true;
+
 			DeathTimerCounter = 0.0f;
 			HitByWallCount = 0;
 			IsDead = false;

@@ -78,7 +78,7 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	UPROPERTY(EditAnywhere, Replicated)
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
 		bool CanMove = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -194,7 +194,7 @@ public:
 		FVector RespawnCheckpoint = FVector(0, 0, 0);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsDead = false;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		int HitByWallCount = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float DeathTimer = 1.0f;
@@ -235,4 +235,5 @@ public:
 		//Interact Type
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 			TEnumAsByte<EInteractType> InteractType;
+
 };

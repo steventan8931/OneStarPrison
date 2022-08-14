@@ -14,7 +14,7 @@ struct FOnOffLeverDoors
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-		class AOnOffLever* Lever;
+		class AOnOffLever* Lever = nullptr;
 
 	UPROPERTY(EditAnywhere)
 		TArray<ADoor*> Doors;
