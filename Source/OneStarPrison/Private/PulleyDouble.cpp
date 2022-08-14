@@ -9,6 +9,7 @@
 #include "Breakable.h"
 
 #include "Kismet/GameplayStatics.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 APulleyDouble::APulleyDouble()
@@ -36,6 +37,17 @@ void APulleyDouble::BeginPlay()
 	UpdateTargetPos();
 }
 
+void APulleyDouble::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APulleyDouble, IsSoundPlaying);
+	DOREPLIFETIME(APulleyDouble, SoundTimer);
+	DOREPLIFETIME(APulleyDouble, SoundReplayTimer);
+}
+
+
+
 // Called every frame
 void APulleyDouble::Tick(float DeltaTime)
 {
@@ -52,6 +64,20 @@ void APulleyDouble::Tick(float DeltaTime)
 			MaxHeight = MaxHeightAfterBreaking;
 			BreakablePlatform = nullptr;
 		}
+	}
+
+	if (IsSoundPlaying)
+	{
+		SoundTimer += DeltaTime;
+
+		if (SoundTimer >= SoundReplayTimer)
+		{
+			IsSoundPlaying = false;
+		}
+	}
+	else
+	{
+		SoundTimer = 0.0f;
 	}
 }
 
@@ -94,7 +120,12 @@ void APulleyDouble::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 			{
 				if (!pushable->HasBeenPushed)
 				{
-					ServerPlaySound();
+					if (!IsSoundPlaying)
+					{
+						ServerPlaySound();
+						IsSoundPlaying = true;
+					}
+
 					pushable->HasBeenPushed = true;
 				}
 
@@ -120,8 +151,15 @@ void APulleyDouble::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, clas
 			{
 				if (MovingSound)
 				{
-					ServerPlaySound();
-					pushable->HasBeenPushed = true;
+					//if (!pushable->HasBeenPushed)
+					{
+						if (!IsSoundPlaying)
+						{
+							ServerPlaySound();
+							IsSoundPlaying = true;
+						}
+						pushable->HasBeenPushed = true;
+					}
 				}
 				RockCount -= pushable->PulleyWeightage;
 			}

@@ -235,4 +235,5 @@ public:
 		//Interact Type
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 			TEnumAsByte<EInteractType> InteractType;
+
 };
