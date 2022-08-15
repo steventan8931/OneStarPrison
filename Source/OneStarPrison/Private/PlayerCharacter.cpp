@@ -508,7 +508,7 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation(APickupable* _Picku
 
 	if (key)
 	{
-		IsGrabbing = true;
+		IsPickingUp = true;
 	}
 	else
 	{

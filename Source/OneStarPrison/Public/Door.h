@@ -25,7 +25,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		USoundBase* OpenSound;
 
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
