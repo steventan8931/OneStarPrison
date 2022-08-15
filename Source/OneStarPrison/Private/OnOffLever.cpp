@@ -67,54 +67,62 @@ void AOnOffLever::Tick(float DeltaTime)
 			OverlappingPlayer->InteractType = EInteractType::LeverPull;
 		}
 
-		if (OverlappingPlayer->IsInteracting)
+		if (OverlappingPlayer->CanInteract)
 		{
-			if (IsOpen)
+			if (OverlappingPlayer->IsInteracting)
 			{
-				IsOpen = false;
-				if (OpenSound)
+				if (IsOpen)
 				{
-					UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
-				}
-
-				if (Manager)
-				{
-					for (int i = 0; i < Manager->OnOffLeverDoors.Num(); i++)
+					IsOpen = false;
+					if (OpenSound)
 					{
-						Manager->OnOffLeverDoors[IndexInManager].Doors[i]->PlaySound();
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
 					}
 
-				}
-
-				OverlappingPlayer->IsInteracting = false;
-
-				OverlappingPlayer->CanInteract = false;
-				OpenTimer = 0.0f;
-			}
-			else
-			{
-				IsOpen = true;
-				if (OpenSound)
-				{
-					UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
-				}
-
-				if (Manager)
-				{
-					for (int i = 0; i < Manager->OnOffLeverDoors.Num(); i++)
+					if (Manager)
 					{
-						Manager->OnOffLeverDoors[IndexInManager].Doors[i]->PlaySound();
+						for (int i = 0; i < Manager->OnOffLeverDoors.Num(); i++)
+						{
+							Manager->OnOffLeverDoors[IndexInManager].Doors[i]->PlaySound();
+						}
+
 					}
 
+					//OverlappingPlayer->IsInteracting = false;
+
+					OverlappingPlayer->CanInteract = false;
+					OpenTimer = 0.0f;
+				}
+				else
+				{
+					IsOpen = true;
+					if (OpenSound)
+					{
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+					}
+
+					if (Manager)
+					{
+						for (int i = 0; i < Manager->OnOffLeverDoors.Num(); i++)
+						{
+							Manager->OnOffLeverDoors[IndexInManager].Doors[i]->PlaySound();
+						}
+
+					}
+
+					//OverlappingPlayer->IsInteracting = false;
+
+					OverlappingPlayer->CanInteract = false;
+					OpenTimer = 0.0f;
 				}
 
-				OverlappingPlayer->IsInteracting = false;
-
-				OverlappingPlayer->CanInteract = false;
-				OpenTimer = 0.0f;
 			}
-
 		}
+		else
+		{
+			OverlappingPlayer->IsInteracting = false;
+		}
+
 	}
 
 	if (IsOpen)

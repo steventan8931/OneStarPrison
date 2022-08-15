@@ -185,6 +185,8 @@ public:
 	UFUNCTION(Client, Reliable)
 		void CheckInteract();
 
+
+
 	//Current Pickedup Item
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadWrite)
 		class APickupable* PickedUpItem = nullptr;
