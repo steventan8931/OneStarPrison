@@ -54,6 +54,11 @@ void ADoubleDoorCastle::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 
 	DOREPLIFETIME(ADoubleDoorCastle, LClosedRotation);
 	DOREPLIFETIME(ADoubleDoorCastle, RClosedRotation);
+
+	DOREPLIFETIME(ADoubleDoorCastle, OpenSound);
+	DOREPLIFETIME(ADoubleDoorCastle, InsertSound);
+
+
 }
 
 

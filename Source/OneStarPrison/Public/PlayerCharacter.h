@@ -185,6 +185,13 @@ public:
 	UFUNCTION(Client, Reliable)
 		void CheckInteract();
 
+	//Punch Interact delay
+	UPROPERTY(BlueprintReadWrite, Replicated)
+		float PunchTimer = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
+		float PunchDelay = 0.5f;
+
+
 	//Current Pickedup Item
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadWrite)
 		class APickupable* PickedUpItem = nullptr;

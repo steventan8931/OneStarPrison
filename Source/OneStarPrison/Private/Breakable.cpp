@@ -78,16 +78,37 @@ void ABreakable::Tick(float DeltaTime)
 
 	if (OverlappingPlayer != nullptr)
 	{
-		if (OverlappingPlayer->IsInteracting)
+		if (OverlappingPlayer->PunchTimer >= OverlappingPlayer->PunchDelay)
 		{
-			HitOnce = true;
-			UpdateMaterial();
-			OverlappingPlayer->IsInteracting = false;
+			OverlappingPlayer->CanInteract = true;
+			if (OverlappingPlayer->CanInteract)
+			{
+				if (OverlappingPlayer->IsInteracting)
+				{
+					HitOnce = true;
+					UpdateMaterial();
+					OverlappingPlayer->CanInteract = false;
+					OverlappingPlayer->PunchTimer = 0.0f;
+				}
+				else
+				{
+					HitOnce = false;
+				}
+			}
+			//else
+			//{
+			//	OverlappingPlayer->IsInteracting = false;
+			//	OverlappingPlayer->CanInteract = true;
+			//}
 		}
 		else
 		{
-			HitOnce = false;
+			OverlappingPlayer->IsInteracting = false;
+			OverlappingPlayer->CanInteract = false;
 		}
+
+
+
 	}
 
 	if (CurrentHealth <= 0)
