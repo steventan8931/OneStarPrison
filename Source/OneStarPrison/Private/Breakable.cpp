@@ -246,7 +246,12 @@ void ABreakable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPr
 		APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
 		if (player)
 		{
-			player->CanInteract = true;
+			if (player->PunchTimer >= player->PunchDelay)
+			{
+				player->CanInteract = true;
+				OverlappingPlayer->CanInteract = false;
+				OverlappingPlayer = player;
+			}
 			player->InteractType = EInteractType::Punch;
 		}
 	}

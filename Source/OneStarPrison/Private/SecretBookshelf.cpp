@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 ASecretBookshelf::ASecretBookshelf()
@@ -85,6 +86,7 @@ void ASecretBookshelf::Tick(float DeltaTime)
 
 			if (book)
 			{
+				OverlappingPlayer->CanInteract = true;
 				if (OverlappingPlayer->IsInteracting)
 				{
 					book->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
@@ -154,24 +156,30 @@ void ASecretBookshelf::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		if (OverlappingPlayer == nullptr)
-		{
-			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
-			if (playerActor)
+		if (playerActor)
+		{
+			if (OverlappingPlayer == nullptr)
 			{
 				OverlappingPlayer = playerActor;
+			}
+			else
+			{
 				if (playerActor->PickedUpItem)
 				{
 					APickupableBook* book = Cast<APickupableBook>(playerActor->PickedUpItem);
 
 					if (book)
 					{
-						OverlappingPlayer->CanInteract = true;
+						playerActor->CanInteract = true;
+						OverlappingPlayer->CanInteract = false;
+						OverlappingPlayer = playerActor;
 					}
 				}
 			}
 		}
+
 	}
 }
 
@@ -189,6 +197,10 @@ void ASecretBookshelf::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, c
 				{
 					OverlappingPlayer->CanInteract = false;
 					OverlappingPlayer = nullptr;
+				}
+				else
+				{
+					playerActor->CanInteract = false;
 				}
 			}
 		}
