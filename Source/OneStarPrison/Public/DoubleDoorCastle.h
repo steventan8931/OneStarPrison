@@ -25,10 +25,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		USoundBase* OpenSound;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		USoundBase* InsertSound;
 
 	UPROPERTY(VisibleAnywhere)
@@ -86,6 +86,6 @@ public:
 	UFUNCTION(NetMulticast, Unreliable)
 	void CheckKeyDoor(APlayerCharacter* _Player);
 	//Check Key
-	UFUNCTION(Server, Unreliable)
+	UFUNCTION(NetMulticast, Unreliable)
 	void RPCCheckKeyDoor(APlayerCharacter* _Player);
 };
