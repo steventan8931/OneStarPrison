@@ -3,6 +3,7 @@
 
 #include "MannequinManager.h"
 #include "Mannequin.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 AMannequinManager::AMannequinManager()

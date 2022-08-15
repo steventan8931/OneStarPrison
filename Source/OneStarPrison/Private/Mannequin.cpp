@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 AMannequin::AMannequin()
