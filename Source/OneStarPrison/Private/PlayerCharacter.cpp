@@ -108,12 +108,22 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, CurrentInteractWidget);
 
 	DOREPLIFETIME(APlayerCharacter, HitByWallCount);
+
+	DOREPLIFETIME(APlayerCharacter, PunchTimer);
+	DOREPLIFETIME(APlayerCharacter, PunchDelay);
 }
 
 // Called every frame
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//Punch Delay
+	if (PunchTimer <= PunchDelay)
+	{
+		PunchTimer += DeltaTime;
+	}
+
 
 	ServerCheckPickup();
 	ServerCheckInteract();
