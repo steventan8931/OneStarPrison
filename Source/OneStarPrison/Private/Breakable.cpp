@@ -95,14 +95,15 @@ void ABreakable::Tick(float DeltaTime)
 					HitOnce = false;
 				}
 			}
-			else
-			{
-				OverlappingPlayer->IsInteracting = false;
-				OverlappingPlayer->CanInteract = true;
-			}
+			//else
+			//{
+			//	OverlappingPlayer->IsInteracting = false;
+			//	OverlappingPlayer->CanInteract = true;
+			//}
 		}
 		else
 		{
+			OverlappingPlayer->IsInteracting = false;
 			OverlappingPlayer->CanInteract = false;
 		}
 
