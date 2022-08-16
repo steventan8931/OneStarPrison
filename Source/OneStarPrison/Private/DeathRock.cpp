@@ -37,6 +37,7 @@ void ADeathRock::Tick(float DeltaTime)
 	
 	DeathTime += DeltaTime;
 
+	//If the rock isn't at its end position, make the rock move towards the end position
 	if (GetActorLocation() != EndPosition)
 	{
 		FVector newPos = FMath::Lerp(GetActorLocation(), EndPosition, DeltaTime * MoveSpeed);
@@ -44,9 +45,11 @@ void ADeathRock::Tick(float DeltaTime)
 	}
 	else
 	{
+		//Otherwise destroy the rock
 		Destroy();
 	}
 
+	//If the rock has been spawned for longer than the death timer, destroy the rock
 	if (DeathTime > DeathTimer)
 	{
 		Destroy();
@@ -56,9 +59,9 @@ void ADeathRock::Tick(float DeltaTime)
 
 void ADeathRock::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("I Hit: %s"), *OtherActor->GetName()));
 	if ((OtherActor) && (OtherActor != this))
 	{
+		//If the actor hit is a player, kill the player
 		APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
 		if (player)
 		{

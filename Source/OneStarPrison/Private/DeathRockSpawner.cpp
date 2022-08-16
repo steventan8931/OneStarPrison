@@ -41,15 +41,22 @@ void ADeathRockSpawner::Tick(float DeltaTime)
 
 	SpawnTimer += DeltaTime;
 
+	//If the timer has been longer than the spawn delay
 	if (SpawnTimer >= SpawnRate)
 	{
-		ADeathRock* rock = Cast<ADeathRock>(SpawnActor());
-		if (rock)
+		if (ActorToSpawn)
 		{
-			rock->EndPosition = EndPosition;
-			rock->DeathTimer = SpawnRate;
+			ADeathRock* rock = Cast<ADeathRock>(SpawnActor());
+
+			//Initialise the spawn rock variables
+			if (rock)
+			{
+				rock->EndPosition = EndPosition;
+				rock->DeathTimer = SpawnRate;
+			}
+			//Reset the spawn timer
+			SpawnTimer = 0.0f;
 		}
-		SpawnTimer = 0.0f;
 	}
 }
 

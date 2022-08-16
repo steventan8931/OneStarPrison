@@ -21,22 +21,26 @@ protected:
 
 	//Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
-public:	
+
+private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditDefaultsOnly)
-		TSubclassOf<class AActor>ActorToSpawn;
-
-	UPROPERTY(EditAnywhere, Replicated)
-		float SpawnRate = 5.0f;
-
+	//Position the rcoks will try to reach
 	UPROPERTY(EditAnywhere, Replicated)
 		FVector EndPosition;
 
+	//Timer for spawn delay
 	UPROPERTY(Replicated)
 	float SpawnTimer = 0.0f;
+	//Spawn Delay
+	UPROPERTY(EditAnywhere, Replicated)
+		float SpawnRate = 5.0f;
 
+	//Death rock to spawn
+	UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<class AActor>ActorToSpawn;
+
+	//Spawns the actor to spawn
 	AActor* SpawnActor();
-
 };
