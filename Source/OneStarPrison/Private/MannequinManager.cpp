@@ -22,7 +22,7 @@ void AMannequinManager::BeginPlay()
 	{
 		if (Keys[i])
 		{
-			Keys[i]->Mesh->SetVisibility(false);
+			//Keys[i]->Mesh->SetVisibility(false);
 			Keys[i]->Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 
