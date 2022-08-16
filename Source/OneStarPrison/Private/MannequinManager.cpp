@@ -3,6 +3,7 @@
 
 #include "MannequinManager.h"
 #include "Mannequin.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 AMannequinManager::AMannequinManager()
@@ -21,7 +22,7 @@ void AMannequinManager::BeginPlay()
 	{
 		if (Keys[i])
 		{
-			Keys[i]->Mesh->SetVisibility(false);
+			//Keys[i]->Mesh->SetVisibility(false);
 			Keys[i]->Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 
