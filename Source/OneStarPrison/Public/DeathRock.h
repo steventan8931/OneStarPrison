@@ -28,14 +28,14 @@ private:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	//Components
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UStaticMeshComponent* Mesh;
-
 	//The speed the rock goes to reach the end position
 	UPROPERTY(EditAnywhere)
 		float MoveSpeed = 0.5f;
 public:
+	//Components
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UStaticMeshComponent* Mesh;
+
 	//The end position the rock is trying to reach
 	UPROPERTY(VisibleAnywhere, Replicated)
 		FVector EndPosition;
