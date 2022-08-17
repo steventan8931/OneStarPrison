@@ -258,7 +258,10 @@ void ABreakable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPr
 			if (player->PunchTimer >= player->PunchDelay)
 			{
 				player->CanInteract = true;
-				OverlappingPlayer->CanInteract = false;
+				if (OverlappingPlayer)
+				{
+					OverlappingPlayer->CanInteract = false;
+				}
 				OverlappingPlayer = player;
 			}
 			//Change the players interact type to punching
