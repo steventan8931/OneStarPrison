@@ -21,41 +21,49 @@ protected:
 
 	//Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
-public:	
+private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		USoundBase* OpenSound;
-
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
-		bool IsOpen = false;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UStaticMeshComponent* Mesh;
-
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
-		FVector OpenPosition = FVector(0, 0, 0);
-
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
-		FVector ClosedPosition = FVector(0, 0, 0);
-
-	UPROPERTY(EditAnywhere, Replicated,BlueprintReadWrite)
-		float OpenSpeed = 1.0f;
-
-	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation", BlueprintReadWrite)
-		bool IsRotationDoor = false;
-	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation", BlueprintReadWrite)
-		FRotator OpenRotation = FRotator(0, 0, 0);
-	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation", BlueprintReadWrite)
-		FRotator ClosedRotation = FRotator(0, 0, 0);
 
 	//Transition From Current Position to Open Position
 	void OpenDoor(float _DeltaTime);
 
 	//Transition From Current Position to Closed Position
 	void CloseDoor(float _DeltaTime);
+public:
+	//Opening Sound
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		USoundBase* OpenSound;
 
-	//Play open soudn
+	//Check whether to open or close the door
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
+		bool IsOpen = false;
+
+	//Component
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UStaticMeshComponent* Mesh;
+
+	//Position of the mesh when opened
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
+		FVector OpenPosition = FVector(0, 0, 0);
+	//Position Of the mesh when rotated
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
+		FVector ClosedPosition = FVector(0, 0, 0);
+
+	//The rate of which the mesh goes to its end position/rotation
+	UPROPERTY(EditAnywhere, Replicated,BlueprintReadWrite)
+		float OpenSpeed = 1.0f;
+
+	//Check if it should be a rotation door instead of a location door
+	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation", BlueprintReadWrite)
+		bool IsRotationDoor = false;
+	//Rotation of the mesh when opened
+	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation", BlueprintReadWrite)
+		FRotator OpenRotation = FRotator(0, 0, 0);
+	//Rotation of the mesh when opened
+	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation", BlueprintReadWrite)
+		FRotator ClosedRotation = FRotator(0, 0, 0);
+
+	//Play open sound once
 	void PlaySound();
 };
