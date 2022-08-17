@@ -73,6 +73,8 @@ void AMannequin::Tick(float DeltaTime)
 						EquippedArray[i]->Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 						EquippedArray[i]->Launch(FVector(3, 3, 3));
 						EquippedArray[i]->Player = nullptr;
+
+						EquippedArray[i]->AttachedToMannequin = true;
 					}
 
 					GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello s")));
@@ -97,6 +99,8 @@ void AMannequin::Tick(float DeltaTime)
 
 			if (armor)
 			{
+				armor->AttachedToMannequin = true;
+
 				if (OverlappingPlayer->IsInteracting)
 				{
 					armor->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);

@@ -26,6 +26,9 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool AttachedToMannequin = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		TEnumAsByte<EMannaquinPart> MannequinPart;
 
 	UPROPERTY(EditAnywhere)
