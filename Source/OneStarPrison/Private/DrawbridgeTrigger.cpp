@@ -67,6 +67,7 @@ void ADrawbridgeTrigger::Tick(float DeltaTime)
 					}
 					MovableMesh->SetRelativeRotation(HandleOpenRotation);
 					OverlappingPlayer->CanInteract = false;
+					OverlappingPlayer->IsInteracting = false;
 				}
 			}
 		}
@@ -103,15 +104,21 @@ void ADrawbridgeTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 		{
 			if (OverlappingPlayer == nullptr)
 			{
-				APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
-
-				if (playerActor)
+				if (Platform)
 				{
-					OverlappingPlayer = playerActor;
-					//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
-					OverlappingPlayer->CanInteract = true;
-					OverlappingPlayer->InteractType = EInteractType::LeverPull;
+					if (!Platform->IsOpen)
+					{
+						APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+						if (playerActor)
+						{
+							OverlappingPlayer = playerActor;
+							//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
+							OverlappingPlayer->CanInteract = true;
+							OverlappingPlayer->InteractType = EInteractType::LeverPull;
+
+						}
+					}
 				}
 			}
 		}
