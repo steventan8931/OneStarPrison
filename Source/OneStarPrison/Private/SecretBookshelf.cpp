@@ -70,7 +70,7 @@ void ASecretBookshelf::Tick(float DeltaTime)
 
 		if (Mesh->GetComponentRotation() != OpenRotation)
 		{
-			FRotator newRot = FMath::Lerp(Mesh->GetComponentRotation(), OpenRotation, DeltaTime);
+			FRotator newRot = FMath::Lerp(Mesh->GetComponentRotation(), OpenRotation, DeltaTime * OpenSpeed);
 			Mesh->SetWorldRotation(newRot);
 		}
 
