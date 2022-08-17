@@ -456,9 +456,11 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 		IsPickingUp = false;
 		IsGrabbing = false;
 		IsHoldingDownThrow = true;
+		//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("throwing"));
 		return;
 	}
 
+	//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("picking up"));
 	TArray<FHitResult> OutHits;
 
 	FVector SweepStart = GetActorLocation();
@@ -539,7 +541,7 @@ void APlayerCharacter::ClientShowThrowWidget_Implementation()
 
 		if (ThrowWidgetClass != nullptr)
 		{
-			//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("WIDGET CLASS EXIST"));
+
 
 			if (CurrentThrowWidget)
 			{
