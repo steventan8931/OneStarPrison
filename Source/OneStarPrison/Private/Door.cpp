@@ -100,6 +100,7 @@ void ADoor::CloseDoor(float _DeltaTime)
 
 }
 
+//Allows other functions to play the sound once when opening/closing the door
 void ADoor::PlaySound()
 {
 	if (OpenSound)

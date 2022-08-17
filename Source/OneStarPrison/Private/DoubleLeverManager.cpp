@@ -4,6 +4,7 @@
 #include "DoubleLeverManager.h"
 #include "DoubleLever.h"
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+#include "Door.h"
 
 // Sets default values
 ADoubleLeverManager::ADoubleLeverManager()
@@ -35,24 +36,30 @@ void ADoubleLeverManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-
+	//If the double levers are both open
 	if (IsOpen)
 	{
+		//Iterate through the array of door
 		for (int i = 0; i < Doors.Num(); i++)
 		{
+			//Set then to be opened
 			Doors[i]->IsOpen = true;
 
+			//If the open sound hasn't been played
 			if (!SoundPlayed)
 			{
+				//Play it once
 				Doors[i]->PlaySound();
 				SoundPlayed = true;
 			}
 		}
 
+		//Don't Check for if levers are open
 		return;
 
 	}
 
+	//Check if the 
 	CheckLeversOpen();
 
 }
@@ -64,36 +71,19 @@ void ADoubleLeverManager::CheckLeversOpen_Implementation()
 
 void ADoubleLeverManager::RPCCheckLeversOpen_Implementation()
 {
+	//Iterate through the array of lever
 	for (int i = 0; i < Levers.Num(); i++)
 	{
+		//If any levers are not open
 		if (!Levers[i]->IsOpen)
 		{
+			//Set the IsOpen bool to false and stop iterating
 			IsOpen = false;
 			return;
 		}
 	}
 
+	//If all levers are open, set the IsOpen bool to ture
 	IsOpen = true;
 }
 
-void ADoubleLeverManager::ResetDoors_Implementation()
-{
-	RPCResetDoors();
-}
-
-void ADoubleLeverManager::RPCResetDoors_Implementation()
-{
-	for (int i = 0; i < Doors.Num(); i++)
-	{
-		Doors[i]->IsOpen = false;
-		Doors[i]->PlaySound();
-	}
-
-	for (int i = 0; i < Levers.Num(); i++)
-	{
-		Levers[i]->IsOpen = false;
-	}
-
-	SoundPlayed = false;
-	IsOpen = false;
-}

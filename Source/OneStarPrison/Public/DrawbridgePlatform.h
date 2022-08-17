@@ -21,21 +21,21 @@ protected:
 
 	//Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
-public:	
+private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//Component
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
 
-	UPROPERTY(EditAnywhere)
-		bool IsOpen = false;
-
+	//Open Rotation for the drawbridge mesh
 	UPROPERTY(EditAnywhere, Replicated)
 		FRotator OpenRotation = FRotator(0, 0, 0);
 
-	UPROPERTY(EditAnywhere, Replicated)
-		FRotator ClosedRotation = FRotator(0, 0, 0);
-
-	void OpenPlatform(float _DeltaTime);
+public:
+	//Checks whether the platform should be updating to its open rotation
+	UPROPERTY(EditAnywhere)
+		bool IsOpen = false;
+	
 };
