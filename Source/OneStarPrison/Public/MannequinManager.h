@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Mannequin.h"
 #include "Door.h"
+#include "GameFramework/Actor.h"
 #include "MannequinManager.generated.h"
 
 UCLASS()
