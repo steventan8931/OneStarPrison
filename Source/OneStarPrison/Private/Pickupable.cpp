@@ -45,7 +45,6 @@ void APickupable::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLif
 void APickupable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void APickupable::PlayPickupSound()
@@ -58,12 +57,13 @@ void APickupable::PlayPickupSound()
 
 void APickupable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("I Hit: %s"), *OtherActor->GetName()));
 	if ((OtherActor) && (OtherActor != this))
 	{
 		APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
+		//If the mesh hits a player that isn't the player
 		if (!player)
 		{
+			//Set its physics to true and disables its projectile movement
 			IsInAir = false;
 			Mesh->SetSimulatePhysics(true);
 			ProjectileMovement->Deactivate();
@@ -73,6 +73,7 @@ void APickupable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 
 void APickupable::Launch(FVector _Velocity)
 {
+	//Activates its projectile movement and sets it velocity to follow a path
 	IsInAir = true;
 	ProjectileMovement->Velocity = _Velocity;
 	ProjectileMovement->Activate();

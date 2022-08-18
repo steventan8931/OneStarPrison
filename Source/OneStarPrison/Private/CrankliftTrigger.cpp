@@ -76,47 +76,51 @@ void ACrankliftTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 void ACrankliftTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	cacheDeltaTime = DeltaTime;
 
+	//If there is a cranklift platform linked
 	if (Platform)
 	{
 		if (OverlappingPlayer != nullptr)
 		{
+			//If Overlapping player is holding down the lever
 			if (OverlappingPlayer->IsInteracting)
 			{
 				if (AudioComponent)
 				{
 					if (!AudioComponent->IsPlaying())
 					{
-						//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("not playing"));
-
 						ServerPlaySound(false);
-					}
-					else
-					{
-						//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("playing"));
 					}
 				}
 
+				//Move the platform up
 				IsMovingUp = true;
 			}
 			else
 			{
+
+				//Move the platform down
 				IsMovingUp = false;
 			}
 		}
 		else
 		{
+			//Move the platform down if the player is not interacting
 			IsMovingUp = false;
 		}
 
+		//If the platform is moving up
 		if (IsMovingUp)
 		{
+			//If the platform has not reached its max hegiht
 			if (Platform->GetActorLocation().Z <= MaxHeight)
 			{
+				//Move the handle to the open position over time
 				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
-				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z + cacheDeltaTime * MoveSpeed));
+				//Keep moving the platform up over time
+				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z + DeltaTime * MoveSpeed));
 
+				//If the platform is almost at its max height pause the audio
 				if ((MaxHeight - Platform->GetActorLocation().Z) < 100)
 				{
 					ServerPlaySound(true);
@@ -134,11 +138,15 @@ void ACrankliftTrigger::Tick(float DeltaTime)
 		}
 		else
 		{
+			//If the platform has not reached its minimum height
 			if (Platform->GetActorLocation().Z >= MinHeight)
 			{
+				//Move the handle to the closed position over time
 				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
-				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z - cacheDeltaTime * MoveSpeed));
+				//Keep moving the platform down over time
+				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z - DeltaTime * MoveSpeed));
 
+				//If the platform is almost at its min height pause the audio
 				if ((Platform->GetActorLocation().Z - MinHeight) < 100)
 				{
 					ServerPlaySound(true);
@@ -165,11 +173,12 @@ void ACrankliftTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 		{
 			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+			//If there is an overlapping actor is a player, allow them to interact
 			if (playerActor)
 			{
 				OverlappingPlayer = playerActor;
-				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 				OverlappingPlayer->CanInteract = true;
+				//Change the players interact type to punching
 				OverlappingPlayer->InteractType = EInteractType::LeverPull;
 			}
 		}
@@ -185,6 +194,7 @@ void ACrankliftTrigger::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, 
 			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 			if (playerActor)
 			{
+				//If there is an overlapping player and if they player is leaving actor, make them unable to interact and set overlapping to nullptr
 				if (playerActor == OverlappingPlayer)
 				{
 					OverlappingPlayer->CanInteract = false;

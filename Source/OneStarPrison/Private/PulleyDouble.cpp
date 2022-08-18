@@ -58,7 +58,7 @@ void APulleyDouble::Tick(float DeltaTime)
 
 	if (BreakablePlatform)
 	{
-		if (BreakablePlatform->CurrentHealth == 0)
+		//if (BreakablePlatform->CurrentHealth == 0)
 		{
 			OtherPlatform->RockCount += 10;
 			MaxHeight = MaxHeightAfterBreaking;

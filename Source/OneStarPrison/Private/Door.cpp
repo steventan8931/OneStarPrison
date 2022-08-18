@@ -40,20 +40,24 @@ void ADoor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//Will update th emesh of the door to its open position
 	if (IsOpen)
 	{
 		OpenDoor(DeltaTime * OpenSpeed);
 	}
 	else
 	{
+		//Will update th emesh of the door to its closed position
 		CloseDoor(DeltaTime * OpenSpeed);
 	}
 }
 
 void ADoor::OpenDoor(float _DeltaTime)
 {
+	//Checks if it is a rotation door
 	if (IsRotationDoor)
 	{
+		//If it is a rotation door, update its rotation to its open rotation
 		if (Mesh->GetComponentRotation() != OpenRotation)
 		{
 			FRotator newRot = FMath::Lerp(Mesh->GetComponentRotation(), OpenRotation, _DeltaTime);
@@ -62,6 +66,7 @@ void ADoor::OpenDoor(float _DeltaTime)
 	}
 	else
 	{
+		//Otherwise update its position to its open position
 		if (Mesh->GetComponentLocation() != OpenPosition)
 		{
 			FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), OpenPosition, _DeltaTime);
@@ -73,8 +78,10 @@ void ADoor::OpenDoor(float _DeltaTime)
 
 void ADoor::CloseDoor(float _DeltaTime)
 {
+	//Checks if it is a rotation door
 	if (IsRotationDoor)
 	{
+		//If it is a rotation door, update its rotation to its closed rotation
 		if (Mesh->GetComponentRotation() != ClosedRotation)
 		{
 			FRotator newRot = FMath::Lerp(Mesh->GetComponentRotation(), ClosedRotation, _DeltaTime);
@@ -83,6 +90,7 @@ void ADoor::CloseDoor(float _DeltaTime)
 	}
 	else
 	{
+		//Otherwise update its position to its open position
 		if (Mesh->GetComponentLocation() != ClosedPosition)
 		{
 			FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), ClosedPosition, _DeltaTime);
@@ -92,6 +100,7 @@ void ADoor::CloseDoor(float _DeltaTime)
 
 }
 
+//Allows other functions to play the sound once when opening/closing the door
 void ADoor::PlaySound()
 {
 	if (OpenSound)

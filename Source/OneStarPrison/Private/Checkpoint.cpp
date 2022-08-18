@@ -17,7 +17,6 @@ ACheckpoint::ACheckpoint()
 	BoxCollision->SetupAttachment(RootComponent);
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ACheckpoint::OnOverlapBegin);
-	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ACheckpoint::OnOverlapEnd);
 }
 
 // Called when the game starts or when spawned
@@ -37,27 +36,12 @@ void ACheckpoint::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, clas
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		if (OverlappingPlayer == nullptr)
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+
+		//If the overlapping actor is a player set checkpoint to the this checkpoints location
+		if (playerActor)
 		{
-			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
-
-			if (playerActor)
-			{
-				OverlappingPlayer = playerActor;
-				playerActor->RespawnCheckpoint = GetActorLocation();
-			}
-		}
-	}
-}
-
-void ACheckpoint::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if (OtherActor && (OtherActor != this))
-	{
-		if (OverlappingPlayer != nullptr)
-		{
-			OverlappingPlayer = nullptr;
-		}
-
+			playerActor->RespawnCheckpoint = GetActorLocation();
+		}		
 	}
 }

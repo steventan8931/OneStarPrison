@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "TrapRoomWalls.h"
 #include "DoubleLeverManager.h"
+#include "Pickupable.h"
 
 // Sets default values
 ATrapRoomTrigger::ATrapRoomTrigger()
@@ -63,7 +64,6 @@ void ATrapRoomTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 
 	DOREPLIFETIME(ATrapRoomTrigger, Triggered);
 	DOREPLIFETIME(ATrapRoomTrigger, RoomWalls);
-	DOREPLIFETIME(ATrapRoomTrigger, DoubleDoorManager);
 
 	DOREPLIFETIME(ATrapRoomTrigger, BreakableBarrels);
 	DOREPLIFETIME(ATrapRoomTrigger, BarrelTransforms);
@@ -182,14 +182,6 @@ void ATrapRoomTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 					RoomWalls[i]->IsOpen = true;
 					RoomWalls[i]->PlaySound();
 
-				}
-
-				if (DoubleDoorManager)
-				{
-					if (DoubleDoorManager->IsOpen)
-					{
-						DoubleDoorManager->ResetDoors();
-					}
 				}
 
 				Triggered = true;

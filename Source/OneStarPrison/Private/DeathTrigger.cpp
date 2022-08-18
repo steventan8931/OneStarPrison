@@ -38,20 +38,24 @@ void ADeathTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 {
 	if (OtherActor && (OtherActor != this))
 	{
+		//If the other actor is a player, kill the player
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 		if (playerActor)
 		{
-			//GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, TEXT("Dead"));
 			playerActor->IsDead = true;
 		}
 
+		//If the other actor is a pushable, reset its transform
 		APushable* pushable = Cast<APushable>(OtherActor);
-
 		if (pushable)
 		{
+			//Set its simulating physics to false to allow it to be moved
 			pushable->Mesh->SetSimulatePhysics(false);
+			//Reset variables
 			pushable->HasBeenPushed = false;
+			//Set transform to starting position
 			pushable->SetActorTransform(pushable->StartingTransform);
+			//Re-enable physics
 			pushable->Mesh->SetSimulatePhysics(true);
 		}
 		

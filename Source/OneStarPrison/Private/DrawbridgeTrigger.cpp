@@ -52,26 +52,36 @@ void ADrawbridgeTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >&
 void ADrawbridgeTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//If the drawbridge has been linked
 	if (Platform)
 	{
+		//If the platform isn't open yet
 		if (!Platform->IsOpen)
 		{
-			if (OverlappingPlayer != nullptr)
+			if (OverlappingPlayer)
 			{
+				//If the overlapping player is interacting
 				if (OverlappingPlayer->IsInteracting)
 				{
+					//Open the platform and play the open sound
 					Platform->IsOpen = true;
 					if (OpenSound)
 					{
 						UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
 					}
+
+					//Update the position of the handle 
 					MovableMesh->SetRelativeRotation(HandleOpenRotation);
+					//Dont let the player interact again
 					OverlappingPlayer->CanInteract = false;
+					OverlappingPlayer->IsInteracting = false;
 				}
 			}
 		}
 		else
 		{
+			//Update the position of the handle
 			MovableMesh->SetRelativeRotation(HandleClosedRotation);
 		}
 
@@ -82,14 +92,17 @@ void ADrawbridgeTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 {
 	if (OtherActor && (OtherActor != this))
 	{
+		//If it is to interacted by throwing projectiles
 		if (!IsPlayerInteractable)
 		{
-			APickupable* pickupable = Cast<APickupable>(OtherActor);
 
+			APickupable* pickupable = Cast<APickupable>(OtherActor);
+			//If the overlapping player is a pickupable
 			if (pickupable)
 			{
 				if (Platform)
 				{
+					//Open the platform and play the open sound
 					Platform->IsOpen = true;
 					if (OpenSound)
 					{
@@ -101,17 +114,26 @@ void ADrawbridgeTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 		}
 		else
 		{
+			//If it is meant to be interacted by players
 			if (OverlappingPlayer == nullptr)
 			{
-				APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
-
-				if (playerActor)
+				if (Platform)
 				{
-					OverlappingPlayer = playerActor;
-					//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
-					OverlappingPlayer->CanInteract = true;
-					OverlappingPlayer->InteractType = EInteractType::LeverPull;
+					if (!Platform->IsOpen)
+					{
+						APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+						//If the overlapping player is a player
+						if (playerActor)
+						{
+							//Set the overlapping player to this player and allow them to interact
+							OverlappingPlayer = playerActor;
+							OverlappingPlayer->CanInteract = true;
+							//Change the players interact type to lever pulling
+							OverlappingPlayer->InteractType = EInteractType::LeverPull;
+
+						}
+					}
 				}
 			}
 		}
@@ -125,12 +147,16 @@ void ADrawbridgeTrigger::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp,
 	{
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+		//If the overlapping actor is a player
 		if (playerActor)
 		{
-			if (OverlappingPlayer != nullptr)
+			//If the overlapping player exists
+			if (OverlappingPlayer)
 			{
+				//If this overlapping player is the overlapping player
 				if (playerActor == OverlappingPlayer)
 				{
+					//Remove the players ability to interact with the lever
 					OverlappingPlayer->CanInteract = false;
 					OverlappingPlayer = nullptr;
 				}

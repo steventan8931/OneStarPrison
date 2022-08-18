@@ -35,7 +35,6 @@ void AInteractiveStepsManager::GetLifetimeReplicatedProps(TArray< FLifetimePrope
 	DOREPLIFETIME(AInteractiveStepsManager, ListOfInteractiveSteps);
 	DOREPLIFETIME(AInteractiveStepsManager, CurrentSteps);
 
-	DOREPLIFETIME(AInteractiveStepsManager, CloseTimer);
 	DOREPLIFETIME(AInteractiveStepsManager, CloseDelay);
 }
 
@@ -47,50 +46,25 @@ void AInteractiveStepsManager::Tick(float DeltaTime)
 
 	if (IsStepOpen)
 	{
-		OpenDoor(DeltaTime);
-		//CloseTimer = 0.0f;
+		OpenStep(DeltaTime);
 	}
 	else
 	{
-		//CloseTimer += DeltaTime;
-		//if (CloseTimer >= CloseDelay)
-		{
-			CloseDoor(DeltaTime);
-			//CloseTimer = 0.0f;
-		}
-
+		CloseStep(DeltaTime);
 	}
 
 }
 
+//Updates the current array of steps 
 void AInteractiveStepsManager::SetOpenStep(TArray<AInteractiveSteps*>  &_CurrentStep)
 {
 	CurrentSteps = _CurrentStep;
 }
 
 
-void AInteractiveStepsManager::OpenDoor(float _DeltaTime)
+void AInteractiveStepsManager::OpenStep(float _DeltaTime)
 {
-	//for (int Index = 0; Index != ListOfInteractiveSteps.Num(); ++Index)
-	//{
-	//	AInteractiveSteps* step = Cast<AInteractiveSteps>(ListOfInteractiveSteps[Index]);
-	//	if (step)
-	//	{
-	//		for (int i = 0; i < CurrentSteps.Num(); i++)
-	//		{
-	//			if (step == CurrentSteps[i])
-	//			{
-	//				step->IsOpen = true;
-	//			}
-	//			else
-	//			{
-	//				step->IsOpen = false;
-	//			}
-	//		}
-
-	//	}		
-	//}
-
+	//Iterate through all the steps are set them to not open
 	for (int i = 0; i < ListOfInteractiveSteps.Num(); i++)
 	{
 		if (ListOfInteractiveSteps[i])
@@ -100,17 +74,19 @@ void AInteractiveStepsManager::OpenDoor(float _DeltaTime)
 	
 	}
 
+	//Iterate through the current steps are set them to open
 	for (int i = 0; i < CurrentSteps.Num(); i++)
 	{
 		CurrentSteps[i]->IsOpen = true;
 	}
 }
 
-void AInteractiveStepsManager::CloseDoor(float _DeltaTime)
+void AInteractiveStepsManager::CloseStep(float _DeltaTime)
 {
-	for (int Index = 0; Index != ListOfInteractiveSteps.Num(); ++Index)
+	//Iterate through all the steps and set them to not open
+	for (int i = 0; i < ListOfInteractiveSteps.Num(); i++)
 	{
-		AInteractiveSteps* step = Cast<AInteractiveSteps>(ListOfInteractiveSteps[Index]);
+		AInteractiveSteps* step = Cast<AInteractiveSteps>(ListOfInteractiveSteps[i]);
 		if (step)
 		{
 			step->IsOpen = false;

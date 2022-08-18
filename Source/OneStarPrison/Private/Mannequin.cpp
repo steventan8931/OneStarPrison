@@ -54,35 +54,44 @@ void AMannequin::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-
+	//If there is a overlapping player
 	if (OverlappingPlayer)
 	{
+		//Checks whether all the armor is equipped
 		CheckArmorEquipped();
 
+		//If the mannequin has all the armor pieces equipped
 		if (MannequinEquiped)
 		{
+			//Checks if the armor is correct or not
 			CheckCorrectArmor();
 
+			//If the armor is incorrect
 			if (!CorrectArmor)
 			{
+				//If the player interacts
 				if (OverlappingPlayer->IsInteracting)
 				{
+					//Iterate through all the equipped armor pieces
 					for (int i = 0; i < EquippedArray.Num(); i++)
 					{
+						//Launches the armor pieces away from the mannequin and resets the variables to allow it to be picked up again
 						EquippedArray[i]->Mesh->SetCollisionProfileName("IgnoreOnlyPawn");
 						EquippedArray[i]->Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 						EquippedArray[i]->Launch(FVector(3, 3, 3));
 						EquippedArray[i]->Player = nullptr;
+						EquippedArray[i]->AttachedToMannequin = true;
 					}
 
-					GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello s")));
-
-					if (EquipSound)
+					//Play the remove sound
+					if (RemoveSound)
 					{
-						UGameplayStatics::PlaySoundAtLocation(GetWorld(), EquipSound, GetActorLocation());
+						UGameplayStatics::PlaySoundAtLocation(GetWorld(), RemoveSound, GetActorLocation());
 					}
 
+					//Reset the equipped array
 					EquippedArray.Empty();
+					//Set all the equipped bools to false
 					EquippedArmor.HelmetEquipped = false;
 					EquippedArmor.ArmorEquipped = false;
 					EquippedArmor.FootwearEquipped = false;
@@ -91,16 +100,25 @@ void AMannequin::Tick(float DeltaTime)
 
 		}
 
+		//If the player has an item
 		if (OverlappingPlayer->PickedUpItem)
 		{
 			AMannequinArmor* armor = Cast<AMannequinArmor>(OverlappingPlayer->PickedUpItem);
 
+			//If the item is a mannequin armor piece
 			if (armor)
 			{
+				//If the player presses interact
 				if (OverlappingPlayer->IsInteracting)
 				{
+					//Make the armor attached to the mannequin
+					armor->AttachedToMannequin = true;
 					armor->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
+					//Check for where the armor piece should be placed
+					//Then updated the equipped armor struct
+					//Snap the armor piece to set location
+					//And add it to the equipped armor array
 					switch (armor->MannequinPart)
 					{
 					case EMannaquinPart::Helmet:
@@ -123,14 +141,17 @@ void AMannequin::Tick(float DeltaTime)
 						break;
 					}
 
+					//Play the equip sound
 					if (EquipSound)
 					{
 						UGameplayStatics::PlaySoundAtLocation(GetWorld(), EquipSound, GetActorLocation());
 					}
 
+					//Stop the player from further interacting
 					OverlappingPlayer->CanInteract = false;
-					OverlappingPlayer->PickedUpItem = nullptr;
 					OverlappingPlayer->IsInteracting = false;
+					//Remove the item from the players hand
+					OverlappingPlayer->PickedUpItem = nullptr;
 				}
 
 			}
@@ -146,6 +167,8 @@ void AMannequin::CheckArmorEquipped_Implementation()
 
 void AMannequin::RPCCheckArmorEquipped_Implementation()
 {
+	//Checks whether the certain armor piece is equipped or not
+
 	if (!EquippedArmor.ArmorEquipped)
 	{
 		MannequinEquiped = false;
@@ -164,6 +187,7 @@ void AMannequin::RPCCheckArmorEquipped_Implementation()
 		return;
 	}
 
+	//If all armor pieces are equipped, set mannequin equipped to true
 	MannequinEquiped = true;
 }
 
@@ -174,15 +198,19 @@ void AMannequin::CheckCorrectArmor_Implementation()
 
 void AMannequin::RPCCheckCorrectArmor_Implementation()
 {
+	//Iterate through the armor
 	for (int i = 0; i < EquippedArray.Num(); i++)
 	{
+		//Check if the armor's number matches to the mannequin's number
 		if (EquippedArray[i]->MannequinNumber != MannequinNumber)
 		{
+			//If they aren't the same set correct armor to false and stop iterating
 			CorrectArmor = false;
 			return;
 		}
 	}
 
+	//If all armor pieces match, then set correct armor to true
 	CorrectArmor = true;
 }
 
@@ -195,15 +223,21 @@ void AMannequin::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 		{
 			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+			//If the overlapping actor is a player
 			if (playerActor)
 			{
 				OverlappingPlayer = playerActor;
+
+				//Check if the overlapping player has a item
 				if (playerActor->PickedUpItem)
 				{
 					AMannequinArmor* armor = Cast<AMannequinArmor>(playerActor->PickedUpItem);
 
+					//If the item is a mannequin armor piece 
 					if (armor)
 					{
+						//Check if that armor piece is already equipped or not
+						//If it is don't allow the player to interact
 						switch (armor->MannequinPart)
 						{
 						case EMannaquinPart::Helmet:
@@ -225,13 +259,17 @@ void AMannequin::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 							}
 							break;
 						}
+
+						//If the armor isn't already equipped, allow the player to interact
 						OverlappingPlayer->CanInteract = true;
 					}
 				}
 
+				//Check if all the armor has been equipped and the armor is incorrect
 				CheckCorrectArmor();
 				CheckArmorEquipped();
 
+				//If they are, then also allow the player to interact (to remove the armor)
 				if ((!CorrectArmor && MannequinEquiped))
 				{
 					OverlappingPlayer->CanInteract = true;
@@ -247,12 +285,16 @@ void AMannequin::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class A
 	{
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+		//If the overlapping actor is a player
 		if (playerActor)
 		{
-			if (OverlappingPlayer != nullptr)
+			//If the overlapping player exists
+			if (OverlappingPlayer)
 			{
+				//If this overlapping player is the overlapping player
 				if (playerActor == OverlappingPlayer)
 				{
+					//Remove the players ability to interact with the lever
 					OverlappingPlayer->CanInteract = false;
 					OverlappingPlayer = nullptr;
 				}

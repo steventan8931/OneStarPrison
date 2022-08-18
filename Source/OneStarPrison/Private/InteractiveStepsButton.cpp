@@ -59,19 +59,26 @@ void AInteractiveStepsButton::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//If there are linked steps for this lever
 	if (LinkedSteps.Num() > 0)
 	{
+		//If there is a pointer to the steps manager
 		if (StepsManager)
 		{
 			if (OverlappingPlayer != nullptr)
 			{
+				//If the player is interacting
 				if (OverlappingPlayer->IsInteracting)
 				{
+					//Update the mesh rotation to its open rotation
 					MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
-					StepsManager->IsStepOpen = true;
-					StepsManager->SetOpenStep(LinkedSteps);
-					StepsManager->OpenDoor(DeltaTime);
 
+					//Tell the steps manager to open these steps
+					StepsManager->IsStepOpen = true;
+					//Set the current moving steps for the manager to be the this levers linked steps
+					StepsManager->SetOpenStep(LinkedSteps);
+
+					//Play the lever sound if it hasn't already been played within the time
 					if (!SoundPlayed)
 					{
 						if (SoundTimer >= SoundPlayDelay)
@@ -90,12 +97,15 @@ void AInteractiveStepsButton::Tick(float DeltaTime)
 					}
 
 				}
-				else
+				else //When the player stops interacting (holding down)
 				{
+					//Update the mesh rotation to its closed rotation
 					MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
+					//Tell the steps manager to close these steps
 					StepsManager->IsStepOpen = false;
-					//StepsManager->SetOpenStep(LinkedSteps);
 
+
+					//Play the lever sound if it has been played and the lever has been released
 					if (SoundPlayed)
 					{
 						if (SoundTimer >= SoundPlayDelay)
@@ -117,9 +127,8 @@ void AInteractiveStepsButton::Tick(float DeltaTime)
 			}
 			else
 			{
+				//Update the mesh rotation to its closed rotation
 				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
-				//StepsManager->IsStepOpen = false;
-				//StepsManager->SetOpenStep(LinkedSteps);
 			}
 		}
 
@@ -134,11 +143,13 @@ void AInteractiveStepsButton::OnOverlapBegin(class UPrimitiveComponent* Overlapp
 		{
 			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+			//If the overlapping actor is a player
 			if (playerActor)
 			{
+				//Set the overlapping player to this player and allow them to interact
 				OverlappingPlayer = playerActor;
-				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 				OverlappingPlayer->CanInteract = true;
+				//Change the players interact type to lever pulling
 				OverlappingPlayer->InteractType = EInteractType::LeverPull;
 			}
 		}
@@ -151,12 +162,16 @@ void AInteractiveStepsButton::OnOverlapEnd(class UPrimitiveComponent* Overlapped
 	{
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+		//If the overlapping actor is a player
 		if (playerActor)
 		{
-			if (OverlappingPlayer != nullptr)
+			//If the overlapping player exists
+			if (OverlappingPlayer)
 			{
+				//If this overlapping player is the overlapping player
 				if (playerActor == OverlappingPlayer)
 				{
+					//Remove the players ability to interact with the lever
 					OverlappingPlayer->CanInteract = false;
 					OverlappingPlayer->IsInteracting = false;
 					OverlappingPlayer = nullptr;

@@ -23,8 +23,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//Component
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
-
-
 };

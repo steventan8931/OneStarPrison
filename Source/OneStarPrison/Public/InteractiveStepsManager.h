@@ -23,31 +23,31 @@ protected:
 	//Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
-public:	
+private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//Array of All Steps
 	UPROPERTY(EditAnywhere, Replicated)
 		TArray<AInteractiveSteps*> ListOfInteractiveSteps;
-
+	//Array of Steps that are being moved
 	UPROPERTY(EditAnywhere, Replicated)
 		TArray<AInteractiveSteps*> CurrentSteps;
 
+	//Delay before it startings closing in again
 	UPROPERTY(EditAnywhere, Replicated)
 		float CloseDelay = 0.0f;
 
-	UPROPERTY(EditAnywhere, Replicated)
-		float CloseTimer = 0.0f;
-
+public:
+	//Check whether it the current set of steps should be moving
 	UPROPERTY(EditAnywhere)
 		bool IsStepOpen = false;
 
 	//Set the current step that should be open
-	void SetOpenStep(TArray<AInteractiveSteps*> &_CurrentStep);
+	void SetOpenStep(TArray<AInteractiveSteps*>& _CurrentStep);
 
 	//Transition From Current Position to Open Position
-	void OpenDoor(float _DeltaTime);
-
-	//Transition From Current Position to Open Position
-	void CloseDoor(float _DeltaTime);
+	void OpenStep(float _DeltaTime);
+	//Transition From Current Position to Closed Position
+	void CloseStep(float _DeltaTime);
 };

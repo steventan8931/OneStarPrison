@@ -40,9 +40,6 @@ public:
 	UPROPERTY(VisibleAnywhere, Replicated)
 		class APlayerCharacter* OverlappingPlayer2;
 
-	UPROPERTY(EditAnywhere, Replicated)
-		class ADoubleLeverManager* DoubleDoorManager;
-
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
 	bool Triggered = false;
 

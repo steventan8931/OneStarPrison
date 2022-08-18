@@ -48,23 +48,14 @@ void ABreakable::BeginPlay()
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ABreakable::OnOverlapEnd);
 
 	CurrentHealth = MaxHealth;
-
-	for (int Index = 0; Index != ListOfMaterialsAtHealth.Num(); ++Index)
-	{
-		if (CurrentHealth == ListOfMaterialsAtHealth[Index].AtHP)
-		{
-			if (ListOfMaterialsAtHealth[Index].Material != nullptr)
-			{
-				//Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
-			}
-		}
-	}
 }
 
 // Called every frame
 void ABreakable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//If the particles are visible, after a delay disable them
 	if (Particles->IsVisible())
 	{
 		ParticleTimer += DeltaTime;
@@ -76,33 +67,28 @@ void ABreakable::Tick(float DeltaTime)
 		}
 	}
 
+
 	if (OverlappingPlayer != nullptr)
 	{
+		//If the player's last punch has been longer than the punch delay
 		if (OverlappingPlayer->PunchTimer >= OverlappingPlayer->PunchDelay)
 		{
 			OverlappingPlayer->CanInteract = true;
+
 			if (OverlappingPlayer->CanInteract)
 			{
+				//If the player is interacting, update the health and reset the players punch/interact timer
 				if (OverlappingPlayer->IsInteracting)
 				{
-					HitOnce = true;
-					UpdateMaterial();
+					UpdateHealth();
 					OverlappingPlayer->CanInteract = false;
 					OverlappingPlayer->PunchTimer = 0.0f;
 				}
-				else
-				{
-					HitOnce = false;
-				}
 			}
-			//else
-			//{
-			//	OverlappingPlayer->IsInteracting = false;
-			//	OverlappingPlayer->CanInteract = true;
-			//}
 		}
 		else
 		{
+			//Don't allow the overlapping player to interact
 			OverlappingPlayer->IsInteracting = false;
 			OverlappingPlayer->CanInteract = false;
 		}
@@ -111,6 +97,7 @@ void ABreakable::Tick(float DeltaTime)
 
 	}
 
+	//If the health is less or equal to zero, destroy the actor after a delay
 	if (CurrentHealth <= 0)
 	{
 		DestroyTimer += DeltaTime;
@@ -124,23 +111,28 @@ void ABreakable::Tick(float DeltaTime)
 
 }
 
-void ABreakable::UpdateMaterial()
+void ABreakable::UpdateHealth()
 {
 	if (CurrentHealth > 0)
 	{
+		//Player the hit sound, and show the breaking particles
 		if (HitSound)
 		{
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, GetActorLocation());
 			Particles->SetVisibility(true);
 			ParticleTimer = 0.0f;
 		}
+
+		//Decrement the health of the breakable by the damage per hit
 		CurrentHealth -= DamagePerHit;
+
+		//If the breakable it out of health, play the break shown and spawn an actor or debris
+		//if it is the server and those objects exists
 		if (CurrentHealth <= 0)
 		{
 			if (BreakSound)
 			{
 				UGameplayStatics::PlaySoundAtLocation(GetWorld(), BreakSound, GetActorLocation());
-				//GEngine->AddOnScreenDebugMessage(-1, 11.0f, FColor::Yellow, FString::Printf(TEXT("BREAK SOUND PLAY = %i"), CurrentHealth));
 				if (HasAuthority())
 				{
 					if (ActorToSpawn)
@@ -148,9 +140,9 @@ void ABreakable::UpdateMaterial()
 						SpawnActor(ActorToSpawn);
 					}
 
-					if (DeprisToSpawn)
+					if (DebrisToSpawn)
 					{
-						SpawnActor(DeprisToSpawn);
+						SpawnActor(DebrisToSpawn);
 					}
 				}
 
@@ -162,19 +154,7 @@ void ABreakable::UpdateMaterial()
 		return;
 	}
 
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Current Health = %i"), CurrentHealth));
-
-	for (int Index = 0; Index != ListOfMaterialsAtHealth.Num(); ++Index)
-	{
-		if(CurrentHealth == ListOfMaterialsAtHealth[Index].AtHP)
-		{
-			if (ListOfMaterialsAtHealth[Index].Material != nullptr)
-			{
-				//Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
-			}
-		}
-	}
-
+	//Deactive the break particles
 	Particles->Activate(false);
 
 }
@@ -187,23 +167,26 @@ void ABreakable::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 		{
 			if (!IsBreakableByProjectiles)
 			{
+				//If it is intended to be broken by the player, allow that player to interact 
 				APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
 				if (playerActor)
 				{
 					OverlappingPlayer = playerActor;
-					//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, playerActor->GetName());
 					OverlappingPlayer->CanInteract = true;
+					//Change the players interact type to punching
 					OverlappingPlayer->InteractType = EInteractType::Punch;
 				}
 			}
 			else
 			{
+				//If it is breakable by projectiles check if it is on pickupable class
 				APickupable* pickupable = Cast<APickupable>(OtherActor);
 
+				//If it is of pickupable class, update the breakable
 				if (pickupable)
 				{
-					UpdateMaterial();
+					UpdateHealth();
 				}
 			}
 		}
@@ -218,6 +201,7 @@ void ABreakable::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class A
 
 		if (playerActor)
 		{
+			//If there is an overlapping player and if they player is leaving actor, make them unable to interact and set overlapping to nullptr
 			if (OverlappingPlayer != nullptr)
 			{
 				if (playerActor == OverlappingPlayer)
@@ -226,10 +210,8 @@ void ABreakable::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class A
 
 					OverlappingPlayer = nullptr;
 				}
-
 			}
 		}
-
 	}
 }
 
@@ -240,18 +222,23 @@ AActor* ABreakable::SpawnActor(TSubclassOf<class AActor> _Actor)
 
 void ABreakable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("I Hit: %s"), *OtherActor->GetName()));
+	//If the player hits it, allow them to interact with it
 	if ((OtherActor) && (OtherActor != this))
 	{
 		APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
 		if (player)
 		{
+			//If the player's last punch has been longer than the punch delay
 			if (player->PunchTimer >= player->PunchDelay)
 			{
 				player->CanInteract = true;
-				OverlappingPlayer->CanInteract = false;
+				if (OverlappingPlayer)
+				{
+					OverlappingPlayer->CanInteract = false;
+				}
 				OverlappingPlayer = player;
 			}
+			//Change the players interact type to punching
 			player->InteractType = EInteractType::Punch;
 		}
 	}
