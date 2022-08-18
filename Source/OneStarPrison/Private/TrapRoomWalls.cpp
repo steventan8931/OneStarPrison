@@ -2,7 +2,7 @@
 
 
 #include "TrapRoomWalls.h"
-#include "Components/BoxComponent.h"
+
 #include "PlayerCharacter.h"
 
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
