@@ -67,10 +67,9 @@ void AMovingPlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& Ou
 	DOREPLIFETIME(AMovingPlatform, OpenPosition);
 	DOREPLIFETIME(AMovingPlatform, ClosedPosition);
 
-	DOREPLIFETIME(AMovingPlatform, IsMoving);
+	DOREPLIFETIME(AMovingPlatform, IsOpen);
 	DOREPLIFETIME(AMovingPlatform, MoveSpeed);
 	
-		
 	DOREPLIFETIME(AMovingPlatform, AudioComponent);
 }
 
@@ -79,49 +78,51 @@ void AMovingPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//If theree is a platform linked
 	if (Platform)
 	{
+		//If there is a player
 		if (OverlappingPlayer != nullptr)
 		{
+			//If there is a player holding interacting
 			if (OverlappingPlayer->IsInteracting)
 			{
 				if (AudioComponent)
 				{
 					if(!AudioComponent->IsPlaying())
 					{
-						//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("not playing"));
-	
 						ServerPlaySound(false);
-					}
-					else
-					{
-						//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("playing"));
 					}
 				}
 
-				IsMoving = true;
+				//Move the platform to its open position
+				IsOpen = true;
 			}
 			else
 			{
-				IsMoving = false;
+				//Move the platform to its closed position
+				IsOpen = false;
 			}
 		}
 		else
 		{
-			IsMoving = false;
-
+			//Move the platform to its closed position
+			IsOpen = false;
 		}
 
 
-		if (IsMoving)
+		//If the lever is pulled held
+		if (IsOpen)
 		{
+			//Move the platform to its open position over time
 			if (Platform->GetActorLocation() != OpenPosition)
 			{
+				//Update the handle to its open rotation over time
 				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
 				FVector newPos = FMath::Lerp(Platform->GetActorLocation(), OpenPosition, DeltaTime * MoveSpeed);
 				Platform->SetActorLocation(newPos);
 
-
+				//If the platform is almost at its open position stop playing the audio
 				if (FVector::Distance(Platform->GetActorLocation(), OpenPosition) < 100)
 				{
 					ServerPlaySound(true);
@@ -133,6 +134,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 			}
 			else
 			{
+				//If the platform is at its open position stop playing the audio
 				ServerPlaySound(true);
 			}
 
@@ -140,12 +142,15 @@ void AMovingPlatform::Tick(float DeltaTime)
 		}
 		else
 		{
+			//Move the platform to its closed position over time
 			if (Platform->GetActorLocation() != ClosedPosition)
 			{
+				//Update the handle to its closed rotation over time
 				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
 				FVector newPos = FMath::Lerp(Platform->GetActorLocation(), ClosedPosition, DeltaTime * MoveSpeed);
 				Platform->SetActorLocation(newPos);
 
+				//If the platform is almost at its closed position stop playing the audio
 				if (FVector::Distance(Platform->GetActorLocation(), ClosedPosition) < 100)
 				{	
 					ServerPlaySound(true);
@@ -158,11 +163,13 @@ void AMovingPlatform::Tick(float DeltaTime)
 			}
 			else
 			{
+				//If the platform is at its closed position stop playing the audio
 				ServerPlaySound(true);
 			}
 
 		}
 
+		//Cache to not play sound on spawn
 		if (FirstFrame)
 		{
 			ServerPlaySound(true);
@@ -179,11 +186,14 @@ void AMovingPlatform::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
 		{
 			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+			//If the overlapping actor is a player
 			if (playerActor)
 			{
+				//Set the overlapping player to this player and allow them to interact
 				OverlappingPlayer = playerActor;
 				OverlappingPlayer->CanInteract = true;
-
+				//Change the players interact type to lever pulling
+				OverlappingPlayer->InteractType = EInteractType::LeverPull;
 			}
 		}
 	}
@@ -195,15 +205,21 @@ void AMovingPlatform::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cl
 	{
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+		//If the overlapping actor is a player
 		if (playerActor)
 		{
-			if (OverlappingPlayer != nullptr)
+			//If the overlapping player exists
+			if (OverlappingPlayer)
 			{
+				//If this overlapping player is the overlapping player
 				if (playerActor == OverlappingPlayer)
 				{
+					//Remove the players ability to interact with the lever
 					OverlappingPlayer->CanInteract = false;
-					IsMoving = false;
 					OverlappingPlayer = nullptr;
+
+					//Sets the platform to move back
+					IsOpen = false;
 				}
 			}
 		}

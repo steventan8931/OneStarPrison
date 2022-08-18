@@ -64,6 +64,8 @@ void AKeyDoor::Tick(float DeltaTime)
 			if (key->KeyCode == KeyCode)
 			{
 				OverlappingPlayer->CanInteract = true;
+				//Change the players interact type to lever pulling
+				OverlappingPlayer->InteractType = EInteractType::LeverPull;
 			}
 
 			//If they are interacting
@@ -128,6 +130,8 @@ void AKeyDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class A
 						//Make the overlapping actor the current player and allow them to interact
 						playerActor->CanInteract = true;
 						OverlappingPlayer = playerActor;
+						//Change the players interact type to lever pulling
+						OverlappingPlayer->InteractType = EInteractType::LeverPull;
 					}
 				}
 			}
