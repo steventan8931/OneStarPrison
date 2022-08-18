@@ -23,29 +23,32 @@ protected:
 
 	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
 
-public:	
+private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//Array of mannequins to check
 	UPROPERTY(EditAnywhere, Replicated)
 		TArray<AMannequin*> Mannequins;
-
+	//Array of doors to open
 	UPROPERTY(EditAnywhere, Replicated)
 		TArray<ADoor*> Doors;
 
+	//Array of keys to set pickupable
 	UPROPERTY(EditAnywhere, Replicated)
 		TArray<APickupable*> Keys;
 
 	//Check if both mannequins match
 	UFUNCTION(Client, Unreliable)
 		void CheckMatchingMannequin();
-
 	UFUNCTION(Server, Unreliable)
 		void RPCCheckMatchingMannequin();
 
+	//Check whether the doors should open or not
 	UPROPERTY(VisibleAnywhere, Replicated)
 		bool IsOpen = false;
 
+	//cache to play sound only once
 	bool SoundPlayed = false;
 
 };

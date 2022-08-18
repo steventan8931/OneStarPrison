@@ -66,6 +66,4 @@ private:
 	//Checks whether the door is opened
 	UPROPERTY(VisibleAnywhere, Replicated)
 		bool IsOpen = false;
-
-public:
 };
