@@ -51,34 +51,44 @@ void ADoubleLever::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
+	//If the lever has been open for longer than its designated time
 	if (OpenTimer >= OpenTime)
 	{
 		if (OpenSound)
 		{
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
 		}
+		//Close the lever and reset the timer
 		IsOpen = false;
 		OpenTimer = 0.0f;
 	}
+
+	//If there is an overlapping player
 	if (OverlappingPlayer != nullptr)
 	{
+		//If the overlapping player pressed interact
 		if (OverlappingPlayer->IsInteracting)
 		{
+			//and the lever isn't already opened
 			if (!IsOpen)
 			{
+				//Set the lever to its open state
 				IsOpen = true;
 				if (OpenSound)
 				{
 					UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
 				}
+				//Stop the player from interacting
 				OverlappingPlayer->IsInteracting = false;
 			}
 
 		}
 	}
 
+	//Update the position of the handle based on whether its open or closed
 	if (IsOpen)
 	{
+		//If it is open increment the open timer over time, so it can reset back to closed after a delay
 		OpenTimer += DeltaTime;
 		MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
 	}
@@ -96,10 +106,13 @@ void ADoubleLever::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 		{
 			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+			//If the overlapping actor is a player
 			if (playerActor)
 			{
+				//Set the overlapping player to this player and allow them to interact
 				OverlappingPlayer = playerActor;
 				OverlappingPlayer->CanInteract = true;
+				//Change the players interact type to lever pulling
 				OverlappingPlayer->InteractType = EInteractType::LeverPull;
 
 			}
@@ -113,12 +126,16 @@ void ADoubleLever::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class
 	{
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+		//If the overlapping actor is a player
 		if (playerActor)
 		{
-			if (OverlappingPlayer != nullptr)
+			//If the overlapping player exists
+			if (OverlappingPlayer)
 			{
+				//If this overlapping player is the overlapping player
 				if (playerActor == OverlappingPlayer)
 				{
+					//Remove the players ability to interact with the lever
 					OverlappingPlayer->CanInteract = false;
 					OverlappingPlayer = nullptr;
 				}

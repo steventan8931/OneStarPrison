@@ -21,31 +21,29 @@ protected:
 
 	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
 
-public:	
+private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//Array of lever
 	UPROPERTY(EditAnywhere, Replicated)
 		TArray<ADoubleLever*> Levers;
 
+	//Array of doors
 	UPROPERTY(EditAnywhere, Replicated)
 		TArray<ADoor*> Doors;
 
+	//Checks for whether the levers are open
 	UFUNCTION(NetMulticast, Unreliable)
 	void CheckLeversOpen();
-
 	UFUNCTION(Server, Unreliable)
 	void RPCCheckLeversOpen();
 
-	UFUNCTION(NetMulticast, Unreliable)
-		void ResetDoors();
-
-	UFUNCTION(Server, Unreliable)
-		void RPCResetDoors();
-
+	//Checks whether all the levers are open
 	UPROPERTY(VisibleAnywhere, Replicated)
 		bool IsOpen = false;
 
+	//Cache to only play sound once
 	bool SoundPlayed = false;
 
 };

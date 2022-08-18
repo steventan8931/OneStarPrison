@@ -2,7 +2,7 @@
 
 
 #include "TrapRoomWalls.h"
-#include "Components/BoxComponent.h"
+
 #include "PlayerCharacter.h"
 
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
@@ -23,6 +23,7 @@ ATrapRoomWalls::ATrapRoomWalls()
 	BoxCollision->SetupAttachment(RootComponent);
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ATrapRoomWalls::OnOverlapBegin);
+	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ATrapRoomWalls::OnOverlapEnd);
 }
 
 // Called when the game starts or when spawned
@@ -65,6 +66,19 @@ void ATrapRoomWalls::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("hit by wall"));
 			playerActor->HitByWallCount += 1;
+		}
+	}
+}
+
+void ATrapRoomWalls::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherActor && (OtherActor != this))
+	{
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+		if (playerActor)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("left the wall"));
+			playerActor->HitByWallCount -= 1;
 		}
 
 	}

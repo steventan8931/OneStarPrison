@@ -2,7 +2,6 @@
 
 
 #include "MannequinManager.h"
-#include "Mannequin.h"
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
@@ -18,11 +17,12 @@ void AMannequinManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//Iterate through the keys
 	for (int i = 0; i < Keys.Num(); i++)
 	{
 		if (Keys[i])
 		{
-			//Keys[i]->Mesh->SetVisibility(false);
+			//Make the keys unable to be picked up
 			Keys[i]->Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 
@@ -37,8 +37,6 @@ void AMannequinManager::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 	DOREPLIFETIME(AMannequinManager, Doors);
 	DOREPLIFETIME(AMannequinManager, IsOpen);
 	DOREPLIFETIME(AMannequinManager, Keys);
-
-
 }
 
 // Called every frame
@@ -46,23 +44,27 @@ void AMannequinManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	
 	if (IsOpen)
 	{
+		//Iterate through the doors and open them
 		for (int i = 0; i < Doors.Num(); i++)
 		{
 			Doors[i]->IsOpen = true;
 
+			//Play the door open sound only once
 			if (!SoundPlayed)
 			{
 				Doors[i]->PlaySound();
 				SoundPlayed = true;
 			}
 		}
-
+		
+		//Don't check for matching mannequins after the doors have been opened
 		return;
-
 	}
 
+	//Check whether the mannequins match
 	CheckMatchingMannequin();
 
 }
@@ -70,20 +72,11 @@ void AMannequinManager::Tick(float DeltaTime)
 void AMannequinManager::CheckMatchingMannequin_Implementation()
 {
 	RPCCheckMatchingMannequin();
-
-	//Play open sound once 
-	if (IsOpen)
-	{
-		for (int i = 0; i < Doors.Num(); i++)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello s")));
-
-		}
-	}
 }
 
 void AMannequinManager::RPCCheckMatchingMannequin_Implementation()
 {
+	//Iterate through the mannequins
 	for (int i = 0; i < Mannequins.Num(); i++)
 	{
 		Mannequins[i]->CheckArmorEquipped();
@@ -108,11 +101,13 @@ void AMannequinManager::RPCCheckMatchingMannequin_Implementation()
 
 	}
 
+	//If all mannequins are matching, allow the keys to be pickupable
 	for (int i = 0; i < Keys.Num(); i++)
 	{
-		Keys[i]->Mesh->SetVisibility(true);
 		Keys[i]->Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	}
+
+	//Allow the doors to be opened
 	IsOpen = true;
 }
 

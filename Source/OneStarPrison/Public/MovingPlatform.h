@@ -22,55 +22,6 @@ protected:
 	//Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	UPROPERTY(EditAnywhere)
-		USoundBase* MovingSound;
-
-	UPROPERTY(EditAnywhere, Replicated)
-		UAudioComponent* AudioComponent;
-
-	UFUNCTION(Server, Unreliable)
-		void ServerPlaySound(bool _IsPaused);
-	UFUNCTION(NetMulticast, Unreliable)
-		void ClientPlaySound(bool _IsPaused);
-
-	UPROPERTY(VisibleAnywhere)
-		class UStaticMeshComponent* Mesh;
-
-	UPROPERTY(VisibleAnywhere)
-		class UStaticMeshComponent* MovableMesh;
-
-	UPROPERTY(EditAnywhere, Replicated)
-		FRotator HandleOpenRotation = FRotator(-50, 0, 0);
-
-	UPROPERTY(EditAnywhere, Replicated)
-		FRotator HandleClosedRotation = FRotator(50, 0, 0);
-
-	UPROPERTY(VisibleAnywhere)
-		class UBoxComponent* BoxCollision;
-
-	UPROPERTY(EditAnywhere, Replicated)
-		class ACrankliftPlatform* Platform;
-
-	UPROPERTY(EditAnywhere, Replicated)
-		FVector OpenPosition = FVector(0, 0, 0);
-
-	UPROPERTY(EditAnywhere, Replicated)
-		FVector ClosedPosition = FVector(0, 0, 0);
-
-	UPROPERTY(Replicated)
-		bool IsMoving = false;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
-		float MoveSpeed = 20.0f;
-
-	UPROPERTY(VisibleAnywhere)
-		class APlayerCharacter* OverlappingPlayer = nullptr;
-
-	bool FirstFrame = true;
-
 	//Overlap Functions
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -78,5 +29,63 @@ public:
 	//Overlap Functions
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+private:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	//Components
+	UPROPERTY(VisibleAnywhere)
+		class UStaticMeshComponent* Mesh;
+	UPROPERTY(VisibleAnywhere)
+		class UStaticMeshComponent* MovableMesh;
+	UPROPERTY(VisibleAnywhere)
+		class UBoxComponent* BoxCollision;
+
+	//Open and closed rotations for the handle
+	UPROPERTY(EditAnywhere, Replicated)
+		FRotator HandleOpenRotation = FRotator(-50, 0, 0);
+	UPROPERTY(EditAnywhere, Replicated)
+		FRotator HandleClosedRotation = FRotator(50, 0, 0);
+
+	//Linked platform to move
+	UPROPERTY(EditAnywhere, Replicated)
+		class ACrankliftPlatform* Platform;
+
+	//Starting(Open) and end(Closed) positions for the platform
+	UPROPERTY(EditAnywhere, Replicated)
+		FVector OpenPosition = FVector(0, 0, 0);
+	UPROPERTY(EditAnywhere, Replicated)
+		FVector ClosedPosition = FVector(0, 0, 0);
+
+	//Sound to play when it is moving
+	UPROPERTY(EditAnywhere)
+		USoundBase* MovingSound;
+	//Audio component to allow to pause/unpause the audio
+	UPROPERTY(EditAnywhere, Replicated)
+		UAudioComponent* AudioComponent;
+
+	//Updates the sound, by pausing/unpausing
+	UFUNCTION(Server, Unreliable)
+		void ServerPlaySound(bool _IsPaused);
+	UFUNCTION(NetMulticast, Unreliable)
+		void ClientPlaySound(bool _IsPaused);
+
+	//Check whether the platform is moving or not
+	UPROPERTY(Replicated)
+		bool IsOpen = false;
+
+	//Player Interaction
+	UPROPERTY(VisibleAnywhere)
+		class APlayerCharacter* OverlappingPlayer = nullptr;
+
+	bool FirstFrame = true;
+
+public:
+	//The speed of which the platform moves
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
+		float MoveSpeed = 20.0f;
+
+
 
 };

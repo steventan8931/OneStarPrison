@@ -21,36 +21,6 @@ protected:
 
 	//Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	UPROPERTY(EditAnywhere)
-		int KeyCode = 0;
-
-	UPROPERTY(EditAnywhere)
-		USoundBase* OpenSound;
-
-	UPROPERTY(VisibleAnywhere)
-		class UStaticMeshComponent* Mesh;
-
-	UPROPERTY(VisibleAnywhere)
-		class UBoxComponent* BoxCollision;
-
-	UPROPERTY(VisibleAnywhere, Replicated)
-		bool IsOpen = false;
-
-	UPROPERTY(EditAnywhere, Replicated)
-		bool IsKeyOneTimeUse = false;
-
-	UPROPERTY(EditAnywhere, Replicated)
-		FVector OpenPosition = FVector(0, 0, 0);
-
-	UPROPERTY(EditAnywhere)
-		FVector ClosedPosition = FVector(0, 0, 0);
-
-	UPROPERTY(VisibleAnywhere)
-		class APlayerCharacter* OverlappingPlayer = nullptr;
 
 	//Overlap Functions
 	UFUNCTION()
@@ -60,6 +30,40 @@ public:
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+private:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	//Components
+	UPROPERTY(VisibleAnywhere)
+		class UStaticMeshComponent* Mesh;
+	UPROPERTY(VisibleAnywhere)
+		class UBoxComponent* BoxCollision;
+
+	//Open position of the door mesh
+	UPROPERTY(EditAnywhere, Replicated)
+		FVector OpenPosition = FVector(0, 0, 0);
+
 	//Transition From Current Position to Open Position
 	void OpenDoor(float _DeltaTime);
+
+	//Player Interaction
+	UPROPERTY(VisibleAnywhere)
+		class APlayerCharacter* OverlappingPlayer = nullptr;
+
+	//To allow unique key and door combination
+	UPROPERTY(EditAnywhere)
+		int KeyCode = 0;
+
+	//Checks whether to destroy the key or not after opening the door
+	UPROPERTY(EditAnywhere, Replicated)
+		bool IsKeyOneTimeUse = false;
+
+	//Sound that plays when the doors open
+	UPROPERTY(EditAnywhere)
+		USoundBase* OpenSound;
+
+	//Checks whether the door is opened
+	UPROPERTY(VisibleAnywhere, Replicated)
+		bool IsOpen = false;
 };

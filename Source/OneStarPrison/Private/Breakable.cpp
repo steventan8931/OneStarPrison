@@ -48,17 +48,6 @@ void ABreakable::BeginPlay()
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ABreakable::OnOverlapEnd);
 
 	CurrentHealth = MaxHealth;
-
-	//for (int Index = 0; Index != ListOfMaterialsAtHealth.Num(); ++Index)
-	//{
-	//	if (CurrentHealth == ListOfMaterialsAtHealth[Index].AtHP)
-	//	{
-	//		if (ListOfMaterialsAtHealth[Index].Material != nullptr)
-	//		{
-	//			Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
-	//		}
-	//	}
-	//}
 }
 
 // Called every frame
@@ -165,19 +154,6 @@ void ABreakable::UpdateHealth()
 		return;
 	}
 
-
-	//Update the material of the object
-	//for (int Index = 0; Index != ListOfMaterialsAtHealth.Num(); ++Index)
-	//{
-	//	if(CurrentHealth == ListOfMaterialsAtHealth[Index].AtHP)
-	//	{
-	//		if (ListOfMaterialsAtHealth[Index].Material != nullptr)
-	//		{
-	//			Mesh->SetMaterial(0, ListOfMaterialsAtHealth[Index].Material);
-	//		}
-	//	}
-	//}
-
 	//Deactive the break particles
 	Particles->Activate(false);
 
@@ -234,10 +210,8 @@ void ABreakable::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class A
 
 					OverlappingPlayer = nullptr;
 				}
-
 			}
 		}
-
 	}
 }
 

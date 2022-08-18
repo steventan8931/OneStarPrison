@@ -27,7 +27,6 @@ void ADrawbridgePlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ADrawbridgePlatform, OpenRotation);
-	DOREPLIFETIME(ADrawbridgePlatform, ClosedRotation);
 }
 
 // Called every frame
@@ -35,17 +34,14 @@ void ADrawbridgePlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//If the drawbridge is open
 	if (IsOpen)
 	{
-		OpenPlatform(DeltaTime);
-	}
-}
-
-void ADrawbridgePlatform::OpenPlatform(float _DeltaTime)
-{
-	if (GetActorRotation() != OpenRotation)
-	{
-		FRotator newRot = FMath::Lerp(GetActorRotation(), OpenRotation, _DeltaTime * 2.0f);
-		SetActorRotation(newRot);
+		//Update its rotation to its open rotation
+		if (GetActorRotation() != OpenRotation)
+		{
+			FRotator newRot = FMath::Lerp(GetActorRotation(), OpenRotation, DeltaTime * 2.0f);
+			SetActorRotation(newRot);
+		}
 	}
 }
