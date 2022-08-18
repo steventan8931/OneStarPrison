@@ -210,10 +210,8 @@ void ABreakable::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class A
 
 					OverlappingPlayer = nullptr;
 				}
-
 			}
 		}
-
 	}
 }
 
