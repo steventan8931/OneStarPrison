@@ -46,41 +46,46 @@ void AKeyDoor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//Update the door to its open position when open
 	if (IsOpen)
 	{
 		OpenDoor(DeltaTime);
 		return;
 	}
 
+	//If there is an overlapping player
 	if (OverlappingPlayer)
 	{
 		APickupableKey* key = Cast<APickupableKey>(OverlappingPlayer->PickedUpItem);
+		//If the overlapping player has a key
 		if (key)
 		{
+			//If the key matches allow them to interact
 			if (key->KeyCode == KeyCode)
 			{
 				OverlappingPlayer->CanInteract = true;
 			}
 
+			//If they are interacting
 			if (OverlappingPlayer->IsInteracting)
 			{
+				//Remove the key if it is only a one time use
 				if (IsKeyOneTimeUse)
 				{
 					OverlappingPlayer->PickedUpItem->Destroy();
 					OverlappingPlayer->PickedUpItem = nullptr;
 				}
 
+				//Play the door open sound
 				if (OpenSound)
 				{
 					UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
 				}
 
+				//Open the door
 				IsOpen = true;
-
-				OverlappingPlayer->CanInteract = false;
-
-				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Open"));
-			
+				//Remove the players ability to further interact with this door
+				OverlappingPlayer->CanInteract = false;			
 			}
 		}
 
@@ -89,16 +94,12 @@ void AKeyDoor::Tick(float DeltaTime)
 
 void AKeyDoor::OpenDoor(float _DeltaTime)
 {
+	//Updates the door to its open position over time
 	if (Mesh->GetComponentLocation() != OpenPosition)
 	{
 		FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), OpenPosition, _DeltaTime);
 		Mesh->SetWorldLocation(newPos);
 	}
-	//if (GetActorLocation() != OpenPosition)
-	//{
-	//	FVector newPos = FMath::Lerp(GetActorLocation(), OpenPosition, _DeltaTime);
-	//	SetActorLocation(newPos);
-	//}
 }
 
 void AKeyDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -107,30 +108,31 @@ void AKeyDoor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class A
 	{
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+		//If the overlapping actor is a player
 		if (playerActor)
 		{
+			//If overlapping player is null, set the overlapping player to the current player
 			if (OverlappingPlayer == nullptr)
 			{
 				OverlappingPlayer = playerActor;
 			}
 			else
 			{
-				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Can Interact"));
+				//If the overlapping actor isn't null and the overlapping actor has a key
 				APickupableKey* key = Cast<APickupableKey>(playerActor->PickedUpItem);
 				if (key)
 				{
+					//If the key matches
 					if (key->KeyCode == KeyCode)
 					{
+						//Make the overlapping actor the current player and allow them to interact
 						playerActor->CanInteract = true;
 						OverlappingPlayer = playerActor;
 					}
 				}
 			}
-
-
 		}
-
-		
+	
 	}
 }
 
@@ -140,15 +142,23 @@ void AKeyDoor::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AAc
 	{
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+		//If the overlapping actor is a player
 		if (playerActor)
 		{
-			if (OverlappingPlayer != nullptr)
+			//If the overlapping player exists
+			if (OverlappingPlayer)
 			{
-				OverlappingPlayer->CanInteract = false;
-				//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("Player left"));
-				OverlappingPlayer = nullptr;
+				//If this overlapping player is the overlapping player
+				if (playerActor == OverlappingPlayer)
+				{
+					//Remove the players ability to interact with the lever
+					OverlappingPlayer->CanInteract = false;
+					OverlappingPlayer = nullptr;
+				}
 			}
 		}
 	}
+
+
 }
 
