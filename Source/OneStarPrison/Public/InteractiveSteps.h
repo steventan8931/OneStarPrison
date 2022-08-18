@@ -21,31 +21,36 @@ protected:
 
 	//Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
-public:	
+private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//Component
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
-
-	UPROPERTY(VisibleAnywhere, Replicated)
-		bool IsOpen = false;
-
-	UPROPERTY(EditAnywhere, Replicated)
-		FVector OpenPosition = FVector(0, 0, 0);
-
-	UPROPERTY(VisibleAnywhere, Replicated)
-		FVector ClosedPosition = FVector(0, 0, 0);
-
-	UPROPERTY(VisibleAnywhere,Replicated)
-		float CloseDelay = 0.0f;
-
-	UPROPERTY(VisibleAnywhere,Replicated)
-		float CloseTimer = 0.0f;
 
 	//Transition From Current Position to Open Position
 	void OpenDoor(float _DeltaTime);
 
 	//Transition From Current Position to Closed Position
 	void CloseDoor(float _DeltaTime);
+
+	//The open and closed positions for the stepss
+	UPROPERTY(EditAnywhere, Replicated)
+		FVector OpenPosition = FVector(0, 0, 0);
+	UPROPERTY(VisibleAnywhere, Replicated)
+		FVector ClosedPosition = FVector(0, 0, 0);
+
+	//The timer to count up to the delay
+	UPROPERTY(VisibleAnywhere, Replicated)
+		float CloseTimer = 0.0f;
+public:
+	//Checks whether the steps should be going to their closed or open positions
+	UPROPERTY(VisibleAnywhere, Replicated)
+		bool IsOpen = false;
+
+	//Delay before it startings closing in again (Set by the manager)
+	UPROPERTY(VisibleAnywhere, Replicated)
+		float CloseDelay = 0.0f;
+
 };

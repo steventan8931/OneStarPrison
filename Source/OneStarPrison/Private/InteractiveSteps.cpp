@@ -39,6 +39,7 @@ void AInteractiveSteps::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//Update the door position based on whether it is open or closed
 	if (IsOpen)
 	{
 		OpenDoor(DeltaTime);
@@ -51,7 +52,10 @@ void AInteractiveSteps::Tick(float DeltaTime)
 
 void AInteractiveSteps::OpenDoor(float _DeltaTime)
 {
+	//Resets the close timer when it is open
 	CloseTimer = 0.0f;
+
+	//Update the position of the step to its open position over time
 	if (GetActorLocation() != OpenPosition)
 	{
 		FVector newPos = FMath::Lerp(GetActorLocation(), OpenPosition, _DeltaTime);
@@ -62,21 +66,18 @@ void AInteractiveSteps::OpenDoor(float _DeltaTime)
 
 void AInteractiveSteps::CloseDoor(float _DeltaTime)
 {
+	//Increment the close timer over time
 	CloseTimer += _DeltaTime;
 
+	//If the close timer has reached the close delay time
 	if (CloseTimer >= CloseDelay)
 	{
-		//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("moving"));
+		//Update the position of the step to its closed position over time
 		if (GetActorLocation() != ClosedPosition)
 		{
 			FVector newPos = FMath::Lerp(GetActorLocation(), ClosedPosition, _DeltaTime);
 			SetActorLocation(newPos);
 		}
-		else
-		{
-			//CloseTimer = 0.0f;
-		}
-
 	}
 
 }
