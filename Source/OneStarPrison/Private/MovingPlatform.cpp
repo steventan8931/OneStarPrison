@@ -39,15 +39,11 @@ void AMovingPlatform::BeginPlay()
 	{
 		if (Platform)
 		{
+			//Set up audio component to have utilise the moving sound
 			AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, MovingSound, Platform->GetActorLocation());
 
 			if (AudioComponent)
 			{
-				//AudioComponent->SetIsReplicated(true);
-				//if (!HasAuthority())
-				//{
-				//	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("moving"));
-				//};
 				ServerPlaySound(true);
 				AudioComponent->SetPaused(true);
 			}

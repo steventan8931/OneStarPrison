@@ -13,9 +13,11 @@ struct FOnOffLeverDoors
 {
 	GENERATED_BODY()
 
+	//Array of On/Off Levers
 	UPROPERTY(EditAnywhere)
 		class AOnOffLever* Lever = nullptr;
 
+	//Array of door
 	UPROPERTY(EditAnywhere)
 		TArray<ADoor*> Doors;
 };
@@ -35,19 +37,23 @@ protected:
 
 	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
 
-public:	
+private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, Replicated)
-		TArray<FOnOffLeverDoors> OnOffLeverDoors;
-
-	//Check if both mannequins match
+	//Update the doors to be open/closed based on the levers
 	UFUNCTION(NetMulticast, Unreliable)
 		void UpdateDoors();
-
 	UFUNCTION(Server, Reliable)
 		void RPCUpdateDoors();
 
+	//cache to set values in the first frame
 	bool FirstFrame = true;
+
+public:
+	//Struct of an array of levers and doors
+	UPROPERTY(EditAnywhere, Replicated)
+		TArray<FOnOffLeverDoors> OnOffLeverDoors;
+
+
 };

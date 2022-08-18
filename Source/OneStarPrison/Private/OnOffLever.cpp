@@ -60,42 +60,56 @@ void AOnOffLever::Tick(float DeltaTime)
 
 	if (OverlappingPlayer != nullptr)
 	{
-
+		//If the timer has been longer than the delay
 		if (OpenTimer >= OpenTime)
 		{
+			//Allow the player to interact
 			OverlappingPlayer->CanInteract = true;
+			//Change the players interact type to lever pulling
 			OverlappingPlayer->InteractType = EInteractType::LeverPull;
 		}
 
+		//If the player is able to interact
 		if (OverlappingPlayer->CanInteract)
 		{
+			//if the player is interacting
 			if (OverlappingPlayer->IsInteracting)
 			{
+				//If the lever is already in its open state
 				if (IsOpen)
 				{
+					//Set its state to closed
 					IsOpen = false;
+
+					//Play the lever sound
 					if (OpenSound)
 					{
 						UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
 					}
 
+					
 					if (Manager)
 					{
+						//Iterate through all the doors
 						for (int i = 0; i < Manager->OnOffLeverDoors.Num(); i++)
 						{
+							//Have the doors play their open/close sounds
 							Manager->OnOffLeverDoors[IndexInManager].Doors[i]->PlaySound();
 						}
 
 					}
-
-					//OverlappingPlayer->IsInteracting = false;
-
+					
+					//Make the player unable to interact
 					OverlappingPlayer->CanInteract = false;
+					//Reset the timer
 					OpenTimer = 0.0f;
 				}
-				else
+				else //If the lever is in its closed state
 				{
+					//Set its state to open
 					IsOpen = true;
+
+					//Play the lever sound
 					if (OpenSound)
 					{
 						UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
@@ -103,16 +117,18 @@ void AOnOffLever::Tick(float DeltaTime)
 
 					if (Manager)
 					{
+						//Iterate through all the doors
 						for (int i = 0; i < Manager->OnOffLeverDoors.Num(); i++)
 						{
+							//Have the doors play their open/close sounds
 							Manager->OnOffLeverDoors[IndexInManager].Doors[i]->PlaySound();
 						}
 
 					}
 
-					//OverlappingPlayer->IsInteracting = false;
-
+					//Make the player unable to interact
 					OverlappingPlayer->CanInteract = false;
+					//Reset the timer
 					OpenTimer = 0.0f;
 				}
 
@@ -120,21 +136,24 @@ void AOnOffLever::Tick(float DeltaTime)
 		}
 		else
 		{
+			//If the player is unable to interact, make them not interact
 			OverlappingPlayer->IsInteracting = false;
 		}
 
 	}
 
+	//Update the position of the lever over time based on whether its open or closed
 	if (IsOpen)
 	{
-		OpenTimer += DeltaTime;
 		MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
 	}
 	else
 	{
-		OpenTimer += DeltaTime;
 		MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
 	}
+
+	//Increment the time before the player can interact again
+	OpenTimer += DeltaTime;
 
 }
 
@@ -146,8 +165,10 @@ void AOnOffLever::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, clas
 		{
 			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+			//If the overlapping actor is a player
 			if (playerActor)
 			{
+				//Set the overlapping player to this player 
 				OverlappingPlayer = playerActor;
 
 			}
@@ -161,12 +182,16 @@ void AOnOffLever::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class 
 	{
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+		//If the overlapping actor is a player
 		if (playerActor)
 		{
-			if (OverlappingPlayer != nullptr)
+			//If the overlapping player exists
+			if (OverlappingPlayer)
 			{
+				//If this overlapping player is the overlapping player
 				if (playerActor == OverlappingPlayer)
 				{
+					//Remove the players ability to interact with the lever
 					OverlappingPlayer->CanInteract = false;
 					OverlappingPlayer = nullptr;
 				}
