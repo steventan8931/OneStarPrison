@@ -45,6 +45,8 @@ void ADrawbridgeTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >&
 
 	DOREPLIFETIME(ADrawbridgeTrigger, HandleOpenRotation);
 	DOREPLIFETIME(ADrawbridgeTrigger, HandleClosedRotation);
+
+	DOREPLIFETIME(ADrawbridgeTrigger, Platform);
 }
 
 
@@ -76,11 +78,17 @@ void ADrawbridgeTrigger::Tick(float DeltaTime)
 					//Dont let the player interact again
 					OverlappingPlayer->CanInteract = false;
 					OverlappingPlayer->IsInteracting = false;
+					OverlappingPlayer->CanMove = true;
 				}
 			}
 		}
 		else
 		{
+			if (OverlappingPlayer)
+			{
+				OverlappingPlayer->IsInteracting = false;
+				OverlappingPlayer->CanMove = true;
+			}
 			//Update the position of the handle
 			MovableMesh->SetRelativeRotation(HandleClosedRotation);
 		}
