@@ -40,6 +40,8 @@ void ATrapRoomWalls::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& Out
 	DOREPLIFETIME(ATrapRoomWalls, OpenPosition);
 	DOREPLIFETIME(ATrapRoomWalls, ClosedPosition);
 	DOREPLIFETIME(ATrapRoomWalls, IsOpen);
+
+	DOREPLIFETIME(ATrapRoomWalls, MoveSpeed);
 }
 
 // Called every frame
@@ -64,7 +66,7 @@ void ATrapRoomWalls::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 		if (playerActor)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("hit by wall"));
+			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("hit by wall"));
 			playerActor->HitByWallCount += 1;
 		}
 	}
@@ -77,7 +79,7 @@ void ATrapRoomWalls::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cla
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 		if (playerActor)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("left the wall"));
+			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("left the wall"));
 			playerActor->HitByWallCount -= 1;
 		}
 

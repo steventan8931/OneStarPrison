@@ -71,8 +71,7 @@ void ATrapRoomTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(ATrapRoomTrigger, OverlappingPlayer);
 	DOREPLIFETIME(ATrapRoomTrigger, OverlappingPlayer2);
 
-	DOREPLIFETIME(ATrapRoomTrigger, IsPlayerHit);
-	
+	DOREPLIFETIME(ATrapRoomTrigger, IsPlayerHit);	
 }
 
 // Called every frame

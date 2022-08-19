@@ -53,7 +53,7 @@ private:
 		USoundBase* OpenSound;
 
 	//Drawbrdige
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		class ADrawbridgePlatform* Platform;
 
 	//Checks whether it should be triggered by throwing projectiles or player interaction
