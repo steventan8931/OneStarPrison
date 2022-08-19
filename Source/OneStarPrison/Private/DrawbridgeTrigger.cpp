@@ -76,19 +76,14 @@ void ADrawbridgeTrigger::Tick(float DeltaTime)
 					//Update the position of the handle 
 					MovableMesh->SetRelativeRotation(HandleOpenRotation);
 					//Dont let the player interact again
-					OverlappingPlayer->CanInteract = false;
-					OverlappingPlayer->IsInteracting = false;
+					//OverlappingPlayer->CanInteract = false;
+					//OverlappingPlayer->IsInteracting = false;
 					OverlappingPlayer->CanMove = true;
 				}
 			}
 		}
 		else
 		{
-			if (OverlappingPlayer)
-			{
-				OverlappingPlayer->IsInteracting = false;
-				OverlappingPlayer->CanMove = true;
-			}
 			//Update the position of the handle
 			MovableMesh->SetRelativeRotation(HandleClosedRotation);
 		}
