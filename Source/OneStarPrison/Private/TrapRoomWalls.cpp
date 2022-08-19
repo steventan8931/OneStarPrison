@@ -40,6 +40,8 @@ void ATrapRoomWalls::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& Out
 	DOREPLIFETIME(ATrapRoomWalls, OpenPosition);
 	DOREPLIFETIME(ATrapRoomWalls, ClosedPosition);
 	DOREPLIFETIME(ATrapRoomWalls, IsOpen);
+
+	DOREPLIFETIME(ATrapRoomWalls, MoveSpeed);
 }
 
 // Called every frame

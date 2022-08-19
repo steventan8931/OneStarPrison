@@ -103,6 +103,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, IsCrouching);
 
 	DOREPLIFETIME(APlayerCharacter, IsClimbing);
+	DOREPLIFETIME(APlayerCharacter, ClimbSpeed);
 
 	DOREPLIFETIME(APlayerCharacter, CurrentPickupWidget);
 	DOREPLIFETIME(APlayerCharacter, CurrentInteractWidget);
@@ -111,6 +112,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 
 	DOREPLIFETIME(APlayerCharacter, PunchTimer);
 	DOREPLIFETIME(APlayerCharacter, PunchDelay);
+
 }
 
 // Called every frame
