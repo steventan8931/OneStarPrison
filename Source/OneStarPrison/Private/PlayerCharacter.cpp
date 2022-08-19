@@ -288,6 +288,9 @@ void APlayerCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Locat
 		return;
 	}
 	Jump();
+
+	CanMove = true;
+	IsInteracting = false;
 }
 
 void APlayerCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
@@ -304,9 +307,6 @@ void APlayerCharacter::TurnAtRate(float Rate)
 void APlayerCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
-
-
-
 	if (CameraBoom->bDoCollisionTest)
 	{
 		//Normal Camera
