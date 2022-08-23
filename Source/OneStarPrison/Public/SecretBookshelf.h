@@ -22,56 +22,6 @@ protected:
 
 	//Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	UPROPERTY(EditAnywhere)
-		USoundBase* InsertSound;
-
-	UPROPERTY(EditAnywhere)
-		USoundBase* CompleteSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class UStaticMeshComponent* Mesh;
-
-	UPROPERTY(VisibleAnywhere)
-		class UBoxComponent* BoxCollision;
-
-	UPROPERTY(VisibleAnywhere)
-		class USceneComponent* Book1Position;
-
-	UPROPERTY(VisibleAnywhere)
-		class USceneComponent* Book2Position;
-
-	UPROPERTY(VisibleAnywhere)
-		class USceneComponent* Book3Position;
-
-	UPROPERTY(EditAnywhere, Replicated)
-		FRotator OpenRotation = FRotator(0, 0, 0);
-
-	class APlayerCharacter* OverlappingPlayer = nullptr;
-
-	UPROPERTY(EditAnywhere)
-		bool Book1Inserted = false;
-
-	UPROPERTY(EditAnywhere)
-		bool Book2Inserted = false;
-
-	UPROPERTY(EditAnywhere)
-		bool Book3Inserted = false;
-
-	UPROPERTY(Replicated)
-		bool BothBooksInserted = false;
-
-	bool SoundPlayed = false;
-
-	//Check if book is inserted
-	UFUNCTION(Client, Unreliable)
-	void CheckInsertedBook();
-	//Check if book is inserted
-	UFUNCTION(Server, Unreliable)
-	void RPCCheckInsertedBook();
 
 	//Overlap Functions
 	UFUNCTION()
@@ -80,7 +30,59 @@ public:
 	//Overlap Functions
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+private:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
+	//Components
+	UPROPERTY(EditAnywhere)
+		class UStaticMeshComponent* Mesh;
+	UPROPERTY(VisibleAnywhere)
+		class UBoxComponent* BoxCollision;
+
+	//Sound that plays when a book is inserted
+	UPROPERTY(EditAnywhere)
+		USoundBase* InsertSound;
+	//Sound that plays when all books are inserted
+	UPROPERTY(EditAnywhere, Replicated)
+		USoundBase* CompleteSound;
+
+	//Scene Transforms for the position
+	UPROPERTY(VisibleAnywhere)
+		class USceneComponent* Book1Position;
+	UPROPERTY(VisibleAnywhere)
+		class USceneComponent* Book2Position;
+	UPROPERTY(VisibleAnywhere)
+		class USceneComponent* Book3Position;
+
+	//Booleans for each book slot
+	UPROPERTY(EditAnywhere,Replicated)
+		bool Book1Inserted = false;
+	UPROPERTY(EditAnywhere, Replicated)
+		bool Book2Inserted = false;
+	UPROPERTY(EditAnywhere, Replicated)
+		bool Book3Inserted = false;
+
+	//Checks whether all books have been inserted
+	UPROPERTY(Replicated)
+		bool AllBooksInserted = false;
+
+	//Speed the shelf opens
 	UPROPERTY(EditAnywhere, Replicated)
 		float OpenSpeed = 1.0f;
+
+	//Rotation the bookshelf will be at when all books are insterted
+	UPROPERTY(EditAnywhere, Replicated)
+		FRotator OpenRotation = FRotator(0, 0, 0);
+
+	//Player Interaction
+	UPROPERTY(Replicated)
+	class APlayerCharacter* OverlappingPlayer = nullptr;
+
+	//Check if book is inserted On Client
+	UFUNCTION(NetMulticast, Unreliable)
+	void CheckInsertedBook();
+	//Check if book is inserted On Server
+	UFUNCTION(Server, Unreliable)
+	void RPCCheckInsertedBook();
 };

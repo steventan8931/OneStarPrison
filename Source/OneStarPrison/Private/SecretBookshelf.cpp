@@ -46,7 +46,16 @@ void ASecretBookshelf::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ASecretBookshelf, OpenRotation);
-	DOREPLIFETIME(ASecretBookshelf, BothBooksInserted);
+
+	DOREPLIFETIME(ASecretBookshelf, Book1Inserted);
+	DOREPLIFETIME(ASecretBookshelf, Book2Inserted);
+	DOREPLIFETIME(ASecretBookshelf, Book3Inserted);
+	
+	DOREPLIFETIME(ASecretBookshelf, AllBooksInserted);
+
+	DOREPLIFETIME(ASecretBookshelf, CompleteSound);
+	DOREPLIFETIME(ASecretBookshelf, OverlappingPlayer);
+	
 }
 
 // Called every frame
@@ -54,43 +63,41 @@ void ASecretBookshelf::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CheckInsertedBook();
-
-	if (BothBooksInserted)
+	//If all books are inserted
+	if (AllBooksInserted)
 	{
-		//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello s")));
-		if (!SoundPlayed)
-		{
-			if (CompleteSound)
-			{
-				UGameplayStatics::PlaySoundAtLocation(GetWorld(), CompleteSound, GetActorLocation());
-			}
-			SoundPlayed = true;
-		}
-
+		//Update the position of the bookshelf to its open rotation
 		if (Mesh->GetComponentRotation() != OpenRotation)
 		{
 			FRotator newRot = FMath::Lerp(Mesh->GetComponentRotation(), OpenRotation, DeltaTime * OpenSpeed);
 			Mesh->SetWorldRotation(newRot);
 		}
 
+		//Don't do the code after
 		return;
 	}
 
-
+	//If there is an overlapping player
 	if (OverlappingPlayer)
 	{
+		//If they have an item
 		if (OverlappingPlayer->PickedUpItem)
 		{
 			APickupableBook* book = Cast<APickupableBook>(OverlappingPlayer->PickedUpItem);
 
+			//If the held item is a book
 			if (book)
 			{
+				//Allow the player to interact
 				OverlappingPlayer->CanInteract = true;
+
+				//If the player clicked interact
 				if (OverlappingPlayer->IsInteracting)
 				{
+					//Attach the book to this actor
 					book->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
+					//Place the book in the correct position based on the code
 					switch (book->Code)
 					{
 					case 0:
@@ -107,49 +114,70 @@ void ASecretBookshelf::Tick(float DeltaTime)
 						break;
 					}
 
+					//Play the insert sound
 					if (InsertSound)
 					{
 						UGameplayStatics::PlaySoundAtLocation(GetWorld(), InsertSound, GetActorLocation());
 					}
 
+					//Make the player unable to continue interacting
 					OverlappingPlayer->CanInteract = false;
-					OverlappingPlayer->PickedUpItem = nullptr;
 					OverlappingPlayer->IsInteracting = false;
+					//Remove the item from the player
+					OverlappingPlayer->PickedUpItem = nullptr;
+
 				}
 
 			}
 		}
 	}
 
+	CheckInsertedBook();
+
 
 }
 
 void ASecretBookshelf::CheckInsertedBook_Implementation()
 {
-	RPCCheckInsertedBook();
-}
-
-void ASecretBookshelf::RPCCheckInsertedBook_Implementation()
-{
+	//Checks for if each book has been inserted
+	//If they aren't they set all books inserted to false and stop checking
 	if (!Book1Inserted)
 	{
-		BothBooksInserted = false;
+		AllBooksInserted = false;
 		return;
 	}
 
 	if (!Book2Inserted)
 	{
-		BothBooksInserted = false;
+		AllBooksInserted = false;
 		return;
 	}
 
 	if (!Book3Inserted)
 	{
-		BothBooksInserted = false;
+		AllBooksInserted = false;
 		return;
 	}
 
-	BothBooksInserted = true;
+	//Make it start moving the bookshelf
+	AllBooksInserted = true;
+
+	if (AllBooksInserted)
+	{
+		//If all each book inserted managed to all be true
+		//Play the complete sound of inserting all the books
+		if (CompleteSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), CompleteSound, GetActorLocation());
+		}
+
+	}
+	RPCCheckInsertedBook();
+}
+
+void ASecretBookshelf::RPCCheckInsertedBook_Implementation()
+{
+
 }
 
 void ASecretBookshelf::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -158,21 +186,28 @@ void ASecretBookshelf::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 	{
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+		//If the overlapping actor is a player
 		if (playerActor)
 		{
-			if (OverlappingPlayer == nullptr)
+			//If there isn't already an overlapping player
+			if (!OverlappingPlayer)
 			{
+				//Set the current player to the overlapping player
 				OverlappingPlayer = playerActor;
 			}
 			else
 			{
+				//If there is already an overlapping player
+				//But the current actor has a item
 				if (playerActor->PickedUpItem)
 				{
 					APickupableBook* book = Cast<APickupableBook>(playerActor->PickedUpItem);
-
+					//And the item is a book
 					if (book)
 					{
+						//Allow this player to interact 
 						playerActor->CanInteract = true;
+						//Make the previous overlapping player unable to interact and make overlapping player the current player with the book
 						OverlappingPlayer->CanInteract = false;
 						OverlappingPlayer = playerActor;
 					}
@@ -189,17 +224,22 @@ void ASecretBookshelf::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, c
 	{
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
+		//If the overlapping actor is a player
 		if (playerActor)
 		{
-			if (OverlappingPlayer != nullptr)
+			//If an overlapping player exists
+			if (OverlappingPlayer)
 			{
+				//If the current player is the overlapping player
 				if (playerActor == OverlappingPlayer)
 				{
+					//Make the overlapping player can't interact 
 					OverlappingPlayer->CanInteract = false;
 					OverlappingPlayer = nullptr;
 				}
 				else
 				{
+					//Otherwise make the overlapping actor unable to interact
 					playerActor->CanInteract = false;
 				}
 			}
