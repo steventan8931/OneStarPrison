@@ -24,45 +24,58 @@ protected:
 	//Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	UPROPERTY(EditAnywhere)
-		USoundBase* TriggerSound;
-
-	UPROPERTY(EditAnywhere, Replicated)
-		TArray<ATrapRoomWalls*> RoomWalls;
-
-	UPROPERTY(VisibleAnywhere, Replicated)
-		class APlayerCharacter* OverlappingPlayer;
-
-	UPROPERTY(VisibleAnywhere, Replicated)
-		class APlayerCharacter* OverlappingPlayer2;
-
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
-	bool Triggered = false;
-
-	UPROPERTY(VisibleAnywhere)
-		class UBoxComponent* BoxCollision;
-
 	//Overlap Functions
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	//Reseting
+private:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	//Component
+	UPROPERTY(VisibleAnywhere)
+		class UBoxComponent* BoxCollision;
+
+	//Sound that plays when the player overlaps
+	UPROPERTY(EditAnywhere)
+		USoundBase* TriggerSound;
+
+	//An array of walls that are being moved when this is triggered
+	UPROPERTY(EditAnywhere, Replicated)
+		TArray<ATrapRoomWalls*> RoomWalls;
+
+	//For Reseting of Puzzle
+	//Array of Barrels in Trap room
 	UPROPERTY(EditAnywhere, Replicated)
 		TArray<ABreakable*> BreakableBarrels;
+	//Array of Barrel Transforms
 	UPROPERTY(Replicated)
 		TArray<FTransform> BarrelTransforms;
-		TSubclassOf<class AActor>ActorToSpawn;
-		TSubclassOf<class AActor> ActorHiddenInBarrel;
+	//The type of actor to spawn
+	TSubclassOf<class AActor>ActorToSpawn;
+	//The type actor that was hidden in barrel
+	TSubclassOf<class AActor> ActorHiddenInBarrel;
 
+	//Spawns actor at given transform
 	AActor* SpawnActor(FTransform _Transform);
 
+	//Player Interactions
+	UPROPERTY(VisibleAnywhere, Replicated)
+		class APlayerCharacter* OverlappingPlayer;
+	UPROPERTY(VisibleAnywhere, Replicated)
+		class APlayerCharacter* OverlappingPlayer2;
+
+	//Checks given player's hitbywall count 
 	void CheckPlayerHit(APlayerCharacter* _Player);
+	//Repsawns both players to their last checkpoint
 	void RespawnPlayers(APlayerCharacter* _Player);
 
+public:
+	//Checks whether a player has overlapped
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
+	bool Triggered = false;
+
+	//Checks whether a player hit by wall count is >= 2
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
 	bool IsPlayerHit = false;
 };
