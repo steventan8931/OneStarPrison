@@ -33,7 +33,9 @@ APulleyDouble::APulleyDouble()
 void APulleyDouble::BeginPlay()
 {
 	Super::BeginPlay();
+	//Set the starting height of the pulleys to their current z positions
 	StartingHeight = GetActorLocation().Z;
+	//Update their target positions based on their starting heights
 	UpdateTargetPos();
 }
 
@@ -53,42 +55,43 @@ void APulleyDouble::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//Update the target position of the pulleys
 	UpdateTargetPos();
+
+	//Move the pulleys to their new target heights
 	MovePlatform(DeltaTime);
 
-	if (BreakablePlatform)
-	{
-		//if (BreakablePlatform->CurrentHealth == 0)
-		{
-			OtherPlatform->RockCount += 10;
-			MaxHeight = MaxHeightAfterBreaking;
-			BreakablePlatform = nullptr;
-		}
-	}
-
+	//If the sound has been played
 	if (IsSoundPlaying)
 	{
+		//Increment the sound timer
 		SoundTimer += DeltaTime;
 
+		//If the sound timer has pasted the replay timer
 		if (SoundTimer >= SoundReplayTimer)
 		{
+			//Reset the is sound playing bool
 			IsSoundPlaying = false;
 		}
 	}
 	else
 	{
+		//If the sound hasn't been played set sound timer to 0
 		SoundTimer = 0.0f;
 	}
 }
 
 void APulleyDouble::MovePlatform(float _DeltaTime)
 {
+	//If the other platform is valid
 	if (OtherPlatform)
 	{
+		//If the target height of the pulley is less than than the current height, move the pulley down
 		if (GetActorLocation().Z > TargetHeight)
 		{
 			SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z - _DeltaTime * MoveSpeed));
 		}
+		//If the target height of the pulley is higher than than the current height, move the pulley up
 		if (GetActorLocation().Z < TargetHeight)
 		{
 			SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z + _DeltaTime * MoveSpeed));
@@ -98,11 +101,16 @@ void APulleyDouble::MovePlatform(float _DeltaTime)
 
 void APulleyDouble::UpdateTargetPos()
 {
+	//If the other platform is valid
 	if (OtherPlatform)
 	{
+		//If the pulley estimated target height is less than its max height
 		if ((OtherPlatform->StartingHeight + (RockCount * HeightPerRock) - (OtherPlatform->RockCount * HeightPerRock)) <= OtherPlatform->MaxHeight)
 		{
+			//Set the estimated height as the other pulley's target height
 			OtherPlatform->TargetHeight = OtherPlatform->StartingHeight + (RockCount * HeightPerRock) - (OtherPlatform->RockCount * HeightPerRock);
+
+			//Set the target height of the pulley as the inverse 
 			TargetHeight = StartingHeight - (RockCount * HeightPerRock) + (OtherPlatform->RockCount * HeightPerRock);
 		}
 	}
@@ -114,22 +122,19 @@ void APulleyDouble::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 	{
 		APushable* pushable = Cast<APushable>(OtherActor);
 
+		//If the overlappign actor is a pushable
 		if (pushable)
 		{
 			if (OtherPlatform)
 			{
-				if (!pushable->HasBeenPushed)
+				//If the sound isnt playing
+				if (!IsSoundPlaying)
 				{
-					if (!IsSoundPlaying)
-					{
-						ServerPlaySound();
-						IsSoundPlaying = true;
-					}
-
-					pushable->HasBeenPushed = true;
+					ServerPlaySound();
+					IsSoundPlaying = true;
 				}
 
-
+				//Increment the rock count by the weightage of the pushable
 				RockCount += pushable->PulleyWeightage;
 			}
 
@@ -142,25 +147,21 @@ void APulleyDouble::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, clas
 {
 	if (OtherActor && (OtherActor != this))
 	{
-
 		APushable* pushable = Cast<APushable>(OtherActor);
 
+		//If the overlappign actor is a pushable
 		if (pushable)
 		{
 			if (OtherPlatform)
 			{
-				if (MovingSound)
+				//If the sound isnt playing
+				if (!IsSoundPlaying)
 				{
-					//if (!pushable->HasBeenPushed)
-					{
-						if (!IsSoundPlaying)
-						{
-							ServerPlaySound();
-							IsSoundPlaying = true;
-						}
-						pushable->HasBeenPushed = true;
-					}
+					ServerPlaySound();
+					IsSoundPlaying = true;
 				}
+				
+				//Decrement the rock count by the weightage of the pushable
 				RockCount -= pushable->PulleyWeightage;
 			}
 
@@ -170,6 +171,7 @@ void APulleyDouble::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, clas
 
 void APulleyDouble::ServerPlaySound_Implementation()
 {
+	//Have the server play the sound on all clients
 	ClientPlaySound();
 }
 

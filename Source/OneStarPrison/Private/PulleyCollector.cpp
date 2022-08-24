@@ -99,7 +99,7 @@ void APulleyCollector::UpdateTargetPos()
 		//If the platforms estimated target height is less than its max height
 		if ((Platform->StartingHeight + (RockCount * HeightPerRock)) <= Platform->MaxHeight)
 		{
-			//Set the estimated height as the platform's target hegith
+			//Set the estimated height as the platform's target height
 			Platform->TargetHeight = Platform->StartingHeight + (RockCount * HeightPerRock);
 
 			//Set the target height of the pulley as the inverse 
