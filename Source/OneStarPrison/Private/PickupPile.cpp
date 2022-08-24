@@ -26,7 +26,7 @@ APickupPile::APickupPile()
 void APickupPile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	//Spawns at rock at the start to be picked up
 	ServerSpawn();
 }
 
@@ -42,33 +42,38 @@ void APickupPile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//Have the server check for pickups
 	RPCCheckForPickUp();
-
 }
 
 
 void APickupPile::RPCCheckForPickUp_Implementation()
 {
+	//Check for pick up on the clients
 	CheckForPickUp();
 }
 
+//Spawns the actor at this actors transform
 AActor* APickupPile::SpawnActor()
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, TEXT("SPAWNED"));
-
 	return(GetWorld()->SpawnActor<AActor>(ActorToSpawn, GetActorTransform()));
 }
 
 void APickupPile::CheckForPickUp_Implementation()
 {
-	for (int Index = 0; Index != ListOfPickups.Num(); ++Index)
+	//Iterate through the spawn items
+	for (int i = 0; i < ListOfPickups.Num(); i++)
 	{
-		APickupable* pickup = Cast<APickupable>(ListOfPickups[Index]);
+		APickupable* pickup = Cast<APickupable>(ListOfPickups[i]);
+
+		//If the spawn actors are valid
 		if (pickup)
 		{
+			//If the spawned actors have been picked up by a player or have been thrown
 			if (pickup->Player || pickup->IsInAir)
 			{
-				ListOfPickups[Index] = SpawnActor();
+				//Spawn another one
+				ListOfPickups[i] = SpawnActor();
 				break;
 			}
 
@@ -78,9 +83,7 @@ void APickupPile::CheckForPickUp_Implementation()
 
 void APickupPile::ServerSpawn_Implementation()
 {
-	ListOfPickups.SetNum(PickupsToSpawn);
-	for (int Index = 0; Index != ListOfPickups.Num(); ++Index)
-	{
-		ListOfPickups[Index] = SpawnActor();
-	}
+	//Set the number of
+	ListOfPickups.SetNum(1);
+	ListOfPickups[0] = SpawnActor();
 }

@@ -22,33 +22,36 @@ protected:
 	//Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
-public:	
+private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//Components
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
-
 	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
 
-	UPROPERTY(EditAnywhere)
-		int PickupsToSpawn = 3;
-
+	//Actor type of the blueprint to spawn
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<class AActor>ActorToSpawn;
 
+	//Array of actors spawned
 	UPROPERTY(VisibleAnywhere, Replicated)
 		TArray<class AActor*> ListOfPickups;
 
+	//Has the server check the pick up on the client
+	UFUNCTION(Server, Unreliable)
+		void RPCCheckForPickUp();
+	//Checks for pick up on the client
 	UFUNCTION(Client, Unreliable)
 	void CheckForPickUp();
-	UFUNCTION(Server, Unreliable)
-	void RPCCheckForPickUp();
 
+	//Spawns the pickupables on the server
 	UFUNCTION(Server, Unreliable)
 		void ServerSpawn();
 
+	//Spawns specified actor
 	AActor* SpawnActor();
 
 };
