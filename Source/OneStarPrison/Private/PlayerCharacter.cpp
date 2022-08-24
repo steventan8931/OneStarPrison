@@ -510,6 +510,11 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 
 void APlayerCharacter::ClientRPCPickupAndDrop_Implementation(APickupable* _Pickup)
 {
+	//If the pickuped item is not null
+	if (!_Pickup)
+	{
+		return;
+	}
 	_Pickup->Player = this;
 	_Pickup->Mesh->SetSimulatePhysics(false);
 	_Pickup->Mesh->SetCollisionProfileName("Trigger");

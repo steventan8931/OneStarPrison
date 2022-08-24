@@ -19,48 +19,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	UPROPERTY(EditAnywhere)
-		USoundBase* MovingSound;
-
-	UPROPERTY(EditAnywhere)
-		UAudioComponent* AudioComponent;
-
-	UFUNCTION(Server, Reliable)
-		void ServerPlaySound();
-	UFUNCTION(NetMulticast, Reliable)
-		void ClientPlaySound();
-
-	UPROPERTY(VisibleAnywhere)
-		class UStaticMeshComponent* Mesh;
-
-	UPROPERTY(VisibleAnywhere)
-		class UBoxComponent* BoxCollision;
-
-	UPROPERTY(EditAnywhere)
-		class APulleyPlatform* Platform;
-
-	UPROPERTY(VisibleAnywhere)
-		int StartingHeight = 0;
-
-	UPROPERTY(EditAnywhere)
-		int TargetHeight = 0;
-
-	UPROPERTY(VisibleAnywhere)
-		int RockCount = 0;
-
-	UPROPERTY(EditAnywhere)
-		int HeightPerRock = 50;
-
-	UPROPERTY(EditAnywhere)
-		float MoveSpeed = 10.0f;
-
-	void MovePlatform(float _DeltaTime);
-
-	void UpdateTargetPos();
+	//Replication
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
 	//Overlap Functions
 	UFUNCTION()
@@ -70,4 +30,53 @@ public:
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+private:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	//Components
+	UPROPERTY(VisibleAnywhere)
+		class UStaticMeshComponent* Mesh;
+	UPROPERTY(VisibleAnywhere)
+		class UBoxComponent* BoxCollision;
+
+	//Pointer to the platform this pulley is moving
+	UPROPERTY(EditAnywhere,Replicated)
+		class APulleyPlatform* Platform;
+
+	//Sound that plays when a rock has been added and the platforms move
+	UPROPERTY(EditAnywhere, Replicated)
+		USoundBase* MovingSound;
+
+	//Have the server call the client play sound
+	UFUNCTION(Server, Reliable)
+		void ServerPlaySound();
+	//Plays the sound for everyone
+	UFUNCTION(NetMulticast, Reliable)
+		void ClientPlaySound();
+
+	//The starting height of the pulley
+	UPROPERTY(VisibleAnywhere, Replicated)
+		int StartingHeight = 0;
+	//Target height of the pulley
+	UPROPERTY(EditAnywhere, Replicated)
+		int TargetHeight = 0;
+
+	//The total amount of rocks in this box collision
+	UPROPERTY(VisibleAnywhere, Replicated)
+		int RockCount = 0;
+
+	//Height to increase the platform by for each rock
+	UPROPERTY(EditAnywhere, Replicated)
+		int HeightPerRock = 50;
+
+	//The rate and which the platform and the pulley collector moves
+	UPROPERTY(EditAnywhere)
+		float MoveSpeed = 10.0f;
+
+	//Move the platform and the pulley based on their target height
+	void MovePlatform(float _DeltaTime);
+
+	//Update their target position based on the rock count
+	void UpdateTargetPos();
 };
