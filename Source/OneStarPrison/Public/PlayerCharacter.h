@@ -66,50 +66,86 @@ protected:
 	//Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
-public:	
+private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	//Throw Widget Blueprint
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> ThrowWidgetClass;
+	//Pickup Widget Blueprint
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> PickupWidgetClass;
+	//Interact Widget Blueprint
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> InteractWidgetClass;
+
+	//Cache of Current Widgets
+	UPROPERTY(Replicated)
+		class UUserWidget* CurrentThrowWidget;
+	UPROPERTY(Replicated)
+		class UUserWidget* CurrentPickupWidget;
+	UPROPERTY(Replicated)
+		class UUserWidget* CurrentInteractWidget;
+public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+	//Checks whether the player can move or not (used with holing levers)
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
 		bool CanMove = true;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		class USceneComponent* ThrowCameraPos;
 	
+	//Cached armlength for when it will be changed for the maze
 	UPROPERTY(BlueprintReadWrite)
 	float cacheArmLength = 0.0f;
 
-	//Interact with object/button press/hold
+	//When the player presses the interact button
 	void Interact();
+	//Call function on the server
+	UFUNCTION(Server, Reliable)
+		void RPCInteract();
+	//When the player releases the interact button
 	void StopInteract();
+	//Call function on the server
+	UFUNCTION(Server, Reliable)
+		void RPCStopInteract();
+	//Whetther the player is able to interact (Interact prompt shows up)
 	UPROPERTY(Replicated)
 	bool CanInteract = false;
+	//Whether the player is interacting (holding down / clicked interact button)
 	UPROPERTY(BlueprintReadWrite,Replicated)
 	bool IsInteracting = false;
 
+	//Have the server to check for the interact
 	UFUNCTION(Server, Reliable)
-		void RPCInteract();
-	UFUNCTION(Server, Reliable)
-		void RPCStopInteract();
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
-		bool IsGrabbing = false;
+		void ServerCheckInteract();
+	//Check whether to show interact prompt on the client
+	UFUNCTION(Client, Reliable)
+		void CheckInteract();
 
-	//Grab Pickupable items and drop
+	//When the player presses the pick up button
 	void PickupAndDrop();
+	//Call Pick up on the server
 	UFUNCTION(Server, Reliable)
 		void ServerRPCPickupAndDrop();
+	//Call Pick up on the client
 	UFUNCTION(NetMulticast, Unreliable)
 		void ClientRPCPickupAndDrop(APickupable* _Pickup);
+	//Checks if the player is picking up (for the animation)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		bool IsPickingUp = false;
+
+	//Have the server to check for the pick up
+	UFUNCTION(Server, Reliable)
+		void ServerCheckPickup();
+	//Check whether to show pick up prompt on the client
+	UFUNCTION(Client, Reliable)
+		void CheckPickup();
 
 	//Throw Picked up item
 	void Throw();
@@ -119,10 +155,8 @@ public:
 		void ClientRPCThrow();
 	UFUNCTION(Client, Unreliable)
 		void ClientShowThrowWidget();
-	float cacheDeltaTime = 0;
 
-	UPROPERTY()
-	FRotator rot = FRotator::ZeroRotator;
+
 
 	//Check if Throw Key is being held down
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
@@ -134,14 +168,10 @@ public:
 	//Maximum Throw Power
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxThrowPower = 150.0f;
-	UPROPERTY(EditAnywhere)
-		float ThrowSpeed = 1.0f;
-	//Current Player Index
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
-	int PlayerIndex = 0;
 
 	UPROPERTY(BlueprintReadWrite)
 		FVector cacheVelocity;
+
 	//Throw Rendering
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		class USplineComponent* SplineComponent;
@@ -152,38 +182,10 @@ public:
 	UPROPERTY(EditAnywhere)
 		class UMaterialInstance* SplineMeshMaterial;
 
-	//HUD Class to add to viewport
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UUserWidget> ThrowWidgetClass;
 
-	UPROPERTY(Replicated)
-		class UUserWidget* CurrentThrowWidget;
 
-	//Pickup Widget
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UUserWidget> PickupWidgetClass;
 
-	UPROPERTY(Replicated)
-		class UUserWidget* CurrentPickupWidget;
 
-	//Interact Widget
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UUserWidget> InteractWidgetClass;
-
-	UPROPERTY(Replicated)
-		class UUserWidget* CurrentInteractWidget;
-
-	//Show Pickup Widget
-	UFUNCTION(Server, Reliable)
-		void ServerCheckPickup();
-	UFUNCTION(Client, Reliable)
-		void CheckPickup();
-
-	//Show Interact Widget
-	UFUNCTION(Server, Reliable)
-		void ServerCheckInteract();
-	UFUNCTION(Client, Reliable)
-		void CheckInteract();
 
 	//Punch Interact delay
 	UPROPERTY(BlueprintReadWrite, Replicated)

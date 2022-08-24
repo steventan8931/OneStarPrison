@@ -61,23 +61,14 @@ APlayerCharacter::APlayerCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
-	ThrowCameraPos = CreateDefaultSubobject<USceneComponent>(TEXT("ThrowCameraPos"));
-	ThrowCameraPos->SetupAttachment(GetCapsuleComponent());
-
 	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
 	SplineComponent->SetupAttachment(GetCapsuleComponent());
-	//SplineMesh = CreateDefaultSubobject<UStaticMesh>("SplineMesh");
-
 }
 
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	if (!HasAuthority())
-	{
-		PlayerIndex = 1;
-	}
 	RespawnCheckpoint = GetActorLocation();
 
 	CurrentInteractWidget = CreateWidget<UUserWidget>(GetWorld(), InteractWidgetClass);
@@ -96,8 +87,6 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, CurrentThrowWidget);
 	DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
 	DOREPLIFETIME(APlayerCharacter, IsPickingUp);
-	DOREPLIFETIME(APlayerCharacter, IsGrabbing);
-	DOREPLIFETIME(APlayerCharacter, PlayerIndex);
 
 	DOREPLIFETIME(APlayerCharacter, CanMove);
 	DOREPLIFETIME(APlayerCharacter, IsCrouching);
@@ -126,45 +115,53 @@ void APlayerCharacter::Tick(float DeltaTime)
 		PunchTimer += DeltaTime;
 	}
 
-
 	ServerCheckPickup();
 	ServerCheckInteract();
 
+	//Check if the player is holding down throw
 	if (IsHoldingDownThrow)
 	{
+		
 		if (ThrowPowerScale < MaxThrowPower)
 		{
+			//Reset the spline component
+			//Clear all the spline points
 			SplineComponent->ClearSplinePoints(true);
-			for (int Index = 0; Index != SplineComponentArray.Num(); ++Index)
+			//Iterate through the spline component array
+			for (int i = 0; i < SplineComponentArray.Num(); i++)
 			{
-				SplineComponentArray[Index]->DestroyComponent();
+				//Delete all the components
+				SplineComponentArray[i]->DestroyComponent();
 			}
+			//Empty the array
 			SplineComponentArray.Empty();
 
+			//Update the arm length to set a length
 			CameraBoom->TargetArmLength = 200;
 			
-			ThrowPowerScale += (DeltaTime * MaxThrowPower * ThrowSpeed);
+			//Increment the throw power for each second while holding it down
+			ThrowPowerScale += (DeltaTime * MaxThrowPower);
 			
-			rot = FRotator(0, GetControlRotation().Yaw, 0);
-
-			
+			//Get rotation of the camera so it is behind the player
+			FRotator rot = FRotator(0, GetControlRotation().Yaw, 0);
+			//Update the rotation of the actor only if it is the server
 			if (HasAuthority())
 			{
 				SetActorRotation(rot, ETeleportType::ResetPhysics);
 			}
 
-			FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
-			velocity.Normalize();
+			//Create Parameters for the
 			FPredictProjectilePathParams params;
 			params.StartLocation = GetMesh()->GetSocketLocation("Base-HumanPalmBone001Bone0015");
-			//GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello %s"), *params.StartLocation.ToString()));
+
+			//Starting Velocity of the throwing
+			FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
+			velocity.Normalize();
 
 			cacheVelocity = velocity * ThrowPowerScale * 10;
 			params.LaunchVelocity = cacheVelocity;
 			params.ProjectileRadius = 10;
 			params.bTraceWithChannel = false;
-			params.DrawDebugTime = 1.0f;
-			params.DrawDebugType = EDrawDebugTrace::None;
 			params.SimFrequency = 5;
 			TArray<AActor*> actors;
 			actors.Add(this);
@@ -237,7 +234,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	CheckClimbing();
 
 	IsPickingUp = false;
-	IsGrabbing = false;
 	CheckDeath(DeltaTime);
 }
 
@@ -407,7 +403,6 @@ void APlayerCharacter::Interact()
 	if (CanInteract)
 	{
 		IsInteracting = true;
-		IsGrabbing = true;
 	}
 }
 void APlayerCharacter::StopInteract()
@@ -420,14 +415,12 @@ void APlayerCharacter::RPCInteract_Implementation()
 	if (CanInteract)
 	{
 		IsInteracting = true;
-		IsGrabbing = true;
 	}
 }
 
 void APlayerCharacter::RPCStopInteract_Implementation()
 {
-	IsInteracting = false;
-	IsGrabbing = false;
+	IsInteracting = false; 
 }
 
 void APlayerCharacter::PickupAndDrop()
@@ -456,13 +449,10 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 	if (PickedUpItem)
 	{
 		IsPickingUp = false;
-		IsGrabbing = false;
 		IsHoldingDownThrow = true;
-		//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("throwing"));
 		return;
 	}
 
-	//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("picking up"));
 	TArray<FHitResult> OutHits;
 
 	FVector SweepStart = GetActorLocation();
@@ -471,9 +461,6 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 
 	//Create a collision sphere
 	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(200.0f);
-
-	//Draw debug sphere
-	//DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 50, FColor::White, false, 10);
 
 	//Check if something is hit
 	bool isHit = GetWorld()->SweepMultiByChannel(OutHits, SweepStart, SweepEnd, FQuat::Identity, ECC_WorldStatic, MyColSphere);
@@ -494,11 +481,6 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 				}
 
 				ClientRPCPickupAndDrop(pickup);
-
-				if (GEngine)
-				{
-					//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, *Hit.GetActor()->GetName());
-				}
 
 				//Stop after picking up an item
 				break;
@@ -523,16 +505,7 @@ void APlayerCharacter::ClientRPCPickupAndDrop_Implementation(APickupable* _Picku
 
 	PickedUpItem = _Pickup;
 
-	APickupableKey* key = Cast<APickupableKey>(PickedUpItem);
-
-	if (key)
-	{
-		IsPickingUp = true;
-	}
-	else
-	{
-		IsPickingUp = true;
-	}
+	IsPickingUp = true;
 
 	_Pickup->PlayPickupSound();
 
@@ -639,7 +612,6 @@ void APlayerCharacter::ServerRPCThrow_Implementation()
 void APlayerCharacter::ClientRPCThrow_Implementation()
 {
 	IsPickingUp = false;
-	IsGrabbing = false;
 	if (PickedUpItem && IsHoldingDownThrow)
 	{
 		IsHoldingDownThrow = false;
@@ -671,7 +643,6 @@ void APlayerCharacter::CheckPickup_Implementation()
 	if (PickedUpItem)
 	{
 		IsPickingUp = false;
-		IsGrabbing = false;
 		if (CurrentPickupWidget)
 		{
 			if (CurrentPickupWidget->IsVisible())
@@ -732,7 +703,6 @@ void APlayerCharacter::CheckPickup_Implementation()
 		}
 	}
 	IsPickingUp = false;
-	IsGrabbing = false;
 }
 
 
@@ -747,16 +717,11 @@ void APlayerCharacter::CheckInteract_Implementation()
 	{
 		if (InteractWidgetClass != nullptr)
 		{
-
 			if (CurrentInteractWidget)
 			{
 				if (!CurrentInteractWidget->IsVisible())
 				{
 					CurrentInteractWidget->AddToPlayerScreen();
-				}
-				else
-				{
-					//->RemoveFromParent();
 				}
 			}
 		}
