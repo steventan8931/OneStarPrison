@@ -351,11 +351,6 @@ void APlayerCharacter::MoveForward(float Value)
 			Direction = FRotationMatrix(GetActorRotation()).GetUnitAxis(EAxis::X);
 		}
 
-		//if (!HasAuthority())
-		//{
-		//	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello %s"), *Rotation.ToString()));
-		//}
-
 		//Walking VS Crouching
 		if (IsCrouching)
 		{
@@ -611,10 +606,15 @@ void APlayerCharacter::ServerRPCThrow_Implementation()
 
 void APlayerCharacter::ClientRPCThrow_Implementation()
 {
+	//Set picking up to false
 	IsPickingUp = false;
+	//If the player has an item and is holding down throw
 	if (PickedUpItem && IsHoldingDownThrow)
 	{
+		//Release Throw
 		IsHoldingDownThrow = false;
+
+		//Deatch the pickupable and reset its variables
 		PickedUpItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		PickedUpItem->Mesh->SetCollisionProfileName("IgnoreOnlyPawn");
 		PickedUpItem->Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
