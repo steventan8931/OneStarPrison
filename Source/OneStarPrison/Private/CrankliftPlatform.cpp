@@ -7,7 +7,7 @@
 
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
-#include "PickupableBook.h"
+#include "PickupableChest.h"
 
 // Sets default values
 ACrankliftPlatform::ACrankliftPlatform()
@@ -52,7 +52,7 @@ void ACrankliftPlatform::Tick(float DeltaTime)
 		//If the player is holding an item
 		if (OverlappingPlayer->PickedUpItem)
 		{
-			APickupableBook* chest = Cast<APickupableBook>(OverlappingPlayer->PickedUpItem);
+			APickupableChest* chest = Cast<APickupableChest>(OverlappingPlayer->PickedUpItem);
 
 			//If the item is a chest
 			if (chest)
@@ -91,7 +91,7 @@ void ACrankliftPlatform::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 				//If the player is holding an item
 				if (playerActor->PickedUpItem)
 				{
-					APickupableBook* chest = Cast<APickupableBook>(playerActor->PickedUpItem);
+					APickupableChest* chest = Cast<APickupableChest>(playerActor->PickedUpItem);
 
 					//If the item is a chest
 					if (chest)

@@ -182,17 +182,11 @@ public:
 	UPROPERTY(EditAnywhere)
 		class UMaterialInstance* SplineMeshMaterial;
 
-
-
-
-
-
 	//Punch Interact delay
 	UPROPERTY(BlueprintReadWrite, Replicated)
 		float PunchTimer = 0.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		float PunchDelay = 0.5f;
-
 
 	//Current Pickedup Item
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadWrite)

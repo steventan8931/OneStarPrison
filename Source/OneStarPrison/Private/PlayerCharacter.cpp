@@ -577,10 +577,7 @@ void APlayerCharacter::CheckClimbing_Implementation()
 	}
 }
 
-FTransform APlayerCharacter::GetCameraTransform()
-{
-	return FTransform(CameraBoom->GetComponentTransform());
-}
+
 
 void APlayerCharacter::SetVeloctiy_Implementation(FVector _Velocity)
 {
