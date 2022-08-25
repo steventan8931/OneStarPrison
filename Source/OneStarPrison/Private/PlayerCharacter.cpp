@@ -121,7 +121,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	//Check if the player is holding down throw
 	if (IsHoldingDownThrow)
 	{
-		
 		if (ThrowPowerScale < MaxThrowPower)
 		{
 			//Reset the spline component
@@ -172,12 +171,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 			FPredictProjectilePathResult result;
 			UGameplayStatics::PredictProjectilePath(GetWorld(), params, result);
 
-			for (int Index = 0; Index != result.PathData.Num(); ++Index)
+			for (int i = 0; i < result.PathData.Num(); i++)
 			{
-				SplineComponent->AddSplinePointAtIndex(result.PathData[Index].Location, Index, ESplineCoordinateSpace::Local, true);
+				SplineComponent->AddSplinePointAtIndex(result.PathData[i].Location, i, ESplineCoordinateSpace::Local, true);
 			}
 
-			for (int Index = 0; Index < (SplineComponent->GetNumberOfSplinePoints() - 1); ++Index)
+			for (int i = 0; i < (SplineComponent->GetNumberOfSplinePoints() - 1); i++)
 			{
 				USplineMeshComponent* spline = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
 				if (SplineMesh)
@@ -194,10 +193,10 @@ void APlayerCharacter::Tick(float DeltaTime)
 				spline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
 				spline->SetMobility(EComponentMobility::Movable);
 
-				const FVector startPoint = SplineComponent->GetLocationAtSplinePoint(Index, ESplineCoordinateSpace::Local);
-				const FVector startTangent = SplineComponent->GetLocationAtSplinePoint(Index, ESplineCoordinateSpace::Local);
-				const FVector endPoint = SplineComponent->GetLocationAtSplinePoint(Index + 1, ESplineCoordinateSpace::Local);
-				const FVector endTangent = SplineComponent->GetLocationAtSplinePoint(Index + 1, ESplineCoordinateSpace::Local);
+				const FVector startPoint = SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local);
+				const FVector startTangent = SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local);
+				const FVector endPoint = SplineComponent->GetLocationAtSplinePoint(i + 1, ESplineCoordinateSpace::Local);
+				const FVector endTangent = SplineComponent->GetLocationAtSplinePoint(i + 1, ESplineCoordinateSpace::Local);
 				
 				spline->SetStartAndEnd(startPoint, startTangent, endPoint, endTangent, true);
 				spline->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -230,8 +229,16 @@ void APlayerCharacter::Tick(float DeltaTime)
 		CanMove = true;
 	}
 
-	//Updates climbing movement
-	CheckClimbing();
+	if (CheckHeavyItem())
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 250.0f; 
+	}
+	else
+	{
+		//Updates climbing movement
+		CheckClimbing();
+	}
+
 
 	IsPickingUp = false;
 	CheckDeath(DeltaTime);
@@ -530,6 +537,7 @@ void APlayerCharacter::ClientShowThrowWidget_Implementation()
 void APlayerCharacter::Throw()
 {
 	ServerRPCThrow();
+	IsHoldingHeavyItem = false;
 }
 
 void APlayerCharacter::CheckDeath(float _DeltaTime)
@@ -573,15 +581,19 @@ void APlayerCharacter::CheckClimbing_Implementation()
 		GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 		GetCharacterMovement()->MaxStepHeight = 45.0f;
 		GetCharacterMovement()->SetWalkableFloorAngle(60.0f);
-
 	}
 }
 
 
 
-void APlayerCharacter::SetVeloctiy_Implementation(FVector _Velocity)
+bool APlayerCharacter::CheckHeavyItem()
 {
-	GetCharacterMovement()->Velocity = _Velocity;
+	if (IsHoldingHeavyItem)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void APlayerCharacter::StartCrouching_Implementation()

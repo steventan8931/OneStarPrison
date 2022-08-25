@@ -30,6 +30,7 @@ protected:
 	UFUNCTION()
 		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+private:
 	//Collision
 	UPROPERTY(EditAnywhere)
 		class UBoxComponent* BoxCollision;
@@ -37,6 +38,9 @@ protected:
 	//Player Interaction
 	UPROPERTY(VisibleAnywhere)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
+
+	UPROPERTY(VisibleAnywhere)
+		class APickupable* OverlappingWeight = nullptr;
 
 public:	
 	// Called every frame

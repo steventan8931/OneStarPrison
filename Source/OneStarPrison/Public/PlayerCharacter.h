@@ -230,13 +230,12 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void CheckClimbing();
 
-	//Posssesion
-	UFUNCTION(Server, Reliable)
-	void SetVeloctiy(FVector _Velocity);
-		FTransform GetCameraTransform();
+	//Heavy item
+	bool CheckHeavyItem();
+	bool IsHoldingHeavyItem = false;
 
-		//Interact Type
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
-			TEnumAsByte<EInteractType> InteractType;
+	//Interact Type
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TEnumAsByte<EInteractType> InteractType;
 
 };

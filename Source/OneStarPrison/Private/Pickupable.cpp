@@ -67,6 +67,7 @@ void APickupable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 			IsInAir = false;
 			Mesh->SetSimulatePhysics(true);
 			ProjectileMovement->Deactivate();
+			Mesh->SetCollisionProfileName("BlockAll");
 		}
 	}
 }

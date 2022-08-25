@@ -18,6 +18,6 @@ void APickupableChest::Tick(float DeltaTime)
 
 	if (Player)
 	{
-		Player->GetCharacterMovement()->Velocity = 
+		Player->IsHoldingHeavyItem = true;
 	}
 }
