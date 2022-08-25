@@ -49,14 +49,14 @@ void AFloatingSteps::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//If the player is colliding
 	if (IsPlayerColliding)
 	{
 		//If the object has not reached its minimum height
 		if (GetActorLocation().Z >= DownHeight)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("moving down"));
+			//Make the object move down over time
 			SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z - DeltaTime * MoveSpeed));
-
 		}
 	}
 	else
@@ -64,8 +64,7 @@ void AFloatingSteps::Tick(float DeltaTime)
 		//If the object has not reached its maximum height
 		if (GetActorLocation().Z <= UpHeight)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, TEXT("moving up"));
-			//Keep moving the platform up over time
+			//Make the object move up over time
 			SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z + DeltaTime * MoveSpeed));
 
 		}
