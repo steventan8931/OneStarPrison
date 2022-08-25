@@ -599,11 +599,15 @@ bool APlayerCharacter::CheckHeavyItem()
 void APlayerCharacter::StartCrouching_Implementation()
 {
 	IsCrouching = true;
+	Crouch(true);
+
 }
 
 void APlayerCharacter::StopCrouching_Implementation()
 {
 	IsCrouching = false;
+	//GetCapsuleComponent()->SetCapsuleSize(42.f, 96.0f);
+	UnCrouch(true);
 }
 
 
