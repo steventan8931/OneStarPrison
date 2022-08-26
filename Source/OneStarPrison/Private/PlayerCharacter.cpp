@@ -606,7 +606,6 @@ void APlayerCharacter::StartCrouching_Implementation()
 void APlayerCharacter::StopCrouching_Implementation()
 {
 	IsCrouching = false;
-	//GetCapsuleComponent()->SetCapsuleSize(42.f, 96.0f);
 	UnCrouch(true);
 }
 

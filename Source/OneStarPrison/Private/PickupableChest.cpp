@@ -16,6 +16,7 @@ void APickupableChest::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//If the chest is being held by a player, make the player's holding heavy item to true
 	if (Player)
 	{
 		Player->IsHoldingHeavyItem = true;
