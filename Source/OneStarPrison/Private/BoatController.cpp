@@ -65,6 +65,7 @@ void ABoatController::Tick(float DeltaTime)
 			//If the player's last punch has been longer than the punch delay
 			if (InteractTimer >= InteractDelay)
 			{
+
 				OverlappingPlayer->CanInteract = true;
 
 				if (OverlappingPlayer->CanInteract)
@@ -118,7 +119,6 @@ void ABoatController::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
 
 void ABoatController::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-
 	if (OtherActor && (OtherActor != this))
 	{
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);

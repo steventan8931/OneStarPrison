@@ -52,6 +52,7 @@ private:
 		class APlayerCharacter* OverlappingPlayer = nullptr;
 public:
 
+	FTransform cacheTransform;
 
 	UPROPERTY(EditAnywhere, Replicated)
 		bool IsMoving = false;

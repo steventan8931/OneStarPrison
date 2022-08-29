@@ -32,7 +32,8 @@ AControllableBoat::AControllableBoat()
 void AControllableBoat::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	cacheTransform = GetActorTransform();
 }
 
 void AControllableBoat::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -47,16 +48,22 @@ void AControllableBoat::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsMoving)
-	{
-		FVector newPos = FMath::Lerp(GetActorLocation(), GetActorLocation() + (GetActorForwardVector() * Speed), DeltaTime);
-		SetActorLocation(newPos);
-		return;
-	}
+
 
 	//If there is an overlapping player
 	if (OverlappingPlayer)
 	{
+		if (OverlappingPlayer->IsDead)
+		{
+			SetActorTransform(cacheTransform);
+		}
+
+		if (IsMoving)
+		{
+			FVector newPos = FMath::Lerp(GetActorLocation(), GetActorLocation() + (GetActorForwardVector() * Speed), DeltaTime);
+			SetActorLocation(newPos);
+			return;
+		}
 		//If they have an item
 		if (OverlappingPlayer->PickedUpItem)
 		{
