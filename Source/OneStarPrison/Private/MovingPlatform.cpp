@@ -110,31 +110,32 @@ void AMovingPlatform::Tick(float DeltaTime)
 		//If the lever is pulled held
 		if (IsOpen)
 		{
-			//Move the platform to its open position over time
-			if (Platform->GetActorLocation() != OpenPosition)
+			if (Platform->CanMove)
 			{
-				//Update the handle to its open rotation over time
-				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
-				FVector newPos = FMath::Lerp(Platform->GetActorLocation(), OpenPosition, DeltaTime * MoveSpeed);
-				Platform->SetActorLocation(newPos);
-
-				//If the platform is almost at its open position stop playing the audio
-				if (FVector::Distance(Platform->GetActorLocation(), OpenPosition) < 100)
+				//Move the platform to its open position over time
+				if (Platform->GetActorLocation() != OpenPosition)
 				{
-					ServerPlaySound(true);
+					//Update the handle to its open rotation over time
+					MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
+					FVector newPos = FMath::Lerp(Platform->GetActorLocation(), OpenPosition, DeltaTime * MoveSpeed);
+					Platform->SetActorLocation(newPos);
+
+					//If the platform is almost at its open position stop playing the audio
+					if (FVector::Distance(Platform->GetActorLocation(), OpenPosition) < 100)
+					{
+						ServerPlaySound(true);
+					}
+					else
+					{
+						ServerPlaySound(false);
+					}
 				}
 				else
 				{
-					ServerPlaySound(false);
+					//If the platform is at its open position stop playing the audio
+					ServerPlaySound(true);
 				}
 			}
-			else
-			{
-				//If the platform is at its open position stop playing the audio
-				ServerPlaySound(true);
-			}
-
-
 		}
 		else
 		{

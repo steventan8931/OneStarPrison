@@ -31,6 +31,10 @@ APickupable::APickupable()
 void APickupable::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Set its cache values to its value when the game starts
+	cacheTransform = GetActorTransform();
+	ParentActor = GetParentActor();
 }
 
 void APickupable::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -45,6 +49,60 @@ void APickupable::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLif
 void APickupable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//If it is to be reset
+	if (OnDisplay)
+	{
+		//If the a player has picked it up
+		if (Player)
+		{
+			TakenFromDisplay = true;
+		}
+		else
+		{
+			//If the item has been picked up but no longer attached to a player
+			if (TakenFromDisplay)
+			{
+				//When it hits something
+				if (!IsInAir)
+				{
+					//Increment the timer over time
+					Timer += DeltaTime;
+				}
+			}
+		}
+
+		//If the timer has reached the time before it respawns
+		if (Timer > TimeBeforeItRespawns)
+		{
+			//Reset the bool
+			TakenFromDisplay = false;
+
+			//If a parent actor exists
+			if (ParentActor)
+			{
+				//Attach to its parent actor
+				AttachToActor(ParentActor, FAttachmentTransformRules::SnapToTargetIncludingScale);
+			}
+
+			//Resets its transform to its starting transform
+			SetActorTransform(cacheTransform);
+
+			//Disable physics
+			Mesh->SetSimulatePhysics(false);
+
+			//Play the return sound
+			if (ReturnToDisplaySound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), ReturnToDisplaySound, GetActorLocation());
+			}
+
+			//Reset the timer
+			Timer = 0.0f;
+		}
+
+	}
+
 }
 
 void APickupable::PlayPickupSound()
@@ -67,6 +125,7 @@ void APickupable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 			IsInAir = false;
 			Mesh->SetSimulatePhysics(true);
 			ProjectileMovement->Deactivate();
+			Mesh->SetCollisionProfileName("BlockAll");
 		}
 	}
 }

@@ -61,184 +61,8 @@ APlayerCharacter::APlayerCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
-	ThrowCameraPos = CreateDefaultSubobject<USceneComponent>(TEXT("ThrowCameraPos"));
-	ThrowCameraPos->SetupAttachment(GetCapsuleComponent());
-
 	SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
 	SplineComponent->SetupAttachment(GetCapsuleComponent());
-	//SplineMesh = CreateDefaultSubobject<UStaticMesh>("SplineMesh");
-
-}
-
-// Called when the game starts or when spawned
-void APlayerCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	if (!HasAuthority())
-	{
-		PlayerIndex = 1;
-	}
-	RespawnCheckpoint = GetActorLocation();
-
-	CurrentInteractWidget = CreateWidget<UUserWidget>(GetWorld(), InteractWidgetClass);
-	CurrentPickupWidget = CreateWidget<UUserWidget>(GetWorld(), PickupWidgetClass);
-
-	cacheArmLength = CameraBoom->TargetArmLength;
-}
-
-void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(APlayerCharacter, IsInteracting);
-	DOREPLIFETIME(APlayerCharacter, CanInteract);
-	DOREPLIFETIME(APlayerCharacter, PickedUpItem);
-	DOREPLIFETIME(APlayerCharacter, CurrentThrowWidget);
-	DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
-	DOREPLIFETIME(APlayerCharacter, IsPickingUp);
-	DOREPLIFETIME(APlayerCharacter, IsGrabbing);
-	DOREPLIFETIME(APlayerCharacter, PlayerIndex);
-
-	DOREPLIFETIME(APlayerCharacter, CanMove);
-	DOREPLIFETIME(APlayerCharacter, IsCrouching);
-
-	DOREPLIFETIME(APlayerCharacter, IsClimbing);
-	DOREPLIFETIME(APlayerCharacter, ClimbSpeed);
-
-	DOREPLIFETIME(APlayerCharacter, CurrentPickupWidget);
-	DOREPLIFETIME(APlayerCharacter, CurrentInteractWidget);
-
-	DOREPLIFETIME(APlayerCharacter, HitByWallCount);
-
-	DOREPLIFETIME(APlayerCharacter, PunchTimer);
-	DOREPLIFETIME(APlayerCharacter, PunchDelay);
-
-}
-
-// Called every frame
-void APlayerCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	//Punch Delay
-	if (PunchTimer <= PunchDelay)
-	{
-		PunchTimer += DeltaTime;
-	}
-
-
-	ServerCheckPickup();
-	ServerCheckInteract();
-
-	if (IsHoldingDownThrow)
-	{
-		if (ThrowPowerScale < MaxThrowPower)
-		{
-			SplineComponent->ClearSplinePoints(true);
-			for (int Index = 0; Index != SplineComponentArray.Num(); ++Index)
-			{
-				SplineComponentArray[Index]->DestroyComponent();
-			}
-			SplineComponentArray.Empty();
-
-			CameraBoom->TargetArmLength = 200;
-			
-			ThrowPowerScale += (DeltaTime * MaxThrowPower * ThrowSpeed);
-			
-			rot = FRotator(0, GetControlRotation().Yaw, 0);
-
-			
-			if (HasAuthority())
-			{
-				SetActorRotation(rot, ETeleportType::ResetPhysics);
-			}
-
-			FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
-			velocity.Normalize();
-			FPredictProjectilePathParams params;
-			params.StartLocation = GetMesh()->GetSocketLocation("Base-HumanPalmBone001Bone0015");
-			//GEngine->AddOnScreenDebugMessage(-1, 200, FColor::Green, FString::Printf(TEXT("Hello %s"), *params.StartLocation.ToString()));
-
-			cacheVelocity = velocity * ThrowPowerScale * 10;
-			params.LaunchVelocity = cacheVelocity;
-			params.ProjectileRadius = 10;
-			params.bTraceWithChannel = false;
-			params.DrawDebugTime = 1.0f;
-			params.DrawDebugType = EDrawDebugTrace::None;
-			params.SimFrequency = 5;
-			TArray<AActor*> actors;
-			actors.Add(this);
-			actors.Add(PickedUpItem);
-			params.bTraceComplex = true;
-			params.ActorsToIgnore = actors;
-
-			FPredictProjectilePathResult result;
-			UGameplayStatics::PredictProjectilePath(GetWorld(), params, result);
-
-			for (int Index = 0; Index != result.PathData.Num(); ++Index)
-			{
-				SplineComponent->AddSplinePointAtIndex(result.PathData[Index].Location, Index, ESplineCoordinateSpace::Local, true);
-			}
-
-			for (int Index = 0; Index < (SplineComponent->GetNumberOfSplinePoints() - 1); ++Index)
-			{
-				USplineMeshComponent* spline = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
-				if (SplineMesh)
-				{
-						spline->SetStaticMesh(SplineMesh);
-				}
-				spline->SetOnlyOwnerSee(true);
-				spline->SetMaterial(0,SplineMeshMaterial);
-				spline->SetStartScale(FVector2D(0.1f, 0.1f),true);
-				spline->SetEndScale(FVector2D(0.1f, 0.1f), true);
-				spline->SetForwardAxis(ESplineMeshAxis::Z);
-				spline->RegisterComponentWithWorld(GetWorld());
-
-				spline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
-				spline->SetMobility(EComponentMobility::Movable);
-
-				const FVector startPoint = SplineComponent->GetLocationAtSplinePoint(Index, ESplineCoordinateSpace::Local);
-				const FVector startTangent = SplineComponent->GetLocationAtSplinePoint(Index, ESplineCoordinateSpace::Local);
-				const FVector endPoint = SplineComponent->GetLocationAtSplinePoint(Index + 1, ESplineCoordinateSpace::Local);
-				const FVector endTangent = SplineComponent->GetLocationAtSplinePoint(Index + 1, ESplineCoordinateSpace::Local);
-				
-				spline->SetStartAndEnd(startPoint, startTangent, endPoint, endTangent, true);
-				spline->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-				SplineComponentArray.Add(spline);
-			}
-		}
-		else
-		{
-			Throw();  
-		}
-	}
-	else
-	{
-		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, cacheArmLength, DeltaTime);
-
-		SplineComponent->ClearSplinePoints(true);
-		for (int Index = 0; Index != SplineComponentArray.Num(); ++Index)
-		{
-			SplineComponentArray[Index]->DestroyComponent();
-		}
-		SplineComponentArray.Empty();
-	}
-	
-	if (IsInteracting)
-	{
-		CanMove = false;
-	}
-	else
-	{
-		CanMove = true;
-	}
-
-	//Updates climbing movement
-	CheckClimbing();
-
-	IsPickingUp = false;
-	IsGrabbing = false;
-	CheckDeath(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -247,7 +71,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
-	
+
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
@@ -276,17 +100,13 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	//Throw picked up item
 	PlayerInputComponent->BindAction("Pickup / Throw", IE_Released, this, &APlayerCharacter::Throw);
 
-	//Crouching / Sneakinbg
+	//Crouching / Sneaking
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::StartCrouching);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerCharacter::StopCrouching);
 }
 
 void APlayerCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
-	if (!CanMove)
-	{
-		return;
-	}
 	Jump();
 }
 
@@ -304,9 +124,6 @@ void APlayerCharacter::TurnAtRate(float Rate)
 void APlayerCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
-
-
-
 	if (CameraBoom->bDoCollisionTest)
 	{
 		//Normal Camera
@@ -315,25 +132,24 @@ void APlayerCharacter::LookUpAtRate(float Rate)
 	else
 	{
 		//Maze Camera 
-		//Dont allow camera to go below the ground
 		if (GetControlRotation().Pitch > 270 && GetControlRotation().Pitch <= 360)
 		{
+			//Normal camera look up at rate
 			AddControllerPitchInput(Rate * TurnRateGamepad * GetWorld()->GetDeltaSeconds());
 		}
 		else
 		{
-
+			//Dont allow camera to go below the ground
 			FRotator newRot = GetControlRotation();
 			newRot.Pitch = 360;
 			Controller->SetControlRotation(newRot);
 		}
 	}
-
-
 }
 
 void APlayerCharacter::MoveForward(float Value)
 {
+	//If the player can't move don't update movement
 	if (!CanMove)
 	{
 		return;
@@ -342,31 +158,27 @@ void APlayerCharacter::MoveForward(float Value)
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
 		// find out which way is forward
-
-
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 		// get forward vector
 		FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
+		//If the player is climbing move the player is its actor facing direction instead of camera facing
 		if (IsClimbing)
 		{
 			Direction = FRotationMatrix(GetActorRotation()).GetUnitAxis(EAxis::X);
 		}
 
-		//if (!HasAuthority())
-		//{
-		//	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Hello %s"), *Rotation.ToString()));
-		//}
-
 		//Walking VS Crouching
 		if (IsCrouching)
 		{
+			//Have the player move slower when they are crouching
 			AddMovementInput(Direction, Value * CrouchSpeedScale);
 		}
 		else
 		{
+			//Use default movement if they aren't crouching
 			AddMovementInput(Direction, Value);
 		}
 
@@ -375,6 +187,7 @@ void APlayerCharacter::MoveForward(float Value)
 
 void APlayerCharacter::MoveRight(float Value)
 {
+	//If the player can't move or is climbing don't update movement
 	if (!CanMove || IsClimbing)
 	{
 		return;
@@ -390,62 +203,172 @@ void APlayerCharacter::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 
+		//Walking VS Crouching
 		if (IsCrouching)
 		{
+			//Have the player move slower when they are crouching
 			AddMovementInput(Direction, Value * CrouchSpeedScale);
 		}
 		else
 		{
+			//Use default movement if they aren't crouching
 			AddMovementInput(Direction, Value);
 		}
 	}
 }
 
-void APlayerCharacter::Interact()
+// Called when the game starts or when spawned
+void APlayerCharacter::BeginPlay()
 {
-	RPCInteract();
-	if (CanInteract)
-	{
-		IsInteracting = true;
-		IsGrabbing = true;
-	}
-}
-void APlayerCharacter::StopInteract()
-{
-	RPCStopInteract();
+	Super::BeginPlay();
+	
+	//Cache the starting point as the players respawn checkpoint
+	RespawnCheckpoint = GetActorLocation();
+
+	CurrentInteractWidget = CreateWidget<UUserWidget>(GetWorld(), InteractWidgetClass);
+	CurrentPickupWidget = CreateWidget<UUserWidget>(GetWorld(), PickupWidgetClass);
+
+	//cache the arm legnth as the starting arm length of the camera boom
+	cacheArmLength = CameraBoom->TargetArmLength;
 }
 
-void APlayerCharacter::RPCInteract_Implementation()
+void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APlayerCharacter, IsInteracting);
+	DOREPLIFETIME(APlayerCharacter, CanInteract);
+	DOREPLIFETIME(APlayerCharacter, PickedUpItem);
+	DOREPLIFETIME(APlayerCharacter, CurrentThrowWidget);
+	DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
+	DOREPLIFETIME(APlayerCharacter, IsPickingUp);
+
+	DOREPLIFETIME(APlayerCharacter, CanMove);
+	DOREPLIFETIME(APlayerCharacter, IsCrouching);
+
+	DOREPLIFETIME(APlayerCharacter, IsClimbing);
+	DOREPLIFETIME(APlayerCharacter, ClimbSpeed);
+
+	DOREPLIFETIME(APlayerCharacter, CurrentPickupWidget);
+	DOREPLIFETIME(APlayerCharacter, CurrentInteractWidget);
+
+	DOREPLIFETIME(APlayerCharacter, HitByWallCount);
+
+	DOREPLIFETIME(APlayerCharacter, PunchTimer);
+	DOREPLIFETIME(APlayerCharacter, PunchDelay);
+
+}
+
+// Called every frame
+void APlayerCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	//Punch Delay
+	if (PunchTimer <= PunchDelay)
+	{
+		PunchTimer += DeltaTime;
+	}
+
+	//Have the server
+	ServerCheckPickup();
+	ServerCheckInteract();
+
+	ShowProjectilePath(DeltaTime);
+	
+	if (IsInteracting)
+	{
+		CanMove = false;
+	}
+	else
+	{
+		CanMove = true;
+	}
+
+	if (CheckHeavyItem())
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 250.0f; 
+	}
+	else
+	{
+		//Updates climbing movement
+		CheckClimbing();
+	}
+
+
+	IsPickingUp = false;
+	CheckDeath(DeltaTime);
+}
+
+//When the player presses the interact button
+void APlayerCharacter::Interact_Implementation()
+{
+	//If the player presses the interact button and is able to interact
 	if (CanInteract)
 	{
+		//Set Is Interacting to true
 		IsInteracting = true;
-		IsGrabbing = true;
 	}
 }
 
-void APlayerCharacter::RPCStopInteract_Implementation()
+//When the player releases the interact button
+void APlayerCharacter::StopInteract_Implementation()
 {
+	//Set Is Interacting to false
 	IsInteracting = false;
-	IsGrabbing = false;
 }
 
+//Have the server to check for the interact
+void APlayerCharacter::ServerCheckInteract_Implementation()
+{
+	CheckInteract();
+}
+
+//Check whether to show interact prompt on the client
+void APlayerCharacter::CheckInteract_Implementation()
+{
+	//If the player can interact
+	if (CanInteract)
+	{
+		//If the interact widget class has been filled out
+		if (InteractWidgetClass)
+		{
+			//If the widget exist
+			if (CurrentInteractWidget)
+			{
+				//If it hasn't been rendered to the screen
+				if (!CurrentInteractWidget->IsVisible())
+				{
+					//Render it to the player's screen
+					CurrentInteractWidget->AddToPlayerScreen();
+				}
+			}
+		}
+	}
+	else
+	{
+		//If the widget exist
+		if (CurrentInteractWidget)
+		{
+			//If it is rendered to the screen
+			if (CurrentInteractWidget->IsVisible())
+			{
+				//Remove it from the player's screen
+				CurrentInteractWidget->RemoveFromParent();
+			}
+		}
+	}
+
+}
+
+//When the player presses the pick up button
 void APlayerCharacter::PickupAndDrop()
 {
 	ServerRPCPickupAndDrop();
 
 	if (PickedUpItem)
 	{
-		APickupableKey* key = Cast<APickupableKey>(PickedUpItem);
-
-		if (key)
-		{
-			IsPickingUp = true;
-		}
-		else
-		{
-			IsPickingUp = true;
-		}
+		IsPickingUp = true;		
 	}
 }
 
@@ -456,28 +379,22 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 	if (PickedUpItem)
 	{
 		IsPickingUp = false;
-		IsGrabbing = false;
 		IsHoldingDownThrow = true;
-		//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("throwing"));
 		return;
 	}
 
-	//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("picking up"));
+	//Set up parameters for sweep multi by channel
 	TArray<FHitResult> OutHits;
-
 	FVector SweepStart = GetActorLocation();
-
 	FVector SweepEnd = GetActorLocation();
 
 	//Create a collision sphere
 	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(200.0f);
 
-	//Draw debug sphere
-	//DrawDebugSphere(GetWorld(), SweepStart, MyColSphere.GetSphereRadius(), 50, FColor::White, false, 10);
-
 	//Check if something is hit
 	bool isHit = GetWorld()->SweepMultiByChannel(OutHits, SweepStart, SweepEnd, FQuat::Identity, ECC_WorldStatic, MyColSphere);
 
+	//It something was hit
 	if (isHit)
 	{
 		//Loop through TArray
@@ -485,20 +402,16 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 		{
 			APickupable* pickup = Cast<APickupable>(Hit.GetActor());
 
+			//If the hit actor was a pickup
 			if (pickup)
 			{
-				//If item is already picked up go to next actor
-				if (pickup->Player)
+				//If item has already been picked up or is in the air go to next actor 
+				if (pickup->Player || pickup->IsInAir)
 				{
 					continue;
 				}
 
 				ClientRPCPickupAndDrop(pickup);
-
-				if (GEngine)
-				{
-					//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, *Hit.GetActor()->GetName());
-				}
 
 				//Stop after picking up an item
 				break;
@@ -508,27 +421,116 @@ void APlayerCharacter::ServerRPCPickupAndDrop_Implementation()
 	}
 }
 
+//Have the server to check for the pick up
+void APlayerCharacter::ServerCheckPickup_Implementation()
+{
+	CheckPickup();
+}
+
+//Check whether to show pick up prompt on the client
+void APlayerCharacter::CheckPickup_Implementation()
+{
+	if (PickedUpItem)
+	{
+		IsPickingUp = false;
+		if (CurrentPickupWidget)
+		{
+			if (CurrentPickupWidget->IsVisible())
+			{
+				CurrentPickupWidget->RemoveFromParent();
+			}
+		}
+		return;
+	}
+
+	//Set up parameters for sweep multi by channel
+	TArray<FHitResult> OutHits;
+	FVector SweepStart = GetActorLocation();
+	FVector SweepEnd = GetActorLocation();
+
+	//Create a collision sphere
+	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(200.0f);
+
+	//Check if something is hit
+	bool isHit = GetWorld()->SweepMultiByChannel(OutHits, SweepStart, SweepEnd, FQuat::Identity, ECC_WorldStatic, MyColSphere);
+
+	//It something was hit
+	if (isHit)
+	{
+		//Loop through TArray
+		for (auto& Hit : OutHits)
+		{
+			APickupable* pickup = Cast<APickupable>(Hit.GetActor());
+
+			//If the hit actor was a pickup
+			if (pickup)
+			{
+				//If item hasn't picked up and isn't in the air
+				if (!pickup->IsInAir && !pickup->Player)
+				{
+					//If the pick up widget class has been filled out
+					if (PickupWidgetClass)
+					{
+						//If the widget exist
+						if (CurrentPickupWidget)
+						{
+							//If it hasn't been rendered to the screen
+							if (!CurrentPickupWidget->IsVisible())
+							{
+								//Render it to the player's screen
+								CurrentPickupWidget->AddToPlayerScreen();
+							}
+						}
+						break;
+					}
+				}
+			}
+			else
+			{
+				//If the widget exist
+				if (CurrentPickupWidget)
+				{
+					//If it is rendered to the screen
+					if (CurrentPickupWidget->IsVisible())
+					{
+						//Remove it from the player's screen
+						CurrentPickupWidget->RemoveFromParent();
+					}
+				}
+			}
+
+		}
+	}
+
+	//Reset variables
+	IsPickingUp = false;
+}
+
 void APlayerCharacter::ClientRPCPickupAndDrop_Implementation(APickupable* _Pickup)
 {
+	//If the pickuped item is not null
+	if (!_Pickup)
+	{
+		return;
+	}
+	
+	//Set the owning player of the pickup to this player
 	_Pickup->Player = this;
+	//Make the mesh of the pickup not simulate physics
 	_Pickup->Mesh->SetSimulatePhysics(false);
+	//Remove collision of the mesh
 	_Pickup->Mesh->SetCollisionProfileName("Trigger");
 
+	//Attach the picked up item to the player's hand socket
 	_Pickup->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, GetMesh()->GetSocketBoneName("Base-HumanPalmBone001Bone0015"));
 
+	//Store this item as a variable
 	PickedUpItem = _Pickup;
 
-	APickupableKey* key = Cast<APickupableKey>(PickedUpItem);
+	//Set IsPickingUp to true for playing of the pick up animation
+	IsPickingUp = true;
 
-	if (key)
-	{
-		IsPickingUp = true;
-	}
-	else
-	{
-		IsPickingUp = true;
-	}
-
+	//Play the pick up sound of the picked up item
 	_Pickup->PlayPickupSound();
 
 }
@@ -539,14 +541,16 @@ void APlayerCharacter::ClientShowThrowWidget_Implementation()
 	{
 		IsHoldingDownThrow = true;
 
+		//Create the throw UI
 		CurrentThrowWidget = CreateWidget<UUserWidget>(GetWorld(), ThrowWidgetClass);
 
-		if (ThrowWidgetClass != nullptr)
+		//If the throw widget class has been filled out
+		if (ThrowWidgetClass)
 		{
-
-
+			//If the widget exist
 			if (CurrentThrowWidget)
 			{
+				//Render it to the player's screen
 				CurrentThrowWidget->AddToPlayerScreen();
 			}
 		}
@@ -554,30 +558,220 @@ void APlayerCharacter::ClientShowThrowWidget_Implementation()
 }
 
 
-void APlayerCharacter::Throw()
+void APlayerCharacter::Throw_Implementation()
 {
-	ServerRPCThrow();
+	ClientRPCThrow();
+	IsHoldingHeavyItem = false;
 }
+
+void APlayerCharacter::ClientRPCThrow_Implementation()
+{
+	//Set picking up to false
+	IsPickingUp = false;
+	//If the player has an item and is holding down throw
+	if (PickedUpItem && IsHoldingDownThrow)
+	{
+		//Release Throw
+		IsHoldingDownThrow = false;
+
+		//Deatch the pickupable and reset its variables
+		PickedUpItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		//Make it ignore only the player
+		PickedUpItem->Mesh->SetCollisionProfileName("IgnoreOnlyPawn");
+		//Re-enable collision of query and physics
+		PickedUpItem->Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		//Launch the picked up item at the cache velocity which was set in the predict projectile path
+		PickedUpItem->Launch(cacheVelocity);
+		//Remove the pointer reference from the item
+		PickedUpItem->Player = nullptr;
+
+		//If the throw widget exists
+		if (CurrentThrowWidget)
+		{
+			//Remove it from the player's screen
+			CurrentThrowWidget->RemoveFromParent();
+		}
+
+		//Reset Varibles
+		ThrowPowerScale = 0;
+		PickedUpItem = nullptr;
+	}
+}
+
+void APlayerCharacter::ShowProjectilePath(float _DeltaTime)
+{
+	//Check if the player is holding down throw
+	if (IsHoldingDownThrow)
+	{
+		if (ThrowPowerScale < MaxThrowPower)
+		{
+			//Reset the spline component
+			//Clear all the spline points
+			SplineComponent->ClearSplinePoints(true);
+			//Iterate through the spline component array
+			for (int i = 0; i < SplineComponentArray.Num(); i++)
+			{
+				//Delete all the components
+				SplineComponentArray[i]->DestroyComponent();
+			}
+			//Empty the array
+			SplineComponentArray.Empty();
+
+			//Update the arm length to set a length
+			CameraBoom->TargetArmLength = 200;
+
+			//Increment the throw power for each second while holding it down
+			ThrowPowerScale += (_DeltaTime * MaxThrowPower);
+
+			//Get rotation of the camera so it is behind the player
+			FRotator rot = FRotator(0, GetControlRotation().Yaw, 0);
+			//Update the rotation of the actor only if it is the server
+			if (HasAuthority())
+			{
+				SetActorRotation(rot, ETeleportType::ResetPhysics);
+			}
+
+			//Create Parameters for the
+			FPredictProjectilePathParams params;
+			params.StartLocation = GetMesh()->GetSocketLocation("Base-HumanPalmBone001Bone0015");
+
+			//Starting Velocity of the throwing
+			FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
+			velocity.Normalize();
+
+			//cache this velocity for the throwing of the item
+			cacheVelocity = velocity * ThrowPowerScale * 10;
+
+			//Set the parameters for throwing projectile
+			params.LaunchVelocity = cacheVelocity;
+			params.ProjectileRadius = 10;
+			params.bTraceWithChannel = false;
+			params.SimFrequency = 5;
+			//Make an array of actors for it to ignore
+			TArray<AActor*> actors;
+			//Make the projectile prediction ignore the player and the item being thrown
+			actors.Add(this);
+			actors.Add(PickedUpItem);
+			params.bTraceComplex = true;
+			params.ActorsToIgnore = actors;
+
+			//Set up the predict projectile path
+			FPredictProjectilePathResult result;
+			UGameplayStatics::PredictProjectilePath(GetWorld(), params, result);
+
+			//Iterate through the predicted path and set up spline points at each point of the path
+			for (int i = 0; i < result.PathData.Num(); i++)
+			{
+				SplineComponent->AddSplinePointAtIndex(result.PathData[i].Location, i, ESplineCoordinateSpace::Local, true);
+			}
+
+			//Iterate through each spline point
+			for (int i = 0; i < (SplineComponent->GetNumberOfSplinePoints() - 1); i++)
+			{
+				//Create a spline mesh at each point
+
+				USplineMeshComponent* spline = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
+				if (SplineMesh)
+				{
+					spline->SetStaticMesh(SplineMesh);
+				}
+				//Make it so only the owning player can see the throwing path
+				spline->SetOnlyOwnerSee(true);
+
+				//Set parameters for each spline mesh point
+				spline->SetMaterial(0, SplineMeshMaterial);
+				spline->SetStartScale(FVector2D(0.1f, 0.1f), true);
+				spline->SetEndScale(FVector2D(0.1f, 0.1f), true);
+				spline->SetForwardAxis(ESplineMeshAxis::Z);
+				spline->RegisterComponentWithWorld(GetWorld());
+
+				spline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
+				spline->SetMobility(EComponentMobility::Movable);
+
+				//Set the start and end points and tangent for each spline point
+				const FVector startPoint = SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local);
+				const FVector startTangent = SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local);
+				const FVector endPoint = SplineComponent->GetLocationAtSplinePoint(i + 1, ESplineCoordinateSpace::Local);
+				const FVector endTangent = SplineComponent->GetLocationAtSplinePoint(i + 1, ESplineCoordinateSpace::Local);
+
+				spline->SetStartAndEnd(startPoint, startTangent, endPoint, endTangent, true);
+
+				//Make the spline mesh not have collision (so it doesn't count for players overlapping
+				spline->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				//Add this spline mesh to the array to remove delete later
+				SplineComponentArray.Add(spline);
+			}
+		}
+		else
+		{
+			//Throw the picked up item
+			Throw();
+		}
+	}
+	else
+	{
+		//Slowly reset the camera boom to its original length
+		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, cacheArmLength, _DeltaTime);
+
+		//Reset the spline component
+		//Clear all the spline points
+		SplineComponent->ClearSplinePoints(true);
+		//Iterate through the spline component array
+		for (int i = 0; i < SplineComponentArray.Num(); i++)
+		{
+			//Delete all the components
+			SplineComponentArray[i]->DestroyComponent();
+		}
+		//Empty the array
+		SplineComponentArray.Empty();
+
+	}
+}
+
+//When the player presses the crouch button Makes the player crouch
+void APlayerCharacter::StartCrouching_Implementation()
+{
+	//Sets crouching to true
+	IsCrouching = true;
+	//Use the character movement component's crouch function
+	Crouch(true);
+}
+
+//When the player releases the crouch button makes the player uncrouch
+void APlayerCharacter::StopCrouching_Implementation()
+{
+	//Sets crouching to false
+	IsCrouching = false;
+	//Use the character movement component's crouch function
+	UnCrouch(true);
+}
+
 
 void APlayerCharacter::CheckDeath(float _DeltaTime)
 {
+	//If the player is dead
 	if (IsDead)
 	{
+		//Increase the counter over time
 		DeathTimerCounter += _DeltaTime;
 
+		//Once the counter has reached the death timer
 		if (DeathTimerCounter > DeathTimer)
 		{
+			//Repsawn the player
 			if (HasAuthority())
 			{
+				//At the respawn checkpoint location
 				SetActorLocation(RespawnCheckpoint);
 			}
 			else
 			{
+				//At an offset to the checkpoint location
 				SetActorLocation(RespawnCheckpoint + FVector(5,5,5));
 			}
 
+			//Reset Variables
 			CanMove = true;
-
 			DeathTimerCounter = 0.0f;
 			HitByWallCount = 0;
 			IsDead = false;
@@ -587,6 +781,7 @@ void APlayerCharacter::CheckDeath(float _DeltaTime)
 
 void APlayerCharacter::CheckClimbing_Implementation()
 {
+	//Updates player character movement variables based on whether they are climbing or not
 	if (IsClimbing)
 	{
 		GetCharacterMovement()->bOrientRotationToMovement = false;
@@ -600,171 +795,19 @@ void APlayerCharacter::CheckClimbing_Implementation()
 		GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 		GetCharacterMovement()->MaxStepHeight = 45.0f;
 		GetCharacterMovement()->SetWalkableFloorAngle(60.0f);
-
 	}
 }
 
-FTransform APlayerCharacter::GetCameraTransform()
+
+//Returns whether the player is holding an heavy item or not
+bool APlayerCharacter::CheckHeavyItem()
 {
-	return FTransform(CameraBoom->GetComponentTransform());
-}
-
-void APlayerCharacter::SetVeloctiy_Implementation(FVector _Velocity)
-{
-	GetCharacterMovement()->Velocity = _Velocity;
-}
-
-void APlayerCharacter::StartCrouching_Implementation()
-{
-	IsCrouching = true;
-}
-
-void APlayerCharacter::StopCrouching_Implementation()
-{
-	IsCrouching = false;
-}
-
-
-
-void APlayerCharacter::ServerRPCThrow_Implementation()
-{
-	ClientRPCThrow();
-}
-
-void APlayerCharacter::ClientRPCThrow_Implementation()
-{
-	IsPickingUp = false;
-	IsGrabbing = false;
-	if (PickedUpItem && IsHoldingDownThrow)
+	if (IsHoldingHeavyItem)
 	{
-		IsHoldingDownThrow = false;
-		PickedUpItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		PickedUpItem->Mesh->SetCollisionProfileName("IgnoreOnlyPawn");
-		PickedUpItem->Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		PickedUpItem->Launch(cacheVelocity);
-		PickedUpItem->Player = nullptr;
-
-		if (CurrentThrowWidget)
-		{
-			CurrentThrowWidget->RemoveFromParent();
-		}
-		ThrowPowerScale = 0;
-
-		PickedUpItem = nullptr;
-		return;
-	}
-}
-
-void APlayerCharacter::ServerCheckPickup_Implementation()
-{
-	CheckPickup();
-
-}
-
-void APlayerCharacter::CheckPickup_Implementation()
-{
-	if (PickedUpItem)
-	{
-		IsPickingUp = false;
-		IsGrabbing = false;
-		if (CurrentPickupWidget)
-		{
-			if (CurrentPickupWidget->IsVisible())
-			{
-				CurrentPickupWidget->RemoveFromParent();
-			}
-		}
-		return;
+		return true;
 	}
 
-	TArray<FHitResult> OutHits;
-
-	FVector SweepStart = GetActorLocation();
-
-	FVector SweepEnd = GetActorLocation();
-
-	//Create a collision sphere
-	FCollisionShape MyColSphere = FCollisionShape::MakeSphere(200.0f);
-
-	//Check if something is hit
-	bool isHit = GetWorld()->SweepMultiByChannel(OutHits, SweepStart, SweepEnd, FQuat::Identity, ECC_WorldStatic, MyColSphere);
-
-	if (isHit)
-	{
-		//Loop through TArray
-		for (auto& Hit : OutHits)
-		{
-			APickupable* pickup = Cast<APickupable>(Hit.GetActor());
-
-			if (pickup)
-			{
-				if (!pickup->IsInAir && !pickup->Player)
-				{
-					if (PickupWidgetClass != nullptr)
-					{
-						if (CurrentPickupWidget)
-						{
-							if (!CurrentPickupWidget->IsVisible())
-							{
-								CurrentPickupWidget->AddToPlayerScreen();
-							}
-						}
-						break;
-					}
-				}
-			}
-			else
-			{
-				if (CurrentPickupWidget)
-				{
-					if (CurrentPickupWidget->IsVisible())
-					{
-						CurrentPickupWidget->RemoveFromParent();
-					}
-				}
-			}
-
-		}
-	}
-	IsPickingUp = false;
-	IsGrabbing = false;
+	return false;
 }
 
 
-void APlayerCharacter::ServerCheckInteract_Implementation()
-{
-	CheckInteract();
-}
-
-void APlayerCharacter::CheckInteract_Implementation()
-{
-	if (CanInteract)
-	{
-		if (InteractWidgetClass != nullptr)
-		{
-
-			if (CurrentInteractWidget)
-			{
-				if (!CurrentInteractWidget->IsVisible())
-				{
-					CurrentInteractWidget->AddToPlayerScreen();
-				}
-				else
-				{
-					//->RemoveFromParent();
-				}
-			}
-		}
-	}
-	else
-	{
-		if (CurrentInteractWidget)
-		{
-			if (CurrentInteractWidget->IsVisible())
-			{
-				CurrentInteractWidget->RemoveFromParent();
-			}
-		}
-	}
-
-}

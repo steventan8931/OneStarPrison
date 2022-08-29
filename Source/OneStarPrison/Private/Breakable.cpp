@@ -68,7 +68,7 @@ void ABreakable::Tick(float DeltaTime)
 	}
 
 
-	if (OverlappingPlayer != nullptr)
+	if (OverlappingPlayer)
 	{
 		//If the player's last punch has been longer than the punch delay
 		if (OverlappingPlayer->PunchTimer >= OverlappingPlayer->PunchDelay)

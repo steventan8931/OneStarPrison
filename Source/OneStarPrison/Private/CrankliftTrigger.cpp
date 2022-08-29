@@ -44,11 +44,6 @@ void ACrankliftTrigger::BeginPlay()
 
 			if (AudioComponent)
 			{
-				//AudioComponent->SetIsReplicated(true);
-				//if (!HasAuthority())
-				//{
-				//	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::White, TEXT("moving"));
-				//};
 				ServerPlaySound(true);
 				AudioComponent->SetPaused(true);
 			}

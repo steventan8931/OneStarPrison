@@ -19,19 +19,24 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//Component
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
 
+public:
+	//The New Height the platform is trying to reach
 	UPROPERTY(VisibleAnywhere)
 		int TargetHeight = 0;
 
+	//The Maximum Height the platform can go up to
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int MaxHeight = 0;
 
+	//The Height the platform starts off at 
 	UPROPERTY(VisibleAnywhere)
 	int StartingHeight = 0;
 

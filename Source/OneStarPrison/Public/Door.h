@@ -60,7 +60,7 @@ public:
 	//Rotation of the mesh when opened
 	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation", BlueprintReadWrite)
 		FRotator OpenRotation = FRotator(0, 0, 0);
-	//Rotation of the mesh when opened
+	//Rotation of the mesh when closed
 	UPROPERTY(EditAnywhere, Replicated, Category = "DoorRotation", BlueprintReadWrite)
 		FRotator ClosedRotation = FRotator(0, 0, 0);
 

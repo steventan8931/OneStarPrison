@@ -75,12 +75,38 @@ void AMannequin::Tick(float DeltaTime)
 					//Iterate through all the equipped armor pieces
 					for (int i = 0; i < EquippedArray.Num(); i++)
 					{
-						//Launches the armor pieces away from the mannequin and resets the variables to allow it to be picked up again
-						EquippedArray[i]->Mesh->SetCollisionProfileName("IgnoreOnlyPawn");
-						EquippedArray[i]->Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-						EquippedArray[i]->Launch(FVector(3, 3, 3));
-						EquippedArray[i]->Player = nullptr;
-						EquippedArray[i]->AttachedToMannequin = true;
+						//If the index is valid
+						if (EquippedArray[i])
+						{
+							//If the equipper armor array index's mannequin number is incorrect
+							if(EquippedArray[i]->MannequinNumber != MannequinNumber)
+							{
+								//Launches the armor piece away from the mannequin and resets the variables to allow it to be picked up again
+								EquippedArray[i]->Mesh->SetCollisionProfileName("IgnoreOnlyPawn");
+								EquippedArray[i]->Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+								EquippedArray[i]->Launch(FVector(3, 3, 3));
+								EquippedArray[i]->Player = nullptr;
+								EquippedArray[i]->AttachedToMannequin = true;
+
+								//Set all the equipped bools to false for the corresponding part 
+								switch (EquippedArray[i]->MannequinPart)
+								{
+								case EMannaquinPart::Helmet:
+									EquippedArmor.HelmetEquipped = false;
+									break;
+								case EMannaquinPart::Armor:
+									EquippedArmor.ArmorEquipped = false;
+									break;
+								case EMannaquinPart::Footwear:
+									EquippedArmor.FootwearEquipped = false;
+									break;
+								}
+
+								//Remove this armor from the array
+								EquippedArray.RemoveAt(i);
+							}
+						}
+	
 					}
 
 					//Play the remove sound
@@ -89,12 +115,6 @@ void AMannequin::Tick(float DeltaTime)
 						UGameplayStatics::PlaySoundAtLocation(GetWorld(), RemoveSound, GetActorLocation());
 					}
 
-					//Reset the equipped array
-					EquippedArray.Empty();
-					//Set all the equipped bools to false
-					EquippedArmor.HelmetEquipped = false;
-					EquippedArmor.ArmorEquipped = false;
-					EquippedArmor.FootwearEquipped = false;
 				}
 			}
 

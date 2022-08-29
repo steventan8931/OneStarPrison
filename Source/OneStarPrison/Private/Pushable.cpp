@@ -36,16 +36,18 @@ void APushable::Tick(float DeltaTime)
 
 void APushable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-
 	if ((OtherActor) && (OtherActor != this))
 	{
 		APlayerCharacter* player = Cast<APlayerCharacter>(OtherActor);
+
+		//If the hit actor is a player
 		if (player)
 		{
+			//If the player is within the can push range
 			if (player->CanPush)
 			{
+				//Make the player push (plays pushing animation)
 				player->IsPushing = true;
-				//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, FString::Printf(TEXT("I Hit: %s"), *OtherActor->GetName()));
 			}
 
 		}

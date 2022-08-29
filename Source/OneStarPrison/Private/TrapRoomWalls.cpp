@@ -49,6 +49,7 @@ void ATrapRoomWalls::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//Updates the position of the walls based on if they are open or closed
 	if (IsOpen)
 	{
 		OpenDoor(DeltaTime);
@@ -64,9 +65,9 @@ void ATrapRoomWalls::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 	if (OtherActor && (OtherActor != this))
 	{
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+		//If the overlapping actor is a player increment their hit by wall count by 1
 		if (playerActor)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("hit by wall"));
 			playerActor->HitByWallCount += 1;
 		}
 	}
@@ -77,9 +78,9 @@ void ATrapRoomWalls::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cla
 	if (OtherActor && (OtherActor != this))
 	{
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+		//If the overlapping actor is a player decrement their hit by wall count by 1
 		if (playerActor)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("left the wall"));
 			playerActor->HitByWallCount -= 1;
 		}
 
@@ -90,6 +91,7 @@ void ATrapRoomWalls::OpenDoor(float _DeltaTime)
 {
 	if (Mesh->GetComponentLocation() != OpenPosition)
 	{
+		//Move the doors to its open position over time
 		FVector newPos = FMath::Lerp(Mesh->GetComponentLocation(), OpenPosition, _DeltaTime * MoveSpeed);
 		Mesh->SetWorldLocation(newPos);
 	}
@@ -97,11 +99,13 @@ void ATrapRoomWalls::OpenDoor(float _DeltaTime)
 
 void ATrapRoomWalls::CloseDoor(float _DeltaTime)
 {
+	//Reset the position of the trap wall to its starting position
 	Mesh->SetWorldLocation(ClosedPosition);
 }
 
 void ATrapRoomWalls::PlaySound()
 {
+	//Plays the sound
 	if (OpenSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());

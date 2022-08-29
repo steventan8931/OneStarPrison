@@ -7,7 +7,7 @@
 APulleyPlatform::APulleyPlatform()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
@@ -25,6 +25,6 @@ void APulleyPlatform::BeginPlay()
 void APulleyPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	//Tick is turned off due to it not needing to call the update function
 }
 

@@ -29,26 +29,6 @@ private:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	//To check whether the armor piece should teleport back when dropped
-	UPROPERTY(EditAnywhere)
-		bool OnDisplay = false;
-
-	//cache for when it has been picked up
-	bool TakenFromDisplay = false;
-	//Cache Starting Parent Actor
-	AActor* ParentActor;
-	//Cache Starting Transform
-	FTransform cacheTransform;
-
-	//Time before it is reset
-	UPROPERTY(EditAnywhere)
-		float TimeBeforeItRespawns = 5.0f;
-	//Timer to count up to its reset
-	float Timer = 0.0f;
-
-	//Sound to play when it is reset to starting position
-	UPROPERTY(EditAnywhere)
-		USoundBase* ReturnToDisplaySound;
 public:
 	//The number to match with the mannequin
 	UPROPERTY(EditAnywhere)
