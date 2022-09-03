@@ -4,6 +4,7 @@
 #include "StatueSteps.h"
 #include "Components/BoxComponent.h"
 #include "PlayerCharacter.h"
+#include "StatueManager.h"
 
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 #include "Kismet/GameplayStatics.h"
@@ -16,75 +17,109 @@ AStatueSteps::AStatueSteps()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
-	Mesh->SetCollisionProfileName(TEXT("Trigger"));
+
+	OnMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("OnMesh"));
+	OffMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("OffMesh"));
+
+	OnMesh->SetupAttachment(RootComponent);
+	OffMesh->SetupAttachment(RootComponent);
 
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
-	BoxCollision->SetBoxExtent(FVector(200, 200, 200));
+	BoxCollision->SetBoxExtent(FVector(100, 100, 100));
 	BoxCollision->SetCollisionProfileName(TEXT("Trigger"));
 	BoxCollision->SetupAttachment(RootComponent);
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AStatueSteps::OnOverlapBegin);
-	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AStatueSteps::OnOverlapEnd);
 }
 
 // Called when the game starts or when spawned
 void AStatueSteps::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	OnMesh->SetVisibility(false);
+	OnMesh->SetVisibility(false);
+}
+
+void AStatueSteps::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AStatueSteps, IsOn);
+	DOREPLIFETIME(AStatueSteps, IsChosen);
+	DOREPLIFETIME(AStatueSteps, Manager);
 }
 
 // Called every frame
 void AStatueSteps::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-		 
+
+	if (IsOn)
+	{
+		if (IsChosen)
+		{
+			OnMesh->SetVisibility(true);
+
+		}
+		else
+		{
+			OffMesh->SetVisibility(true);
+		}
+	}
+	else
+	{
+		OnMesh->SetVisibility(false);
+		OffMesh->SetVisibility(false);
+	}
 }
 
 void AStatueSteps::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor && (OtherActor != this))
+	if (Manager)
 	{
-		//If it is meant to be interacted by players
-		if (OverlappingPlayer == nullptr)
+		if (Manager->PuzzleCompleted)
 		{
-			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
-
-			//If the overlapping player is a player
-			if (playerActor)
-			{
-				//Set the overlapping player to this player and allow them to interact
-				OverlappingPlayer = playerActor;
-				OverlappingPlayer->CanInteract = true;
-				//Change the players interact type to lever pulling
-				OverlappingPlayer->InteractType = EInteractType::LeverPull;
-
-			}
+			return;
 		}
 	}
-}
 
-void AStatueSteps::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
+	if (IsOn)
+	{
+		return;
+	}
+
 	if (OtherActor && (OtherActor != this))
 	{
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
 
-		//If the overlapping actor is a player
+		//If the overlapping player is a player
 		if (playerActor)
 		{
-			//If the overlapping player exists
-			if (OverlappingPlayer)
+			//Set the overlapping player to this player 
+			OverlappingPlayer = playerActor;
+
+			if (!IsOn)
 			{
-				//If this overlapping player is the overlapping player
-				if (playerActor == OverlappingPlayer)
+				IsOn = true;
+				if (IsChosen)
 				{
-					//Remove the players ability to interact with the lever
-					OverlappingPlayer->CanInteract = false;
-					OverlappingPlayer = nullptr;
+					OnMesh->SetVisibility(true);
+					if (CorrectSound)
+					{
+						UGameplayStatics::SpawnSoundAtLocation(GetWorld(), CorrectSound, GetActorLocation());
+					}
 				}
+				else
+				{
+					OffMesh->SetVisibility(true);
+					if (FailSound)
+					{
+						UGameplayStatics::SpawnSoundAtLocation(GetWorld(), FailSound, GetActorLocation());
+					}
+				}
+
 			}
 		}
-
 	}
 }
+

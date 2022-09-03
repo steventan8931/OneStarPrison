@@ -26,10 +26,6 @@ protected:
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	//Overlap Functions
-	UFUNCTION()
-		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
 private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -38,18 +34,31 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
 	UPROPERTY(VisibleAnywhere)
+		class UStaticMeshComponent* OnMesh;
+	UPROPERTY(VisibleAnywhere)
+		class UStaticMeshComponent* OffMesh;
+	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
 public:
 
 	//Sound to play when the drawbridge lowers
 	UPROPERTY(EditAnywhere)
-		USoundBase* OpenSound;
+		USoundBase* CorrectSound;
+	//Sound to play when the drawbridge lowers
+	UPROPERTY(EditAnywhere)
+		USoundBase* FailSound;
 
 	//Player Interaction
 	UPROPERTY(VisibleAnywhere)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
 
+	//Player Interaction
+	UPROPERTY(VisibleAnywhere, Replicated)
+		class AStatueManager* Manager = nullptr;
+
+	UPROPERTY(Replicated);
 	bool IsOn = false;
 
-
+	UPROPERTY(Replicated)
+		bool IsChosen = false;
 };
