@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "StatueSteps.h"
 #include "Statue.h"
+#include "Door.h"
 #include "StatueManager.generated.h"
 
 UCLASS()
@@ -39,6 +40,7 @@ public:
 	UPROPERTY(Replicated)
 		AStatue* CurrentStatue = nullptr;
 
+	UPROPERTY(Replicated)
 	int TimesCompleted = 0;
 
 	void ChooseSteps();
@@ -63,4 +65,8 @@ public:
 
 	UPROPERTY(Replicated)
 	bool PuzzleCompleted = false;
+
+	//Array of doors to open
+	UPROPERTY(EditAnywhere, Replicated)
+		TArray<ADoor*> Doors;
 };

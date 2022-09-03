@@ -52,6 +52,10 @@ void AStatueManager::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& Out
 	DOREPLIFETIME(AStatueManager, NextSetTimer);
 	DOREPLIFETIME(AStatueManager, NextSetDelay);
 	DOREPLIFETIME(AStatueManager, PuzzleCompleted);
+
+	DOREPLIFETIME(AStatueManager, CurrentStatue);
+	DOREPLIFETIME(AStatueManager, TimesCompleted);
+
 }
 
 
@@ -60,9 +64,27 @@ void AStatueManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (PuzzleCompleted)
+	{
+		//Iterate through the doors and open them
+		for (int i = 0; i < Doors.Num(); i++)
+		{
+			Doors[i]->IsOpen = true;
+		}
+
+		//Don't check for matching mannequins after the doors have been opened
+		return;
+	}
+
 	if (TimesCompleted >= 3)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, TEXT("finished"));
+		//Iterate through the doors play sound
+		for (int i = 0; i < Doors.Num(); i++)
+		{
+			Doors[i]->PlaySound();	
+		}
+
 		PuzzleCompleted = true;
 		return;
 	}
@@ -209,7 +231,6 @@ void AStatueManager::CheckCompletion()
 				else
 				{
 					StatueFailed = true;
-					//return;
 				}
 			}
 		}
