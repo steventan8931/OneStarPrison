@@ -91,6 +91,10 @@ void AStatueManager::Tick(float DeltaTime)
 
 	if (!StatueChosen)
 	{
+		ResetSteps();
+
+		ResetStatues();
+
 		ChooseStatue();
 	}
 
@@ -118,7 +122,7 @@ void AStatueManager::Tick(float DeltaTime)
 	}
 }
 
-void AStatueManager::ChooseSteps()
+void AStatueManager::ChooseSteps_Implementation()
 {
 	//Randomly choose one barrel to place the key in
 	if (!CurrentStatue)
@@ -162,7 +166,7 @@ void AStatueManager::ChooseSteps()
 	}
 }
 
-void AStatueManager::ResetSteps()
+void AStatueManager::ResetSteps_Implementation()
 {
 	//Reset steps
 	for (int i = 0; i < ListOfSteps.Num(); i++)
@@ -175,7 +179,7 @@ void AStatueManager::ResetSteps()
 	}
 }
 
-void AStatueManager::ResetStatues()
+void AStatueManager::ResetStatues_Implementation()
 {
 	//Reset
 	for (int i = 0; i < ListOfStatues.Num(); i++)
@@ -187,12 +191,8 @@ void AStatueManager::ResetStatues()
 	}
 }
 
-void AStatueManager::ChooseStatue()
+void AStatueManager::ChooseStatue_Implementation()
 {
-	ResetSteps();
-
-	ResetStatues();
-
 	//Choose one statue
 	int chosenStatue = FMath::RandRange(0, ListOfStatues.Num() - 1);
 
@@ -213,7 +213,7 @@ void AStatueManager::ChooseStatue()
 	StatueChosen = true;
 }
 
-void AStatueManager::CheckCompletion()
+void AStatueManager::CheckCompletion_Implementation()
 {
 	//Set Manager
 	int stepsCompleted = 0;

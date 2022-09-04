@@ -43,12 +43,17 @@ public:
 	UPROPERTY(Replicated)
 	int TimesCompleted = 0;
 
+	UFUNCTION(Server, Reliable)
 	void ChooseSteps();
+	UFUNCTION(Server, Reliable)
 	void ChooseStatue();
 
+	UFUNCTION(Server, Reliable)
 	void ResetSteps();
+	UFUNCTION(Server, Reliable)
 	void ResetStatues();
 
+	UFUNCTION(Server, Reliable)
 	void CheckCompletion();
 
 	UPROPERTY(Replicated)

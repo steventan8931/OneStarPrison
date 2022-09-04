@@ -68,17 +68,7 @@ void AStatue::BeginPlay()
 
 	}
 
-	for (int i = 0; i < Meshes.Num(); i++)
-	{
-		if (Meshes[i])
-		{
-			Meshes[i]->SetVisibility(false);
-		}
-	}
-
-	Meshes[TopRow]->SetVisibility(true);
-	Meshes[MidRow]->SetVisibility(true);
-	Meshes[BotRow]->SetVisibility(true);
+	UpdateVisibility();
 }
 
 void AStatue::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -114,3 +104,17 @@ void AStatue::Tick(float DeltaTime)
 
 }
 
+void AStatue::UpdateVisibility()
+{
+	for (int i = 0; i < Meshes.Num(); i++)
+	{
+		if (Meshes[i])
+		{
+			Meshes[i]->SetVisibility(false);
+		}
+	}
+
+	Meshes[TopRow]->SetVisibility(true);
+	Meshes[MidRow]->SetVisibility(true);
+	Meshes[BotRow]->SetVisibility(true);
+}
