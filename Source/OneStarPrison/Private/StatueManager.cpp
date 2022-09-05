@@ -12,6 +12,14 @@ AStatueManager::AStatueManager()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	LeftLightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftLightMesh"));
+	MidLightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MidLightMesh"));
+	RightLightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightLightMesh"));
+
+	RootComponent = LeftLightMesh;
+
+	MidLightMesh->SetupAttachment(RootComponent);
+	RightLightMesh->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -37,6 +45,9 @@ void AStatueManager::BeginPlay()
 		}
 	}
 
+	LeftLightMesh->SetVisibility(false);
+	MidLightMesh->SetVisibility(false);
+	RightLightMesh->SetVisibility(false);
 }
 
 void AStatueManager::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -55,7 +66,6 @@ void AStatueManager::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& Out
 
 	DOREPLIFETIME(AStatueManager, CurrentStatue);
 	DOREPLIFETIME(AStatueManager, TimesCompleted);
-
 }
 
 
@@ -76,21 +86,47 @@ void AStatueManager::Tick(float DeltaTime)
 		return;
 	}
 
-	if (TimesCompleted >= 3)
+
+	switch (TimesCompleted)
 	{
+	case 0:
+		LeftLightMesh->SetVisibility(false);
+		MidLightMesh->SetVisibility(false);
+		RightLightMesh->SetVisibility(false);
+		break;
+	case 1: 
+		LeftLightMesh->SetVisibility(true);
+		MidLightMesh->SetVisibility(false);
+		RightLightMesh->SetVisibility(false);
+		break;
+	case 2:
+		LeftLightMesh->SetVisibility(true);
+		MidLightMesh->SetVisibility(true);
+		RightLightMesh->SetVisibility(false);
+		break;
+	case 3:
+		LeftLightMesh->SetVisibility(true);
+		MidLightMesh->SetVisibility(true);
+		RightLightMesh->SetVisibility(true);
+
 		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, TEXT("finished"));
 		//Iterate through the doors play sound
 		for (int i = 0; i < Doors.Num(); i++)
 		{
-			Doors[i]->PlaySound();	
+			Doors[i]->PlaySound();
 		}
 
 		PuzzleCompleted = true;
 		return;
 	}
 
+
 	if (!StatueChosen)
 	{
+		ResetSteps();
+
+		ResetStatues();
+
 		ChooseStatue();
 	}
 
@@ -98,7 +134,10 @@ void AStatueManager::Tick(float DeltaTime)
 
 	if (StatueFailed)
 	{
-		//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, TEXT("Failed"));
+		TimesCompleted = 0;
+		StatueCompleted = false;
+		StatueChosen = false;
+		StatueFailed = false;
 	}
 
 	if (StatueCompleted)
@@ -118,7 +157,7 @@ void AStatueManager::Tick(float DeltaTime)
 	}
 }
 
-void AStatueManager::ChooseSteps()
+void AStatueManager::ChooseSteps_Implementation()
 {
 	//Randomly choose one barrel to place the key in
 	if (!CurrentStatue)
@@ -162,7 +201,7 @@ void AStatueManager::ChooseSteps()
 	}
 }
 
-void AStatueManager::ResetSteps()
+void AStatueManager::ResetSteps_Implementation()
 {
 	//Reset steps
 	for (int i = 0; i < ListOfSteps.Num(); i++)
@@ -175,7 +214,7 @@ void AStatueManager::ResetSteps()
 	}
 }
 
-void AStatueManager::ResetStatues()
+void AStatueManager::ResetStatues_Implementation()
 {
 	//Reset
 	for (int i = 0; i < ListOfStatues.Num(); i++)
@@ -187,12 +226,8 @@ void AStatueManager::ResetStatues()
 	}
 }
 
-void AStatueManager::ChooseStatue()
+void AStatueManager::ChooseStatue_Implementation()
 {
-	ResetSteps();
-
-	ResetStatues();
-
 	//Choose one statue
 	int chosenStatue = FMath::RandRange(0, ListOfStatues.Num() - 1);
 
@@ -213,7 +248,7 @@ void AStatueManager::ChooseStatue()
 	StatueChosen = true;
 }
 
-void AStatueManager::CheckCompletion()
+void AStatueManager::CheckCompletion_Implementation()
 {
 	//Set Manager
 	int stepsCompleted = 0;

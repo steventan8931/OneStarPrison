@@ -26,9 +26,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	//Component
+	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* Mesh; 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UStaticMeshComponent* AnimalMesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* LightMesh;
 
@@ -55,14 +57,14 @@ public:
 	TArray<UStaticMeshComponent*> Meshes;
 
 	//The scale of normal speed vs crouch speed
-	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "2", UIMin = "0", UIMax = "2"), Replicated)
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "2", UIMin = "0", UIMax = "2"), Replicated, BlueprintReadWrite)
 		int TopRow = 0;
-	UPROPERTY(EditAnywhere, meta = (ClampMin = "3", ClampMax = "5", UIMin = "3", UIMax = "5"), Replicated)
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "3", ClampMax = "5", UIMin = "3", UIMax = "5"), Replicated, BlueprintReadWrite)
 		int MidRow = 3;
-	UPROPERTY(EditAnywhere, meta = (ClampMin = "6", ClampMax = "8", UIMin = "6", UIMax = "8"), Replicated)
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "6", ClampMax = "8", UIMin = "6", UIMax = "8"), Replicated, BlueprintReadWrite)
 		int BotRow = 6;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(EditAnywhere,Replicated)
 		bool IsRandom = true;
 
 	//Array of All Steps
@@ -71,4 +73,7 @@ public:
 
 	UPROPERTY(EditAnywhere,Replicated)
 		bool IsChosen = false;
+
+	UFUNCTION(BlueprintCallable)
+		void UpdateVisibility();
 };

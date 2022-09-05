@@ -18,6 +18,9 @@ AStatue::AStatue()
 	RootComponent = Mesh;
 	LightMesh->SetupAttachment(RootComponent);
 
+	AnimalMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AnimalMesh"));
+	AnimalMesh->SetupAttachment(RootComponent);
+
 	Mesh0 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh0"));
 	Mesh1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh1"));
 	Mesh2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh2"));
@@ -68,17 +71,21 @@ void AStatue::BeginPlay()
 
 	}
 
-	for (int i = 0; i < Meshes.Num(); i++)
+	if (!LightMesh->GetStaticMesh())
 	{
-		if (Meshes[i])
+		//Show steps only if it doenst light up
+		UpdateVisibility();
+	}
+	else
+	{
+		for (int i = 0; i < Meshes.Num(); i++)
 		{
-			Meshes[i]->SetVisibility(false);
+			if (Meshes[i])
+			{
+				Meshes[i]->SetVisibility(false);
+			}
 		}
 	}
-
-	Meshes[TopRow]->SetVisibility(true);
-	Meshes[MidRow]->SetVisibility(true);
-	Meshes[BotRow]->SetVisibility(true);
 }
 
 void AStatue::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -114,3 +121,17 @@ void AStatue::Tick(float DeltaTime)
 
 }
 
+void AStatue::UpdateVisibility()
+{
+	for (int i = 0; i < Meshes.Num(); i++)
+	{
+		if (Meshes[i])
+		{
+			Meshes[i]->SetVisibility(false);
+		}
+	}
+
+	Meshes[TopRow]->SetVisibility(true);
+	Meshes[MidRow]->SetVisibility(true);
+	Meshes[BotRow]->SetVisibility(true);
+}

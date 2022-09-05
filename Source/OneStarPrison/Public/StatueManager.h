@@ -29,6 +29,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//Components
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UStaticMeshComponent* LeftLightMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UStaticMeshComponent* MidLightMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UStaticMeshComponent* RightLightMesh;
+
 	//Array of All Steps
 	UPROPERTY(EditAnywhere, Replicated)
 		TArray<AStatueSteps*> ListOfSteps;
@@ -43,12 +51,17 @@ public:
 	UPROPERTY(Replicated)
 	int TimesCompleted = 0;
 
+	UFUNCTION(Server, Reliable)
 	void ChooseSteps();
+	UFUNCTION(Server, Reliable)
 	void ChooseStatue();
 
+	UFUNCTION(Server, Reliable)
 	void ResetSteps();
+	UFUNCTION(Server, Reliable)
 	void ResetStatues();
 
+	UFUNCTION(Server, Reliable)
 	void CheckCompletion();
 
 	UPROPERTY(Replicated)
