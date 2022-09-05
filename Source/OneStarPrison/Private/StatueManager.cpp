@@ -109,7 +109,6 @@ void AStatueManager::Tick(float DeltaTime)
 		MidLightMesh->SetVisibility(true);
 		RightLightMesh->SetVisibility(true);
 
-		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, TEXT("finished"));
 		//Iterate through the doors play sound
 		for (int i = 0; i < Doors.Num(); i++)
 		{
@@ -142,8 +141,6 @@ void AStatueManager::Tick(float DeltaTime)
 
 	if (StatueCompleted)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, TEXT("success"));
-
 		NextSetTimer += DeltaTime;
 
 		if (NextSetTimer >= NextSetDelay)
@@ -167,7 +164,6 @@ void AStatueManager::ChooseSteps_Implementation()
 	}
 
 	int chosenStep = CurrentStatue->TopRow;
-	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, FString::Printf(TEXT("%lld"), chosenStep));
 
 	if (ListOfSteps[chosenStep])
 	{
@@ -179,7 +175,6 @@ void AStatueManager::ChooseSteps_Implementation()
 
 	//Randomly choose one barrel to place the key in
 	chosenStep = CurrentStatue->MidRow;
-	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, FString::Printf(TEXT("%lld"), chosenStep));
 
 	if (ListOfSteps[chosenStep])
 	{
@@ -190,7 +185,7 @@ void AStatueManager::ChooseSteps_Implementation()
 	}
 
 	chosenStep = CurrentStatue->BotRow;
-	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, FString::Printf(TEXT("%lld"), chosenStep));
+	//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, FString::Printf(TEXT("%lld"), chosenStep));
 
 	if (ListOfSteps[chosenStep])
 	{
@@ -230,8 +225,6 @@ void AStatueManager::ChooseStatue_Implementation()
 {
 	//Choose one statue
 	int chosenStatue = FMath::RandRange(0, ListOfStatues.Num() - 1);
-
-	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, FString::Printf(TEXT("%lld"), chosenStatue));
 
 	if (ListOfStatues[chosenStatue])
 	{

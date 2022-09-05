@@ -71,6 +71,9 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		class AStatueManager* Manager = nullptr;
 
+	UPROPERTY(EditAnywhere, Replicated)
+		bool IsClone = false;
+
 	UPROPERTY(EditAnywhere,Replicated)
 		bool IsChosen = false;
 
