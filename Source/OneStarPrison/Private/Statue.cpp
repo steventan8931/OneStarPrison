@@ -71,6 +71,12 @@ void AStatue::BeginPlay()
 
 	}
 
+	if (IsClone)
+	{
+		UpdateVisibility();
+		return;
+	}
+
 	if (!LightMesh->GetStaticMesh())
 	{
 		//Show steps only if it doenst light up
@@ -99,6 +105,7 @@ void AStatue::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetim
 	DOREPLIFETIME(AStatue, IsRandom);
 	DOREPLIFETIME(AStatue, Manager);
 
+	DOREPLIFETIME(AStatue, IsClone);
 	DOREPLIFETIME(AStatue, IsChosen);
 }
 
