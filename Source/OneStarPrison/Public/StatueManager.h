@@ -29,6 +29,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//Components
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UStaticMeshComponent* LeftLightMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UStaticMeshComponent* MidLightMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UStaticMeshComponent* RightLightMesh;
+
 	//Array of All Steps
 	UPROPERTY(EditAnywhere, Replicated)
 		TArray<AStatueSteps*> ListOfSteps;
