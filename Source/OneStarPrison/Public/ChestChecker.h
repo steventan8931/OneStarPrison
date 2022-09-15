@@ -4,17 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "PickupableBook.h"
-#include "SecretBookshelf.generated.h"
+#include "ChestChecker.generated.h"
 
 UCLASS()
-class ONESTARPRISON_API ASecretBookshelf : public AActor
+class ONESTARPRISON_API AChestChecker : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ASecretBookshelf();
+	AChestChecker();
 
 protected:
 	// Called when the game starts or when spawned
@@ -49,23 +48,11 @@ private:
 
 	//Scene Transforms for the position
 	UPROPERTY(VisibleAnywhere)
-		class USceneComponent* Book1Position;
-	UPROPERTY(VisibleAnywhere)
-		class USceneComponent* Book2Position;
-	UPROPERTY(VisibleAnywhere)
-		class USceneComponent* Book3Position;
-
-	//Booleans for each book slot
-	UPROPERTY(EditAnywhere,Replicated)
-		bool Book1Inserted = false;
-	UPROPERTY(EditAnywhere, Replicated)
-		bool Book2Inserted = false;
-	UPROPERTY(EditAnywhere, Replicated)
-		bool Book3Inserted = false;
+		class USceneComponent* ChestPosition;
 
 	//Checks whether all books have been inserted
 	UPROPERTY(Replicated)
-		bool AllBooksInserted = false;
+		bool ChestInserted = false;
 
 	//Speed the shelf opens
 	UPROPERTY(EditAnywhere, Replicated)
@@ -73,13 +60,10 @@ private:
 
 	//Rotation the bookshelf will be at when all books are insterted
 	UPROPERTY(EditAnywhere, Replicated)
-		FRotator OpenRotation = FRotator(0, 0, 0);
+		class ADoor* Door;
 
 	//Player Interaction
 	UPROPERTY(Replicated)
-	class APlayerCharacter* OverlappingPlayer = nullptr;
+		class APlayerCharacter* OverlappingPlayer = nullptr;
 
-	//Check if book is inserted On Client
-	UFUNCTION(NetMulticast, Unreliable)
-	void CheckInsertedBook();
 };

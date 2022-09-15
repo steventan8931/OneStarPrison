@@ -33,10 +33,6 @@ protected:
 	UPROPERTY(EditAnywhere)
 		USoundBase* PickupSound;
 
-	//To check whether the armor piece should teleport back when dropped
-	UPROPERTY(EditAnywhere)
-		bool OnDisplay = false;
-
 	//cache for when it has been picked up
 	bool TakenFromDisplay = false;
 	//Cache Starting Parent Actor
@@ -74,4 +70,8 @@ public:
 
 	//Plays pick up sound
 	void PlayPickupSound();
+
+	//To check whether the armor piece should teleport back when dropped
+	UPROPERTY(EditAnywhere)
+		bool OnDisplay = false;
 };

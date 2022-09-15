@@ -162,7 +162,5 @@ void AKeyDoor::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AAc
 			}
 		}
 	}
-
-
 }
 
