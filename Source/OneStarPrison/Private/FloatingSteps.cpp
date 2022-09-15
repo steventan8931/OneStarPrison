@@ -42,6 +42,8 @@ void AFloatingSteps::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& Out
 	DOREPLIFETIME(AFloatingSteps, DownHeight);
 	DOREPLIFETIME(AFloatingSteps, IsPlayerColliding);
 	DOREPLIFETIME(AFloatingSteps, MoveSpeed);
+
+	DOREPLIFETIME(AFloatingSteps, IsSideToSide);
 }
 
 // Called every frame
@@ -49,27 +51,38 @@ void AFloatingSteps::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//If the player is colliding
-	if (IsPlayerColliding)
+	if (IsSideToSide)
 	{
-		//If the object has not reached its minimum height
-		if (GetActorLocation().Z >= DownHeight)
+		if (HasAuthority())
 		{
-			//Make the object move down over time
-			SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z - DeltaTime * MoveSpeed));
+			////If the object has not reached its minimum height
+			FVector loc = FVector(0, cos(GetGameTimeSinceCreation()) * 5, 0);
+			Mesh->AddRelativeLocation(loc);
 		}
 	}
 	else
 	{
-		//If the object has not reached its maximum height
-		if (GetActorLocation().Z <= UpHeight)
+		//If the player is colliding
+		if (IsPlayerColliding)
 		{
-			//Make the object move up over time
-			SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z + DeltaTime * MoveSpeed));
+			//If the object has not reached its minimum height
+			if (GetActorLocation().Z >= DownHeight)
+			{
+				//Make the object move down over time
+				SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z - DeltaTime * MoveSpeed));
+			}
+		}
+		else
+		{
+			//If the object has not reached its maximum height
+			if (GetActorLocation().Z <= UpHeight)
+			{
+				//Make the object move up over time
+				SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z + DeltaTime * MoveSpeed));
 
+			}
 		}
 	}
-
 }
 
 void AFloatingSteps::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

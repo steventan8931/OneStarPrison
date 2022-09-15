@@ -59,6 +59,9 @@ private:
 	//The speed at which the object updates it height
 	UPROPERTY(EditAnywhere, Replicated)
 		float MoveSpeed = 10.0f;
+
+	UPROPERTY(EditAnywhere, Replicated)
+		bool IsSideToSide = false;
 public:
 
 
