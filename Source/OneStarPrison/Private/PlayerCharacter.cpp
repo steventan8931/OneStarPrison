@@ -603,115 +603,114 @@ void APlayerCharacter::ShowProjectilePath(float _DeltaTime)
 	//Check if the player is holding down throw
 	if (IsHoldingDownThrow)
 	{
+		FVector cameraOffset = FMath::Lerp(CameraBoom->GetRelativeLocation(), ThrowCamOffset, _DeltaTime * ThrowCamSpeed);
+		CameraBoom->SetRelativeLocation(cameraOffset);
+
+		//Reset the spline component
+		//Clear all the spline points
+		SplineComponent->ClearSplinePoints(true);
+		//Iterate through the spline component array
+		for (int i = 0; i < SplineComponentArray.Num(); i++)
+		{
+			//Delete all the components
+			SplineComponentArray[i]->DestroyComponent();
+		}
+		//Empty the array
+		SplineComponentArray.Empty();
+
+		//Update the arm length to set a length
+		CameraBoom->TargetArmLength = 200;
 		if (ThrowPowerScale < MaxThrowPower)
 		{
-			//Reset the spline component
-			//Clear all the spline points
-			SplineComponent->ClearSplinePoints(true);
-			//Iterate through the spline component array
-			for (int i = 0; i < SplineComponentArray.Num(); i++)
-			{
-				//Delete all the components
-				SplineComponentArray[i]->DestroyComponent();
-			}
-			//Empty the array
-			SplineComponentArray.Empty();
-
-			//Update the arm length to set a length
-			CameraBoom->TargetArmLength = 200;
-
 			//Increment the throw power for each second while holding it down
 			ThrowPowerScale += (_DeltaTime * MaxThrowPower);
-
-			//Get rotation of the camera so it is behind the player
-			FRotator rot = FRotator(0, GetControlRotation().Yaw, 0);
-			//Update the rotation of the actor only if it is the server
-			if (HasAuthority())
-			{
-				SetActorRotation(rot, ETeleportType::ResetPhysics);
-			}
-
-			//Create Parameters for the
-			FPredictProjectilePathParams params;
-			params.StartLocation = GetMesh()->GetSocketLocation("Base-HumanPalmBone001Bone0015");
-
-			//Starting Velocity of the throwing
-			FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
-			velocity.Normalize();
-
-			//cache this velocity for the throwing of the item
-			cacheVelocity = velocity * ThrowPowerScale * 10;
-
-			//Set the parameters for throwing projectile
-			params.LaunchVelocity = cacheVelocity;
-			params.ProjectileRadius = 10;
-			params.bTraceWithChannel = false;
-			params.SimFrequency = 5;
-			//Make an array of actors for it to ignore
-			TArray<AActor*> actors;
-			//Make the projectile prediction ignore the player and the item being thrown
-			actors.Add(this);
-			actors.Add(PickedUpItem);
-			params.bTraceComplex = true;
-			params.ActorsToIgnore = actors;
-
-			//Set up the predict projectile path
-			FPredictProjectilePathResult result;
-			UGameplayStatics::PredictProjectilePath(GetWorld(), params, result);
-
-			//Iterate through the predicted path and set up spline points at each point of the path
-			for (int i = 0; i < result.PathData.Num(); i++)
-			{
-				SplineComponent->AddSplinePointAtIndex(result.PathData[i].Location, i, ESplineCoordinateSpace::Local, true);
-			}
-
-			//Iterate through each spline point
-			for (int i = 0; i < (SplineComponent->GetNumberOfSplinePoints() - 1); i++)
-			{
-				//Create a spline mesh at each point
-
-				USplineMeshComponent* spline = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
-				if (SplineMesh)
-				{
-					spline->SetStaticMesh(SplineMesh);
-				}
-				//Make it so only the owning player can see the throwing path
-				spline->SetOnlyOwnerSee(true);
-
-				//Set parameters for each spline mesh point
-				spline->SetMaterial(0, SplineMeshMaterial);
-				spline->SetStartScale(FVector2D(0.1f, 0.1f), true);
-				spline->SetEndScale(FVector2D(0.1f, 0.1f), true);
-				spline->SetForwardAxis(ESplineMeshAxis::Z);
-				spline->RegisterComponentWithWorld(GetWorld());
-
-				spline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
-				spline->SetMobility(EComponentMobility::Movable);
-
-				//Set the start and end points and tangent for each spline point
-				const FVector startPoint = SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local);
-				const FVector startTangent = SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local);
-				const FVector endPoint = SplineComponent->GetLocationAtSplinePoint(i + 1, ESplineCoordinateSpace::Local);
-				const FVector endTangent = SplineComponent->GetLocationAtSplinePoint(i + 1, ESplineCoordinateSpace::Local);
-
-				spline->SetStartAndEnd(startPoint, startTangent, endPoint, endTangent, true);
-
-				//Make the spline mesh not have collision (so it doesn't count for players overlapping
-				spline->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-				//Add this spline mesh to the array to remove delete later
-				SplineComponentArray.Add(spline);
-			}
 		}
-		else
+		//Get rotation of the camera so it is behind the player
+		FRotator rot = FRotator(0, GetControlRotation().Yaw, 0);
+		//Update the rotation of the actor only if it is the server
+		if (HasAuthority())
 		{
-			//Throw the picked up item
-			Throw();
+			SetActorRotation(rot, ETeleportType::ResetPhysics);
+		}
+
+		//Create Parameters for the
+		FPredictProjectilePathParams params;
+		params.StartLocation = GetMesh()->GetSocketLocation("Base-HumanPalmBone001Bone0015");
+
+		//Starting Velocity of the throwing
+		FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
+		velocity.Normalize();
+
+		//cache this velocity for the throwing of the item
+		cacheVelocity = velocity * ThrowPowerScale * 10;
+
+		//Set the parameters for throwing projectile
+		params.LaunchVelocity = cacheVelocity;
+		params.ProjectileRadius = 10;
+		params.bTraceWithChannel = false;
+		params.SimFrequency = 5;
+		//Make an array of actors for it to ignore
+		TArray<AActor*> actors;
+		//Make the projectile prediction ignore the player and the item being thrown
+		actors.Add(this);
+		actors.Add(PickedUpItem);
+		params.bTraceComplex = true;
+		params.ActorsToIgnore = actors;
+
+		//Set up the predict projectile path
+		FPredictProjectilePathResult result;
+		UGameplayStatics::PredictProjectilePath(GetWorld(), params, result);
+
+		//Iterate through the predicted path and set up spline points at each point of the path
+		for (int i = 0; i < result.PathData.Num(); i++)
+		{
+			SplineComponent->AddSplinePointAtIndex(result.PathData[i].Location, i, ESplineCoordinateSpace::Local, true);
+		}
+
+		//Iterate through each spline point
+		for (int i = 0; i < (SplineComponent->GetNumberOfSplinePoints() - 1); i++)
+		{
+			//Create a spline mesh at each point
+
+			USplineMeshComponent* spline = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
+			if (SplineMesh)
+			{
+				spline->SetStaticMesh(SplineMesh);
+			}
+			//Make it so only the owning player can see the throwing path
+			spline->SetOnlyOwnerSee(true);
+
+			//Set parameters for each spline mesh point
+			spline->SetMaterial(0, SplineMeshMaterial);
+			spline->SetStartScale(FVector2D(0.1f, 0.1f), true);
+			spline->SetEndScale(FVector2D(0.1f, 0.1f), true);
+			spline->SetForwardAxis(ESplineMeshAxis::Z);
+			spline->RegisterComponentWithWorld(GetWorld());
+
+			spline->CreationMethod = EComponentCreationMethod::UserConstructionScript;
+			spline->SetMobility(EComponentMobility::Movable);
+
+			//Set the start and end points and tangent for each spline point
+			const FVector startPoint = SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local);
+			const FVector startTangent = SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local);
+			const FVector endPoint = SplineComponent->GetLocationAtSplinePoint(i + 1, ESplineCoordinateSpace::Local);
+			const FVector endTangent = SplineComponent->GetLocationAtSplinePoint(i + 1, ESplineCoordinateSpace::Local);
+
+			spline->SetStartAndEnd(startPoint, startTangent, endPoint, endTangent, true);
+
+			//Make the spline mesh not have collision (so it doesn't count for players overlapping
+			spline->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			//Add this spline mesh to the array to remove delete later
+			SplineComponentArray.Add(spline);
 		}
 	}
 	else
 	{
 		//Slowly reset the camera boom to its original length
 		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, cacheArmLength, _DeltaTime);
+
+		FVector cameraOffset = FMath::Lerp(CameraBoom->GetRelativeLocation(), FVector(0.0f, 0.0f, 0.0f), _DeltaTime * ThrowCamSpeed);
+		CameraBoom->SetRelativeLocation(cameraOffset);
 
 		//Reset the spline component
 		//Clear all the spline points

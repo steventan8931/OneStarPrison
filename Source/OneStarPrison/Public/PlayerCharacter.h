@@ -206,6 +206,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxThrowPower = 150.0f;
 
+	UPROPERTY(EditAnywhere)
+		FVector ThrowCamOffset = FVector(0.0f, 50.0f, 50.0f);
+	UPROPERTY(EditAnywhere)
+		float ThrowCamSpeed = 5.0f;
+
 	//Punch Interact timer
 	UPROPERTY(BlueprintReadWrite, Replicated)
 		float PunchTimer = 0.0f;

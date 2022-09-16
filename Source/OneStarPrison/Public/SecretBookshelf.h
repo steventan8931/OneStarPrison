@@ -82,7 +82,4 @@ private:
 	//Check if book is inserted On Client
 	UFUNCTION(NetMulticast, Unreliable)
 	void CheckInsertedBook();
-	//Check if book is inserted On Server
-	UFUNCTION(Server, Unreliable)
-	void RPCCheckInsertedBook();
 };
