@@ -74,4 +74,8 @@ public:
 	//To check whether the armor piece should teleport back when dropped
 	UPROPERTY(EditAnywhere)
 		bool OnDisplay = false;
+
+	//Adjusts the throw length based on the mass
+	UPROPERTY(EditAnywhere, Replicated)
+		int Mass = 1;
 };
