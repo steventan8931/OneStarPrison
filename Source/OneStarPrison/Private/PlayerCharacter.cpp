@@ -641,8 +641,12 @@ void APlayerCharacter::ShowProjectilePath(float _DeltaTime)
 		FVector velocity = GetControlRotation().Vector() + FVector(0, 0, 0.5f);
 		velocity.Normalize();
 
-		//cache this velocity for the throwing of the item
-		cacheVelocity = velocity * ThrowPowerScale * 10;
+		if (PickedUpItem)
+		{
+			//cache this velocity for the throwing of the item
+			cacheVelocity = (velocity * ThrowPowerScale * 10) / PickedUpItem->Mass;
+		}
+
 
 		//Set the parameters for throwing projectile
 		params.LaunchVelocity = cacheVelocity;

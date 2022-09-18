@@ -43,6 +43,9 @@ void APickupable::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLif
 
 	DOREPLIFETIME(APickupable, Player);
 	DOREPLIFETIME(APickupable, IsInAir);
+
+	DOREPLIFETIME(APickupable, Mass);
+
 }
 
 // Called every frame
