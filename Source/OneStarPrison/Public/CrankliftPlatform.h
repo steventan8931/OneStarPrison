@@ -42,6 +42,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		class APickupable* OverlappingWeight = nullptr;
 
+	UPROPERTY(EditAnywhere, Replicated)
+		bool IsSideToSide = false;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -57,4 +60,5 @@ public:
 	//Used when the cranklift is weight dependent
 	UPROPERTY(Replicated)
 		bool CanMove = true;
+
 };

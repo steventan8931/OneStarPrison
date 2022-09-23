@@ -39,12 +39,25 @@ void ACrankliftPlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >&
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ACrankliftPlatform, IsWeightDependent);
+	DOREPLIFETIME(ACrankliftPlatform, IsSideToSide);
+	DOREPLIFETIME(ACrankliftPlatform, CanMove);
 }
 
 // Called every frame
 void ACrankliftPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (IsSideToSide)
+	{
+		if (HasAuthority())
+		{
+			////If the object has not reached its minimum height
+			//FVector loc = FVector(cos(GetGameTimeSinceCreation()) * 3, 0 , 0);
+			FVector loc = FVector( 0, cos(GetGameTimeSinceCreation()) * 3, 0);
+			Mesh->AddRelativeLocation(loc);
+		}
+	}
 
 	//If there is a player or a weight
 	if (OverlappingPlayer && OverlappingWeight)
