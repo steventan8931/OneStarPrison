@@ -29,12 +29,19 @@ void ADeathRock::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ADeathRock, EndPosition);
+
+	DOREPLIFETIME(ADeathRock, IsStatic);
 }
 // Called every frame
 void ADeathRock::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
+	if (IsStatic)
+	{
+		return;
+	}
+
 	DeathTime += DeltaTime;
 
 	//If the rock isn't at its end position, make the rock move towards the end position

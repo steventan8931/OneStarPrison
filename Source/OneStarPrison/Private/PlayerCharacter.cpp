@@ -775,6 +775,7 @@ void APlayerCharacter::CheckDeath(float _DeltaTime)
 
 			//Reset Variables
 			CanMove = true;
+			IsHoldingHeavyItem = false;
 			DeathTimerCounter = 0.0f;
 			HitByWallCount = 0;
 			IsDead = false;
@@ -805,7 +806,7 @@ void APlayerCharacter::CheckClimbing_Implementation()
 //Returns whether the player is holding an heavy item or not
 bool APlayerCharacter::CheckHeavyItem()
 {
-	if (IsHoldingHeavyItem)
+	if (IsHoldingHeavyItem && PickedUpItem)
 	{
 		return true;
 	}

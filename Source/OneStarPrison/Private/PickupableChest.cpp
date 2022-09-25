@@ -46,6 +46,7 @@ void APickupableChest::Tick(float DeltaTime)
 		if (Player)
 		{
 			TakenFromDisplay = true;
+			Timer = 0.0f;
 		}
 		else
 		{

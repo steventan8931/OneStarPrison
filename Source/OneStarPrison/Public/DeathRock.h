@@ -31,6 +31,9 @@ private:
 	//The speed the rock goes to reach the end position
 	UPROPERTY(EditAnywhere)
 		float MoveSpeed = 0.5f;
+
+	UPROPERTY(EditAnywhere, Replicated)
+		bool IsStatic = false;
 public:
 	//Components
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
