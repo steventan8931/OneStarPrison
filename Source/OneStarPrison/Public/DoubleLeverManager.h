@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "DoubleLever.h"
+#include "Door.h"
 #include "DoubleLeverManager.generated.h"
+
 
 UCLASS()
 class ONESTARPRISON_API ADoubleLeverManager : public AActor
