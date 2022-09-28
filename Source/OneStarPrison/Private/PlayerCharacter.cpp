@@ -257,6 +257,9 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, PunchTimer);
 	DOREPLIFETIME(APlayerCharacter, PunchDelay);
 
+	DOREPLIFETIME(APlayerCharacter, ThrowEndActorType);
+	DOREPLIFETIME(APlayerCharacter, cacheThrowEndActor);
+	
 }
 
 // Called every frame
@@ -706,10 +709,26 @@ void APlayerCharacter::ShowProjectilePath(float _DeltaTime)
 			spline->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			//Add this spline mesh to the array to remove delete later
 			SplineComponentArray.Add(spline);
+
+			if (ThrowEndActorType)
+			{
+				if (i == SplineComponent->GetNumberOfSplinePoints() - 1)
+				{
+					FTransform transform = FTransform(FRotator(0, 0, 0), FVector(endPoint), FVector(1, 1, 1));
+					cacheThrowEndActor = GetWorld()->SpawnActor<AActor>(ThrowEndActorType, transform);
+				}
+			}
+
 		}
 	}
 	else
 	{
+		if (cacheThrowEndActor)
+		{
+			cacheThrowEndActor->Destroy();
+			cacheThrowEndActor = nullptr;
+		}
+
 		//Slowly reset the camera boom to its original length
 		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, cacheArmLength, _DeltaTime);
 

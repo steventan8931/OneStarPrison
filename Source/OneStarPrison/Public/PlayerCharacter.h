@@ -169,6 +169,11 @@ private:
 	//Checks if dead then respawn player
 	void CheckDeath(float _DeltaTime);
 
+	UPROPERTY(EditAnywhere, Replicated)
+		TSubclassOf<class AActor> ThrowEndActorType;
+
+	UPROPERTY(Replicated)
+		AActor* cacheThrowEndActor;
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
