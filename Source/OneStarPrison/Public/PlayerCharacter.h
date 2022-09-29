@@ -233,10 +233,10 @@ public:
 
 	//Pushing
 	//Whether the player is in the box collision and able to push or not
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		bool CanPush = false;
 	//Whether the player is pushing
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		bool IsPushing = false;
 
 	//Climbing

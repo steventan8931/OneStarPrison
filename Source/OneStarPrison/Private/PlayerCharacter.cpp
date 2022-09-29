@@ -260,6 +260,9 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, ThrowEndActorType);
 	DOREPLIFETIME(APlayerCharacter, cacheThrowEndActor);
 	
+	DOREPLIFETIME(APlayerCharacter, CanPush);
+	DOREPLIFETIME(APlayerCharacter, IsPushing);
+
 }
 
 // Called every frame
