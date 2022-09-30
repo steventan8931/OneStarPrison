@@ -48,12 +48,24 @@ private:
 		float Speed = 100.0f;
 
 	//Player Interaction
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
+	UPROPERTY(VisibleAnywhere, Replicated)
+		class APlayerCharacter* OverlappingPlayer2 = nullptr;
+
+	//Check Item
+	UFUNCTION(NetMulticast, Unreliable)
+		void CheckItem(APlayerCharacter* _Player);
 public:
 
+	//Starting Area
 	FTransform cacheTransform;
 
 	UPROPERTY(EditAnywhere, Replicated)
 		bool IsMoving = false;
+
+	UPROPERTY(Replicated)
+		bool ItemInserted = false;
+
+
 };

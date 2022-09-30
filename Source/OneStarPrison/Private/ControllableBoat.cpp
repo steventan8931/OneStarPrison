@@ -41,6 +41,10 @@ void AControllableBoat::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AControllableBoat, IsMoving);
+	DOREPLIFETIME(AControllableBoat, ItemInserted);
+
+	DOREPLIFETIME(AControllableBoat, OverlappingPlayer);
+	DOREPLIFETIME(AControllableBoat, OverlappingPlayer2);
 }
 
 // Called every frame
@@ -48,14 +52,25 @@ void AControllableBoat::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-
-
 	//If there is an overlapping player
-	if (OverlappingPlayer)
+	if (OverlappingPlayer && OverlappingPlayer2)
 	{
-		if (OverlappingPlayer->IsDead)
+		if (OverlappingPlayer->IsDead || OverlappingPlayer2->IsDead)
 		{
 			SetActorTransform(cacheTransform);
+
+			if (OverlappingPlayer->IsDead)
+			{
+				OverlappingPlayer = nullptr;
+				IsMoving = false;
+			}
+
+			if (OverlappingPlayer2->IsDead)
+			{
+				OverlappingPlayer2 = nullptr;
+				IsMoving = false;
+			}
+			return;
 		}
 
 		if (IsMoving)
@@ -64,19 +79,28 @@ void AControllableBoat::Tick(float DeltaTime)
 			SetActorLocation(newPos);
 			return;
 		}
-		//If they have an item
-		if (OverlappingPlayer->PickedUpItem)
+
+		CheckItem(OverlappingPlayer);
+		CheckItem(OverlappingPlayer2);
+	}
+}
+
+void AControllableBoat::CheckItem_Implementation(APlayerCharacter* _Player)
+{
+	if (_Player)
+	{
+		if (_Player->PickedUpItem)
 		{
-			APickupableBook* book = Cast<APickupableBook>(OverlappingPlayer->PickedUpItem);
+			APickupableBook* book = Cast<APickupableBook>(_Player->PickedUpItem);
 
 			//If the held item is a book
 			if (book)
 			{
 				//Allow the player to interact
-				OverlappingPlayer->CanInteract = true;
+				_Player->CanInteract = true;
 
 				//If the player clicked interact
-				if (OverlappingPlayer->IsInteracting)
+				if (_Player->IsInteracting)
 				{
 					//Attach the book to this actor
 					book->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
@@ -88,19 +112,21 @@ void AControllableBoat::Tick(float DeltaTime)
 					}
 
 					//Make the player unable to continue interacting
-					OverlappingPlayer->CanInteract = false;
-					OverlappingPlayer->IsInteracting = false;
+					_Player->CanInteract = false;
+					_Player->IsInteracting = false;
 					//Remove the item from the player
-					OverlappingPlayer->PickedUpItem = nullptr;
+					_Player->PickedUpItem = nullptr;
 
 					//Set the boat to move
 					IsMoving = true;
+					//Set item inserted to true
+					ItemInserted = true;
 				}
-
 			}
 		}
 	}
 }
+
 
 void AControllableBoat::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -117,6 +143,12 @@ void AControllableBoat::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 		//If the overlapping actor is a player
 		if (playerActor)
 		{
+			if (ItemInserted)
+			{
+				IsMoving = true;
+				//return;
+			}
+
 			//If there isn't already an overlapping player
 			if (!OverlappingPlayer)
 			{
@@ -125,20 +157,10 @@ void AControllableBoat::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 			}
 			else
 			{
-				//If there is already an overlapping player
-				//But the current actor has a item
-				if (playerActor->PickedUpItem)
+				if (playerActor != OverlappingPlayer)
 				{
-					APickupableBook* book = Cast<APickupableBook>(playerActor->PickedUpItem);
-					//And the item is a book
-					if (book)
-					{
-						//Allow this player to interact 
-						playerActor->CanInteract = true;
-						//Make the previous overlapping player unable to interact and make overlapping player the current player with the book
-						OverlappingPlayer->CanInteract = false;
-						OverlappingPlayer = playerActor;
-					}
+					//Set current player to the second player
+					OverlappingPlayer2 = playerActor;
 				}
 			}
 		}
@@ -170,6 +192,33 @@ void AControllableBoat::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, 
 					//Make the overlapping player can't interact 
 					OverlappingPlayer->CanInteract = false;
 					OverlappingPlayer = nullptr;
+
+					if (OverlappingPlayer2)
+					{
+						OverlappingPlayer2->CanInteract = false;
+					}
+				}
+				else
+				{
+					//Otherwise make the overlapping actor unable to interact
+					playerActor->CanInteract = false;
+				}
+			}
+
+			//If an overlapping player exists
+			if (OverlappingPlayer2)
+			{
+				//If the current player is the overlapping player
+				if (playerActor == OverlappingPlayer2)
+				{
+					//Make the overlapping player can't interact 
+					OverlappingPlayer2->CanInteract = false;
+					OverlappingPlayer2 = nullptr;
+
+					if (OverlappingPlayer)
+					{
+						OverlappingPlayer->CanInteract = false;
+					}
 				}
 				else
 				{
