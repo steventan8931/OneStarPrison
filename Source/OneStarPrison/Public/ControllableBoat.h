@@ -50,14 +50,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Replicated)
 		class APlayerCharacter* OverlappingPlayer2 = nullptr;
 
-	//Check Item
-	UFUNCTION(NetMulticast, Unreliable)
-		void CheckItem(APlayerCharacter* _Player);
-
-	//Whether the item has been inserted to start the boat
-	UPROPERTY(Replicated)
-		bool ItemInserted = false;
-
 	//Sound that plays when the wheel is inserted
 	UPROPERTY(EditAnywhere)
 		USoundBase* InsertSound;
@@ -69,4 +61,11 @@ public:
 	UPROPERTY(EditAnywhere, Replicated)
 		bool IsMoving = false;
 
+	//Insert Item
+	UFUNCTION(NetMulticast, Unreliable)
+		void InsertItem();
+
+	//Whether the item has been inserted to start the boat
+	UPROPERTY(Replicated)
+		bool ItemInserted = false;
 };

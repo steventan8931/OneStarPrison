@@ -43,6 +43,9 @@ void ABoatController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& Ou
 	DOREPLIFETIME(ABoatController, InteractTimer);
 
 	DOREPLIFETIME(ABoatController, RotationScale);
+
+	DOREPLIFETIME(ABoatController, IsAnchor);
+	DOREPLIFETIME(ABoatController, AnchorRemoved);
 }
 
 // Called every frame
@@ -56,41 +59,78 @@ void ABoatController::Tick(float DeltaTime)
 		//If the boat isnt moving dont check for player interaction
 		if (!Boat->IsMoving)
 		{
+			//Whether the the controller is an anchor
+			if (IsAnchor)
+			{
+				//If the player is overlapping
+				if (OverlappingPlayer)
+				{
+					//Whether the boat has the item inserted
+					if (!Boat->ItemInserted)
+					{
+						//Allow the player to interact
+						OverlappingPlayer->CanInteract = true;
+
+						//If the player is interacting
+						if (OverlappingPlayer->IsInteracting)
+						{
+							//Unanchors the boat
+							Boat->InsertItem();
+
+							//Set anchor removed to true 
+							AnchorRemoved = true;
+
+							//Stop player from furthering interacting
+							OverlappingPlayer->CanInteract = false;
+							return;
+						}
+					}
+				}
+			}
 			return;
 		}
-
-		InteractTimer += DeltaTime;
-
-		//If the player is overlapping
-		if (OverlappingPlayer)
+		else
 		{
-			//If the player's last interact has been longer than the interact delay
-			if (InteractTimer >= InteractDelay)
+			//Dont move the boat if this is an anchor
+			if (IsAnchor)
 			{
-				//Allow the player to interact
-				OverlappingPlayer->CanInteract = true;
+				return;
+			}
 
-				//If the player is interacting, update the rotation of the boat
-				if (OverlappingPlayer->IsInteracting)
+			InteractTimer += DeltaTime;
+
+			//If the player is overlapping
+			if (OverlappingPlayer)
+			{
+				//If the player's last interact has been longer than the interact delay
+				if (InteractTimer >= InteractDelay)
 				{
-					if (HasAuthority())
+					//Allow the player to interact
+					OverlappingPlayer->CanInteract = true;
+
+					//If the player is interacting
+					if (OverlappingPlayer->IsInteracting)
 					{
-						FRotator rot = FRotator(0, RotationScale, 0);
-						FRotator newRot = FMath::Lerp(Boat->GetActorRotation(), Boat->GetActorRotation() + rot, DeltaTime * 2);
-						Boat->SetActorRotation(newRot);				
+						//Update the rotation of the boat
+						if (HasAuthority())
+						{
+							FRotator rot = FRotator(0, RotationScale, 0);
+							FRotator newRot = FMath::Lerp(Boat->GetActorRotation(), Boat->GetActorRotation() + rot, DeltaTime * 2);
+							Boat->SetActorRotation(newRot);
+						}
+
+						//Reset the interact timers
+						OverlappingPlayer->CanInteract = false;
+						InteractTimer = 0.0f;
 					}
 
-					//Reset the interact timers
-					OverlappingPlayer->CanInteract = false;
-					InteractTimer = 0.0f;
 				}
-				
-			}
-			else
-			{
-				//Don't allow the overlapping player to interact
-				OverlappingPlayer->IsInteracting = false;
-				OverlappingPlayer->CanInteract = false;
+				else
+				{
+					//Don't allow the overlapping player to interact
+					OverlappingPlayer->IsInteracting = false;
+					OverlappingPlayer->CanInteract = false;
+				}
 			}
 		}
 	}
@@ -99,6 +139,12 @@ void ABoatController::Tick(float DeltaTime)
 
 void ABoatController::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	//If this is an anchor and the player already interacted
+	if (IsAnchor && Boat && Boat->ItemInserted)
+	{
+		return;
+	}
+
 	if (OtherActor && (OtherActor != this))
 	{
 		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
