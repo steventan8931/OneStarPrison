@@ -22,9 +22,8 @@ void APushable::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//Cache starting position
 	StartingTransform = GetActorTransform();
-
-
 }
 
 // Called every frame

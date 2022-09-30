@@ -28,8 +28,6 @@ AFloatingSteps::AFloatingSteps()
 void AFloatingSteps::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	UpHeight = GetActorLocation().Z;
 }
 
 void AFloatingSteps::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -38,12 +36,7 @@ void AFloatingSteps::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& Out
 
 	DOREPLIFETIME(AFloatingSteps, BoxCollision);
 
-	DOREPLIFETIME(AFloatingSteps, UpHeight);
-	DOREPLIFETIME(AFloatingSteps, DownHeight);
-	DOREPLIFETIME(AFloatingSteps, IsPlayerColliding);
 	DOREPLIFETIME(AFloatingSteps, MoveSpeed);
-
-	DOREPLIFETIME(AFloatingSteps, IsSideToSide);
 }
 
 // Called every frame
@@ -51,37 +44,11 @@ void AFloatingSteps::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsSideToSide)
+	if (HasAuthority())
 	{
-		if (HasAuthority())
-		{
-			////If the object has not reached its minimum height
-			FVector loc = FVector(0, cos(GetGameTimeSinceCreation()) * 5, 0);
-			Mesh->AddRelativeLocation(loc);
-		}
-	}
-	else
-	{
-		//If the player is colliding
-		if (IsPlayerColliding)
-		{
-			//If the object has not reached its minimum height
-			if (GetActorLocation().Z >= DownHeight)
-			{
-				//Make the object move down over time
-				SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z - DeltaTime * MoveSpeed));
-			}
-		}
-		else
-		{
-			//If the object has not reached its maximum height
-			if (GetActorLocation().Z <= UpHeight)
-			{
-				//Make the object move up over time
-				SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z + DeltaTime * MoveSpeed));
-
-			}
-		}
+		//Move the object side to side
+		FVector loc = FVector(0, cos(GetGameTimeSinceCreation()) * MoveSpeed, 0);
+		Mesh->AddRelativeLocation(loc);
 	}
 }
 
@@ -99,8 +66,6 @@ void AFloatingSteps::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 			{
 				//Set the overlapping player to the overlapping actor
 				OverlappingPlayer = playerActor;
-				//Set Player Colliding to true
-				IsPlayerColliding = true;
 			}
 		}
 	}
@@ -121,8 +86,7 @@ void AFloatingSteps::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, cla
 				//If this overlapping player is the overlapping player
 				if (playerActor == OverlappingPlayer)
 				{
-					//Set Player colliding to true and set overlapping player to null
-					IsPlayerColliding = false;
+					//Set overlapping player to null
 					OverlappingPlayer = nullptr;
 				}
 			}

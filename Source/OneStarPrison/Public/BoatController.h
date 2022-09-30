@@ -44,22 +44,25 @@ private:
 	UPROPERTY(EditAnywhere)
 		USoundBase* InsertSound;
 
+	//Whether the boat is moving
 	UPROPERTY(EditAnywhere, Replicated)
 		bool IsMoving = false;
 
 	//Player Interaction
 	UPROPERTY(VisibleAnywhere)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
-public:
+
+	//Thethe boat to control
 	UPROPERTY(EditAnywhere)
 		class AControllableBoat* Boat;
 
+	//Timer and delay for the players interaction
 	UPROPERTY(EditAnywhere, Replicated)
 		float InteractDelay = 0.3f;
 	UPROPERTY(Replicated)
-	float InteractTimer = 0.0f;
+		float InteractTimer = 0.0f;
 
+	//The scale to rotate the boat by for each interaction
 	UPROPERTY(EditAnywhere, Replicated)
 		float RotationScale = 15.0f;
-
 };

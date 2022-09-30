@@ -48,12 +48,12 @@ void ACrankliftPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//Check whether to move the platform side to side
 	if (IsSideToSide)
 	{
 		if (HasAuthority())
 		{
-			////If the object has not reached its minimum height
-			//FVector loc = FVector(cos(GetGameTimeSinceCreation()) * 3, 0 , 0);
+			//Move to platform side to side
 			FVector loc = FVector( 0, cos(GetGameTimeSinceCreation()) * 3, 0);
 			Mesh->AddRelativeLocation(loc);
 		}

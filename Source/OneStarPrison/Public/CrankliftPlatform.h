@@ -39,9 +39,11 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
 
+	//Reference to the weighted object
 	UPROPERTY(VisibleAnywhere)
 		class APickupable* OverlappingWeight = nullptr;
 
+	//Whether the object should move side to side
 	UPROPERTY(EditAnywhere, Replicated)
 		bool IsSideToSide = false;
 
@@ -53,7 +55,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh;
 
-	//Whether this platform can only move one object
+	//Whether this platform can only move one object at a time
 	UPROPERTY(EditAnywhere, Replicated)
 		bool IsWeightDependent = false;
 
