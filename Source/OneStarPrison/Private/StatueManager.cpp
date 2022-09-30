@@ -145,6 +145,11 @@ void AStatueManager::Tick(float DeltaTime)
 
 		if (NextSetTimer >= NextSetDelay)
 		{
+			if (OpenSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+			}
+
 			TimesCompleted++;
 			StatueChosen = false;
 			StatueCompleted = false;

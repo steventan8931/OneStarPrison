@@ -29,6 +29,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//Opening Sound
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		USoundBase* OpenSound;
+
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* LeftLightMesh;
@@ -82,4 +86,5 @@ public:
 	//Array of doors to open
 	UPROPERTY(EditAnywhere, Replicated)
 		TArray<ADoor*> Doors;
+
 };
