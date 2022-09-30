@@ -17,6 +17,24 @@ public class OneStarPrison : ModuleRules
 
 		//MinFilesUsingPrecompiledHeaderOverride = 1;
 		//NEW ^
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "Niagara" });
-	}
+		PublicDependencyModuleNames.AddRange(new string[] {
+            "Core",
+            "CoreUObject",
+            "Engine",
+            "InputCore",
+            "HeadMountedDisplay",
+            "AIModule",
+            "GameplayTasks",
+            "NavigationSystem",
+            "UMG",
+            "Slate",
+            "Sockets",
+            "Niagara",
+            "SlateCore",
+            "ApplicationCore"
+        });
+
+        PrivateDependencyModuleNames.AddRange(new string[] { });
+    }
 }
+ 
