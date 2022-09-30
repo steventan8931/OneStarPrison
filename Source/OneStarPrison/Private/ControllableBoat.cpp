@@ -83,52 +83,6 @@ void AControllableBoat::Tick(float DeltaTime)
 			SetActorLocation(newPos);
 			return;
 		}
-
-		//Check for players item and interaction
-		CheckItem(OverlappingPlayer);
-		CheckItem(OverlappingPlayer2);
-	}
-}
-
-void AControllableBoat::CheckItem_Implementation(APlayerCharacter* _Player)
-{
-	if (_Player)
-	{
-		if (_Player->PickedUpItem)
-		{
-			APickupableBook* book = Cast<APickupableBook>(_Player->PickedUpItem);
-
-			//If the held item is a OBJECT
-			if (book)
-			{
-				//Allow the player to interact
-				_Player->CanInteract = true;
-
-				//If the player clicked interact
-				if (_Player->IsInteracting)
-				{
-					//Attach the OBJECT to this actor
-					book->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-
-					//Play the insert sound
-					if (InsertSound)
-					{
-						UGameplayStatics::PlaySoundAtLocation(GetWorld(), InsertSound, GetActorLocation());
-					}
-
-					//Make the player unable to continue interacting
-					_Player->CanInteract = false;
-					_Player->IsInteracting = false;
-					//Remove the item from the player
-					_Player->PickedUpItem = nullptr;
-
-					//Set the boat to move
-					IsMoving = true;
-					//Set item inserted to true
-					ItemInserted = true;
-				}
-			}
-		}
 	}
 }
 
@@ -148,12 +102,6 @@ void AControllableBoat::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 		//If the overlapping actor is a player
 		if (playerActor)
 		{
-			if (ItemInserted)
-			{
-				IsMoving = true;
-				//return;
-			}
-
 			//If there isn't already an overlapping player
 			if (!OverlappingPlayer)
 			{
@@ -168,6 +116,16 @@ void AControllableBoat::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp
 					OverlappingPlayer2 = playerActor;
 				}
 			}
+
+			//If both players are overlapping and the item has been inserted
+			if (OverlappingPlayer && OverlappingPlayer2)
+			{
+				if (ItemInserted)
+				{
+					IsMoving = true;
+				}
+			}
+
 		}
 
 	}
@@ -194,19 +152,7 @@ void AControllableBoat::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, 
 				//If the current player is the overlapping player
 				if (playerActor == OverlappingPlayer)
 				{
-					//Make the overlapping player can't interact 
-					OverlappingPlayer->CanInteract = false;
 					OverlappingPlayer = nullptr;
-
-					if (OverlappingPlayer2)
-					{
-						OverlappingPlayer2->CanInteract = false;
-					}
-				}
-				else
-				{
-					//Otherwise make the overlapping actor unable to interact
-					playerActor->CanInteract = false;
 				}
 			}
 
@@ -216,22 +162,21 @@ void AControllableBoat::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, 
 				//If the current player is the overlapping player
 				if (playerActor == OverlappingPlayer2)
 				{
-					//Make the overlapping player can't interact 
-					OverlappingPlayer2->CanInteract = false;
 					OverlappingPlayer2 = nullptr;
-
-					if (OverlappingPlayer)
-					{
-						OverlappingPlayer->CanInteract = false;
-					}
-				}
-				else
-				{
-					//Otherwise make the overlapping actor unable to interact
-					playerActor->CanInteract = false;
 				}
 			}
 		}
 	}
 }
 
+void AControllableBoat::InsertItem_Implementation()
+{
+	//Play the insert sound
+	if (InsertSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), InsertSound, GetActorLocation());
+	}
+
+	//Set inserted to true
+	ItemInserted = true;
+}

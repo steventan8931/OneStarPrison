@@ -65,4 +65,12 @@ private:
 	//The scale to rotate the boat by for each interaction
 	UPROPERTY(EditAnywhere, Replicated)
 		float RotationScale = 15.0f;
+
+	//Whether this controller is the anchor
+	UPROPERTY(EditAnywhere, Replicated)
+		bool IsAnchor = false;
+public:
+	//Whether the anchor has been removed
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
+		bool AnchorRemoved = false;
 };
