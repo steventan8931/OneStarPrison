@@ -257,6 +257,12 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, PunchTimer);
 	DOREPLIFETIME(APlayerCharacter, PunchDelay);
 
+	DOREPLIFETIME(APlayerCharacter, ThrowEndActorType);
+	DOREPLIFETIME(APlayerCharacter, cacheThrowEndActor);
+	
+	DOREPLIFETIME(APlayerCharacter, CanPush);
+	DOREPLIFETIME(APlayerCharacter, IsPushing);
+
 }
 
 // Called every frame
@@ -651,19 +657,42 @@ void APlayerCharacter::ShowProjectilePath(float _DeltaTime)
 		//Set the parameters for throwing projectile
 		params.LaunchVelocity = cacheVelocity;
 		params.ProjectileRadius = 10;
-		params.bTraceWithChannel = false;
+		//params.bTraceWithChannel = true;
 		params.SimFrequency = 5;
 		//Make an array of actors for it to ignore
 		TArray<AActor*> actors;
 		//Make the projectile prediction ignore the player and the item being thrown
 		actors.Add(this);
 		actors.Add(PickedUpItem);
-		params.bTraceComplex = true;
+		//params.bTraceComplex = false;
 		params.ActorsToIgnore = actors;
+
+		//Set Collision channels to get hit result
+		params.bTraceWithCollision = true;
+		params.bTraceWithChannel = true;
 
 		//Set up the predict projectile path
 		FPredictProjectilePathResult result;
 		UGameplayStatics::PredictProjectilePath(GetWorld(), params, result);
+
+		if (ThrowEndActorType)
+		{
+			if (!cacheThrowEndActor)
+			{
+				FTransform transform = FTransform(FRotator(0, 0, 0), result.HitResult.ImpactPoint, FVector(1, 1, 1));
+				cacheThrowEndActor = GetWorld()->SpawnActor<AActor>(ThrowEndActorType, transform);
+			}
+			else
+			{
+				if (result.HitResult.ImpactPoint != FVector(0, 0, 0))
+				{
+					cacheThrowEndActor->SetActorLocation(result.HitResult.ImpactPoint);
+					
+					//cacheThrowEndActor->SetActorRotation(result.HitResult.ImpactNormal);
+					cacheThrowEndActor->SetActorHiddenInGame(false);
+				}
+			}
+		}
 
 		//Iterate through the predicted path and set up spline points at each point of the path
 		for (int i = 0; i < result.PathData.Num(); i++)
@@ -710,6 +739,11 @@ void APlayerCharacter::ShowProjectilePath(float _DeltaTime)
 	}
 	else
 	{
+		if (cacheThrowEndActor)
+		{
+			cacheThrowEndActor->SetActorHiddenInGame(true);
+		}
+
 		//Slowly reset the camera boom to its original length
 		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, cacheArmLength, _DeltaTime);
 

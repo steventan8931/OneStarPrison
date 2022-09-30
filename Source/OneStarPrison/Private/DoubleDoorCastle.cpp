@@ -134,11 +134,6 @@ void ADoubleDoorCastle::CloseDoor(float _DeltaTime)
 
 void ADoubleDoorCastle::CheckKeyDoor_Implementation(APlayerCharacter* _Player)
 {
-	RPCCheckKeyDoor(_Player);
-}
-
-void ADoubleDoorCastle::RPCCheckKeyDoor_Implementation(APlayerCharacter* _Player)
-{
 	if (_Player)
 	{
 		if (_Player->PickedUpItem)
@@ -148,7 +143,7 @@ void ADoubleDoorCastle::RPCCheckKeyDoor_Implementation(APlayerCharacter* _Player
 			//If the player has a key, allow them to interact with the door
 			if (key)
 			{
-				_Player->CanInteract = true;		
+				_Player->CanInteract = true;
 			}
 
 			//If they are interacting
@@ -168,7 +163,7 @@ void ADoubleDoorCastle::RPCCheckKeyDoor_Implementation(APlayerCharacter* _Player
 				KeysInserted++;
 			}
 		}
-		
+
 		//If the keys inserted is greater or equal to the amount of keys required
 		if (KeysInserted >= KeysRequired)
 		{

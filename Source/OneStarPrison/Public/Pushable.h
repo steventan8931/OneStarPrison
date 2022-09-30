@@ -27,7 +27,7 @@ private:
 	virtual void Tick(float DeltaTime) override;
 public:
 	//Component
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* Mesh;
 
 	//Weightage for the how much the pulley double will go up

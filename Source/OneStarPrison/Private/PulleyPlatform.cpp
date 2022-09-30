@@ -2,6 +2,7 @@
 
 
 #include "PulleyPlatform.h"
+#include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
 APulleyPlatform::APulleyPlatform()
@@ -19,6 +20,14 @@ void APulleyPlatform::BeginPlay()
 	Super::BeginPlay();
 	
 	StartingHeight = GetActorLocation().Z;
+}
+
+void APulleyPlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APulleyPlatform, TargetHeight);
+	DOREPLIFETIME(APulleyPlatform, MaxHeight);
 }
 
 // Called every frame

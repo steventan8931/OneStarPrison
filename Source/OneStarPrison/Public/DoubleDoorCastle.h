@@ -84,9 +84,6 @@ private:
 	//Check Key
 	UFUNCTION(NetMulticast, Unreliable)
 		void CheckKeyDoor(APlayerCharacter* _Player);
-	//Check Key
-	UFUNCTION(NetMulticast, Unreliable)
-		void RPCCheckKeyDoor(APlayerCharacter* _Player);
 public:
 	//Sound for the doors opening
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)

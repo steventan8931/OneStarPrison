@@ -19,6 +19,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	//Replication
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -29,11 +31,11 @@ private:
 
 public:
 	//The New Height the platform is trying to reach
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		int TargetHeight = 0;
 
 	//The Maximum Height the platform can go up to
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		int MaxHeight = 0;
 
 	//The Height the platform starts off at 
