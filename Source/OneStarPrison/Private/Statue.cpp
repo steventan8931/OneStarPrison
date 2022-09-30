@@ -41,6 +41,7 @@ AStatue::AStatue()
 	Mesh7->SetupAttachment(RootComponent);
 	Mesh8->SetupAttachment(RootComponent);
 
+	//Add all the mesh components to the array
 	Meshes.Add(Mesh0);
 	Meshes.Add(Mesh1);
 	Meshes.Add(Mesh2);
@@ -57,41 +58,36 @@ void AStatue::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//If the pattern is randomized
 	if (IsRandom)
 	{
+		//Have the server randomize
 		if (HasAuthority())
 		{
-			//Randomly choose one barrel to place the key in
+			//Randomly choose one an index for the top row
 			TopRow = FMath::RandRange(0, 3 - 1);
-			//Randomly choose one barrel to place the key in
+			//Randomly choose one an index for the middle row
 			MidRow = FMath::RandRange(3, 6 - 1);
-			//Randomly choose one barrel to place the key in
+			//Randomly choose one an index for the bottom row
 			BotRow = FMath::RandRange(6, 9 - 1);
 		}
-
 	}
 
+	//If the object is a clone
 	if (IsClone)
 	{
 		UpdateVisibility();
 		return;
 	}
 
-	if (!LightMesh->GetStaticMesh())
+	//If the statue isn't a clone, turn off all the step meshes
+	for (int i = 0; i < Meshes.Num(); i++)
 	{
-		//Show steps only if it doenst light up
-		UpdateVisibility();
-	}
-	else
-	{
-		for (int i = 0; i < Meshes.Num(); i++)
+		if (Meshes[i])
 		{
-			if (Meshes[i])
-			{
-				Meshes[i]->SetVisibility(false);
-			}
+			Meshes[i]->SetVisibility(false);
 		}
-	}
+	}	
 }
 
 void AStatue::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -114,15 +110,16 @@ void AStatue::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//Have the server update light mesh of statue if they are chosen
 	if (HasAuthority())
 	{
 		if (IsChosen)
 		{
-			LightMesh->SetVisibility(true, true);
+			LightMesh->SetVisibility(true);
 		}
 		else
 		{
-			LightMesh->SetVisibility(false, true);
+			LightMesh->SetVisibility(false);
 		}
 	}
 
@@ -130,6 +127,7 @@ void AStatue::Tick(float DeltaTime)
 
 void AStatue::UpdateVisibility()
 {
+	//Turn off all the step meshes
 	for (int i = 0; i < Meshes.Num(); i++)
 	{
 		if (Meshes[i])
@@ -138,6 +136,7 @@ void AStatue::UpdateVisibility()
 		}
 	}
 
+	//Turn on only the 3 chosen 3 steps
 	Meshes[TopRow]->SetVisibility(true);
 	Meshes[MidRow]->SetVisibility(true);
 	Meshes[BotRow]->SetVisibility(true);

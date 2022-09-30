@@ -25,14 +25,68 @@ protected:
 	//Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
-public:	
+private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	//Opening Sound
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//Set Completion Sound
+	UPROPERTY(EditAnywhere)
 		USoundBase* OpenSound;
 
+	//Array of All Steps
+	UPROPERTY(EditAnywhere, Replicated)
+		TArray<AStatueSteps*> ListOfSteps;
+
+	//Array of Statues
+	UPROPERTY(EditAnywhere, Replicated)
+		TArray<AStatue*> ListOfStatues;
+
+	//Current statue that the player has to match
+	UPROPERTY(Replicated)
+		AStatue* CurrentStatue = nullptr;
+
+	//Times the player has been completed each statue set
+	UPROPERTY(Replicated)
+	int TimesCompleted = 0;
+
+	//Chooses steps based on the statue
+	UFUNCTION(Server, Reliable)
+	void ChooseSteps();
+	//Chooses a random statue
+	UFUNCTION(Server, Reliable)
+	void ChooseStatue();
+
+	//Resets the Chosen Steps
+	UFUNCTION(Server, Reliable)
+	void ResetSteps();
+	//Resets the chosen statue
+	UFUNCTION(Server, Reliable)
+	void ResetStatues();
+
+	//Check for completion of statue set
+	UFUNCTION(Server, Reliable)
+	void CheckCompletion();
+
+	//Whether a statue has been chosen
+	UPROPERTY(Replicated)
+	bool StatueChosen = false;
+	UPROPERTY(Replicated)
+	//Whether the statue set has been matched
+	bool StatueCompleted = false;
+	UPROPERTY(Replicated)
+	//Whether the statue set was failed to match
+	bool StatueFailed = false;
+
+	//Delay and timer to choose next set
+	UPROPERTY(Replicated)
+	float NextSetTimer = 0.0f;
+	UPROPERTY(Replicated)
+	float NextSetDelay = 1.0f;
+
+	//Array of doors to open
+	UPROPERTY(EditAnywhere, Replicated)
+		TArray<ADoor*> Doors;
+public:
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* LeftLightMesh;
@@ -41,50 +95,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* RightLightMesh;
 
-	//Array of All Steps
-	UPROPERTY(EditAnywhere, Replicated)
-		TArray<AStatueSteps*> ListOfSteps;
-
-	//Array of Steps that are being moved
-	UPROPERTY(EditAnywhere, Replicated)
-		TArray<AStatue*> ListOfStatues;
-
+	//Whether the puzzle has been completed
 	UPROPERTY(Replicated)
-		AStatue* CurrentStatue = nullptr;
-
-	UPROPERTY(Replicated)
-	int TimesCompleted = 0;
-
-	UFUNCTION(Server, Reliable)
-	void ChooseSteps();
-	UFUNCTION(Server, Reliable)
-	void ChooseStatue();
-
-	UFUNCTION(Server, Reliable)
-	void ResetSteps();
-	UFUNCTION(Server, Reliable)
-	void ResetStatues();
-
-	UFUNCTION(Server, Reliable)
-	void CheckCompletion();
-
-	UPROPERTY(Replicated)
-	bool StatueChosen = false;
-	UPROPERTY(Replicated)
-	bool StatueCompleted = false;
-	UPROPERTY(Replicated)
-	bool StatueFailed = false;
-
-	UPROPERTY(Replicated)
-	float NextSetTimer = 0.0f;
-	UPROPERTY(Replicated)
-	float NextSetDelay = 1.0f;
-
-	UPROPERTY(Replicated)
-	bool PuzzleCompleted = false;
-
-	//Array of doors to open
-	UPROPERTY(EditAnywhere, Replicated)
-		TArray<ADoor*> Doors;
+		bool PuzzleCompleted = false;
 
 };

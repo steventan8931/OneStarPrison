@@ -36,10 +36,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* OnMesh;
 	UPROPERTY(VisibleAnywhere)
-		class UStaticMeshComponent* OffMesh;
-	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
-public:
 
 	//Sound to play when the drawbridge lowers
 	UPROPERTY(EditAnywhere)
@@ -51,14 +48,16 @@ public:
 	//Player Interaction
 	UPROPERTY(VisibleAnywhere)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
-
+public:
 	//Player Interaction
 	UPROPERTY(VisibleAnywhere, Replicated)
 		class AStatueManager* Manager = nullptr;
 
+	//Whether the statue has been stepped on
 	UPROPERTY(Replicated);
 	bool IsOn = false;
 
+	//Whether the statue has been selected as a correct one
 	UPROPERTY(Replicated)
 		bool IsChosen = false;
 };

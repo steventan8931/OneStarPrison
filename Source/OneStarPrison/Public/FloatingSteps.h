@@ -40,14 +40,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Replicated)
 		class UBoxComponent* BoxCollision;
 
-	//The Height of the object when it is not stepped on
-	UPROPERTY(Replicated)
-		float UpHeight = 0.0f;
-
-	//The Height of the object when it has been stepped on
-	UPROPERTY(EditAnywhere, Replicated)
-		float DownHeight = 0.0f;
-
 	//Player Interaction
 	UPROPERTY(VisibleAnywhere)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
@@ -58,11 +50,5 @@ private:
 
 	//The speed at which the object updates it height
 	UPROPERTY(EditAnywhere, Replicated)
-		float MoveSpeed = 10.0f;
-
-	UPROPERTY(EditAnywhere, Replicated)
-		bool IsSideToSide = false;
-public:
-
-
+		float MoveSpeed = 5.0f;
 };

@@ -22,18 +22,11 @@ protected:
 	//Replication
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
-public:	
+private:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	//Components
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UStaticMeshComponent* Mesh; 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UStaticMeshComponent* AnimalMesh;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class UStaticMeshComponent* LightMesh;
-
+	//Components for each step
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh0;
 	UPROPERTY(VisibleAnywhere)
@@ -53,10 +46,33 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class UStaticMeshComponent* Mesh8;
 
+	//Mesh Array
 	UPROPERTY(Replicated)
-	TArray<UStaticMeshComponent*> Meshes;
+		TArray<UStaticMeshComponent*> Meshes;
 
-	//The scale of normal speed vs crouch speed
+	//If the statue should be randomized
+	UPROPERTY(EditAnywhere, Replicated)
+		bool IsRandom = true;
+
+	//Whether the statue is a clone of another
+	UPROPERTY(EditAnywhere, Replicated)
+		bool IsClone = false;
+
+	//Update visiblity of statue to match the manager
+	UFUNCTION(BlueprintCallable)
+		void UpdateVisibility();
+
+public:
+	//Statue support mesh
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UStaticMeshComponent* Mesh;
+	//Animal statue Mesh
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UStaticMeshComponent* AnimalMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UStaticMeshComponent* LightMesh;
+
+	//The Min and Max Values for each row (index for the mesh array)
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "2", UIMin = "0", UIMax = "2"), Replicated, BlueprintReadWrite)
 		int TopRow = 0;
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "3", ClampMax = "5", UIMin = "3", UIMax = "5"), Replicated, BlueprintReadWrite)
@@ -64,19 +80,11 @@ public:
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "6", ClampMax = "8", UIMin = "6", UIMax = "8"), Replicated, BlueprintReadWrite)
 		int BotRow = 6;
 
-	UPROPERTY(EditAnywhere,Replicated)
-		bool IsRandom = true;
-
-	//Array of All Steps
+	//Statue Manager
 	UPROPERTY(EditAnywhere, Replicated)
 		class AStatueManager* Manager = nullptr;
 
+	//Whether  this statue is chosen
 	UPROPERTY(EditAnywhere, Replicated)
-		bool IsClone = false;
-
-	UPROPERTY(EditAnywhere,Replicated)
 		bool IsChosen = false;
-
-	UFUNCTION(BlueprintCallable)
-		void UpdateVisibility();
 };

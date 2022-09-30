@@ -40,10 +40,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
 
-	//Sound that plays when the wheel is inserted
-	UPROPERTY(EditAnywhere)
-		USoundBase* InsertSound;
-
+	//The speed the boat moves in
 	UPROPERTY(EditAnywhere)
 		float Speed = 100.0f;
 
@@ -56,16 +53,20 @@ private:
 	//Check Item
 	UFUNCTION(NetMulticast, Unreliable)
 		void CheckItem(APlayerCharacter* _Player);
-public:
 
-	//Starting Area
-	FTransform cacheTransform;
-
-	UPROPERTY(EditAnywhere, Replicated)
-		bool IsMoving = false;
-
+	//Whether the item has been inserted to start the boat
 	UPROPERTY(Replicated)
 		bool ItemInserted = false;
 
+	//Sound that plays when the wheel is inserted
+	UPROPERTY(EditAnywhere)
+		USoundBase* InsertSound;
+
+	//Starting Area
+	FTransform cacheTransform;
+public:
+	//Whether the boat is moving
+	UPROPERTY(EditAnywhere, Replicated)
+		bool IsMoving = false;
 
 };

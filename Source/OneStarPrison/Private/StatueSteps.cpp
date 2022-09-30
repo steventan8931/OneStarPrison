@@ -19,10 +19,8 @@ AStatueSteps::AStatueSteps()
 	RootComponent = Mesh;
 
 	OnMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("OnMesh"));
-	OffMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("OffMesh"));
 
 	OnMesh->SetupAttachment(RootComponent);
-	OffMesh->SetupAttachment(RootComponent);
 
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	BoxCollision->SetBoxExtent(FVector(100, 100, 100));
@@ -36,7 +34,8 @@ AStatueSteps::AStatueSteps()
 void AStatueSteps::BeginPlay()
 {
 	Super::BeginPlay();
-	OnMesh->SetVisibility(false);
+
+	//Make the mesh not turned on
 	OnMesh->SetVisibility(false);
 }
 
@@ -54,35 +53,38 @@ void AStatueSteps::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//If the step has been stepped on
 	if (IsOn)
 	{
+		//If it chosen and stepped on then turn on the on mesh
 		if (IsChosen)
 		{
 			OnMesh->SetVisibility(true);
-
 		}
 		else
 		{
-			OffMesh->SetVisibility(true);
+			OnMesh->SetVisibility(false);
 		}
 	}
 	else
 	{
 		OnMesh->SetVisibility(false);
-		OffMesh->SetVisibility(false);
 	}
 }
 
 void AStatueSteps::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	//IF a manager has been attached
 	if (Manager)
 	{
+		//If the statue puzzle has already been completed, dont continue
 		if (Manager->PuzzleCompleted)
 		{
 			return;
 		}
 	}
 
+	//If the step has already been stepped on, dont continue
 	if (IsOn)
 	{
 		return;
@@ -98,27 +100,27 @@ void AStatueSteps::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 			//Set the overlapping player to this player 
 			OverlappingPlayer = playerActor;
 
-			if (!IsOn)
-			{
-				IsOn = true;
-				if (IsChosen)
-				{
-					OnMesh->SetVisibility(true);
-					if (CorrectSound)
-					{
-						UGameplayStatics::SpawnSoundAtLocation(GetWorld(), CorrectSound, GetActorLocation());
-					}
-				}
-				else
-				{
-					OffMesh->SetVisibility(true);
-					if (FailSound)
-					{
-						UGameplayStatics::SpawnSoundAtLocation(GetWorld(), FailSound, GetActorLocation());
-					}
-				}
+			//Turn the step on
+			IsOn = true;
 
+			//If this step is chosen
+			if (IsChosen)
+			{
+				//Turn the mesh on
+				OnMesh->SetVisibility(true);
+				if (CorrectSound)
+				{
+					UGameplayStatics::SpawnSoundAtLocation(GetWorld(), CorrectSound, GetActorLocation());
+				}
 			}
+			else
+			{
+				if (FailSound)
+				{
+					UGameplayStatics::SpawnSoundAtLocation(GetWorld(), FailSound, GetActorLocation());
+				}
+			}
+
 		}
 	}
 }

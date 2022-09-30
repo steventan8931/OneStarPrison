@@ -45,6 +45,7 @@ void AStatueManager::BeginPlay()
 		}
 	}
 
+	//Set the meshes of indicators off
 	LeftLightMesh->SetVisibility(false);
 	MidLightMesh->SetVisibility(false);
 	RightLightMesh->SetVisibility(false);
@@ -74,6 +75,7 @@ void AStatueManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//If the puzzle has been completed
 	if (PuzzleCompleted)
 	{
 		//Iterate through the doors and open them
@@ -82,11 +84,11 @@ void AStatueManager::Tick(float DeltaTime)
 			Doors[i]->IsOpen = true;
 		}
 
-		//Don't check for matching mannequins after the doors have been opened
+		//Don't check for statue puzzle after the doors have been opened
 		return;
 	}
 
-
+	//Turn on the indicator meshes based on how many times the puzzle has been completed
 	switch (TimesCompleted)
 	{
 	case 0:
@@ -114,43 +116,55 @@ void AStatueManager::Tick(float DeltaTime)
 		{
 			Doors[i]->PlaySound();
 		}
-
+		//Set Puzzle to be completed after it has been completed 3 times
 		PuzzleCompleted = true;
+
 		return;
 	}
 
-
+	//If the statue hasnt been chosen
 	if (!StatueChosen)
 	{
+		//Reset the chosen steps
 		ResetSteps();
 
+		//Reset the statues
 		ResetStatues();
 
+		//Choose a statue
 		ChooseStatue();
 	}
 
+	//Check for completion of the puzzle
 	CheckCompletion();
 
+	//If a set has been failed
 	if (StatueFailed)
 	{
+		//Reset all the variables and set the times completed back to 0
 		TimesCompleted = 0;
 		StatueCompleted = false;
 		StatueChosen = false;
 		StatueFailed = false;
 	}
 
+	//If the set has been completed
 	if (StatueCompleted)
 	{
 		NextSetTimer += DeltaTime;
 
+		//After a delay
 		if (NextSetTimer >= NextSetDelay)
 		{
+			//Play completion sound
 			if (OpenSound)
 			{
 				UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
 			}
 
+			//Increment times completed
 			TimesCompleted++;
+			//Reset Variables
 			StatueChosen = false;
 			StatueCompleted = false;
 			NextSetTimer = 0.0f;
@@ -161,13 +175,14 @@ void AStatueManager::Tick(float DeltaTime)
 
 void AStatueManager::ChooseSteps_Implementation()
 {
-	//Randomly choose one barrel to place the key in
+	//If a statue hasnt been chosen
 	if (!CurrentStatue)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, TEXT("statue not set"));
 		return;
 	}
 
+	//Update the steps to match the statue's step for the top row
 	int chosenStep = CurrentStatue->TopRow;
 
 	if (ListOfSteps[chosenStep])
@@ -177,8 +192,7 @@ void AStatueManager::ChooseSteps_Implementation()
 			ListOfSteps[chosenStep]->IsChosen = true;
 		}
 	}
-
-	//Randomly choose one barrel to place the key in
+	//Update the steps to match the statue's step for the middle row
 	chosenStep = CurrentStatue->MidRow;
 
 	if (ListOfSteps[chosenStep])
@@ -188,9 +202,8 @@ void AStatueManager::ChooseSteps_Implementation()
 			ListOfSteps[chosenStep]->IsChosen = true;
 		}
 	}
-
+	//Update the steps to match the statue's step for the bottom row
 	chosenStep = CurrentStatue->BotRow;
-	//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, FString::Printf(TEXT("%lld"), chosenStep));
 
 	if (ListOfSteps[chosenStep])
 	{
@@ -203,7 +216,7 @@ void AStatueManager::ChooseSteps_Implementation()
 
 void AStatueManager::ResetSteps_Implementation()
 {
-	//Reset steps
+	//Iterate through and reset the steps
 	for (int i = 0; i < ListOfSteps.Num(); i++)
 	{
 		if (ListOfSteps[i])
@@ -216,7 +229,7 @@ void AStatueManager::ResetSteps_Implementation()
 
 void AStatueManager::ResetStatues_Implementation()
 {
-	//Reset
+	//Iterate through and reset the statues
 	for (int i = 0; i < ListOfStatues.Num(); i++)
 	{
 		if (ListOfStatues[i])
@@ -231,6 +244,7 @@ void AStatueManager::ChooseStatue_Implementation()
 	//Choose one statue
 	int chosenStatue = FMath::RandRange(0, ListOfStatues.Num() - 1);
 
+	//If the statue isn't chosen, set this statue to be the chosen statue
 	if (ListOfStatues[chosenStatue])
 	{
 		if (!ListOfStatues[chosenStatue]->IsChosen)
@@ -241,36 +255,45 @@ void AStatueManager::ChooseStatue_Implementation()
 		CurrentStatue = ListOfStatues[chosenStatue];
 	}
 
+	//Choose the steps
 	ChooseSteps();
 
+	//Set statuechosen to true
 	StatueChosen = true;
 }
 
 void AStatueManager::CheckCompletion_Implementation()
 {
-	//Set Manager
+	//Check step completion 
 	int stepsCompleted = 0;
 
+	//Iterate through each step
 	for (int i = 0; i < ListOfSteps.Num(); i++)
 	{
 		if (ListOfSteps[i])
 		{
+			//If the step has been stepped on
 			if (ListOfSteps[i]->IsOn)
 			{
+				//And the step was chosen 
 				if (ListOfSteps[i]->IsChosen)
 				{
+					//Increment the step completed count
 					stepsCompleted++;
 				}
 				else
 				{
+					//Otherwise fail the puzzle
 					StatueFailed = true;
 				}
 			}
 		}
 	}
 
+	//If 3 steps correct steps have been stepped on
 	if (stepsCompleted >= 3)
 	{
+		//Complete the set 
 		StatueCompleted = true;
 	}
 }

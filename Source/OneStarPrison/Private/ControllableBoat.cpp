@@ -52,13 +52,16 @@ void AControllableBoat::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//If there is an overlapping player
+	//If both players are overlapping
 	if (OverlappingPlayer && OverlappingPlayer2)
 	{
+		//If either player dies
 		if (OverlappingPlayer->IsDead || OverlappingPlayer2->IsDead)
 		{
+			//Reset the boat to its starting position
 			SetActorTransform(cacheTransform);
 
+			//Make the dead player refernce to null and stop the boat from moving
 			if (OverlappingPlayer->IsDead)
 			{
 				OverlappingPlayer = nullptr;
@@ -73,6 +76,7 @@ void AControllableBoat::Tick(float DeltaTime)
 			return;
 		}
 
+		//If the boat is moving, updates it position, making it go forward in its forward vector
 		if (IsMoving)
 		{
 			FVector newPos = FMath::Lerp(GetActorLocation(), GetActorLocation() + (GetActorForwardVector() * Speed), DeltaTime);
@@ -80,6 +84,7 @@ void AControllableBoat::Tick(float DeltaTime)
 			return;
 		}
 
+		//Check for players item and interaction
 		CheckItem(OverlappingPlayer);
 		CheckItem(OverlappingPlayer2);
 	}
@@ -93,7 +98,7 @@ void AControllableBoat::CheckItem_Implementation(APlayerCharacter* _Player)
 		{
 			APickupableBook* book = Cast<APickupableBook>(_Player->PickedUpItem);
 
-			//If the held item is a book
+			//If the held item is a OBJECT
 			if (book)
 			{
 				//Allow the player to interact
@@ -102,7 +107,7 @@ void AControllableBoat::CheckItem_Implementation(APlayerCharacter* _Player)
 				//If the player clicked interact
 				if (_Player->IsInteracting)
 				{
-					//Attach the book to this actor
+					//Attach the OBJECT to this actor
 					book->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
 					//Play the insert sound

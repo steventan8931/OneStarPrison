@@ -39,26 +39,19 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
 
-	//Sound that plays when a book is inserted
+	//Sound that plays when a chest is inserted
 	UPROPERTY(EditAnywhere)
 		USoundBase* InsertSound;
-	//Sound that plays when all books are inserted
-	UPROPERTY(EditAnywhere, Replicated)
-		USoundBase* CompleteSound;
 
-	//Scene Transforms for the position
+	//Scene Transform for the position
 	UPROPERTY(VisibleAnywhere)
 		class USceneComponent* ChestPosition;
 
-	//Checks whether all books have been inserted
+	//Checks whether the chest hav been inserted
 	UPROPERTY(Replicated)
 		bool ChestInserted = false;
 
-	//Speed the shelf opens
-	UPROPERTY(EditAnywhere, Replicated)
-		float OpenSpeed = 1.0f;
-
-	//Rotation the bookshelf will be at when all books are insterted
+	//Door To Open
 	UPROPERTY(EditAnywhere, Replicated)
 		class ADoor* Door;
 

@@ -33,7 +33,6 @@ ABoatController::ABoatController()
 void ABoatController::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ABoatController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -51,8 +50,10 @@ void ABoatController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//If  the boat is connected
 	if (Boat)
 	{
+		//If the boat isnt moving dont check for player interaction
 		if (!Boat->IsMoving)
 		{
 			return;
@@ -60,31 +61,30 @@ void ABoatController::Tick(float DeltaTime)
 
 		InteractTimer += DeltaTime;
 
+		//If the player is overlapping
 		if (OverlappingPlayer)
 		{
-			//If the player's last punch has been longer than the punch delay
+			//If the player's last interact has been longer than the interact delay
 			if (InteractTimer >= InteractDelay)
 			{
-
+				//Allow the player to interact
 				OverlappingPlayer->CanInteract = true;
 
-				if (OverlappingPlayer->CanInteract)
+				//If the player is interacting, update the rotation of the boat
+				if (OverlappingPlayer->IsInteracting)
 				{
-					//If the player is interacting, update the health and reset the players punch/interact timer
-					if (OverlappingPlayer->IsInteracting)
+					if (HasAuthority())
 					{
-						if (HasAuthority())
-						{
-							FRotator rot = FRotator(0, RotationScale, 0);
-							FRotator newRot = FMath::Lerp(Boat->GetActorRotation(), Boat->GetActorRotation() + rot, DeltaTime * 2);
-							Boat->SetActorRotation(newRot);
-							//Boat->AddActorWorldRotation(newRot);				
-						}
-
-						OverlappingPlayer->CanInteract = false;
-						InteractTimer = 0.0f;
+						FRotator rot = FRotator(0, RotationScale, 0);
+						FRotator newRot = FMath::Lerp(Boat->GetActorRotation(), Boat->GetActorRotation() + rot, DeltaTime * 2);
+						Boat->SetActorRotation(newRot);				
 					}
+
+					//Reset the interact timers
+					OverlappingPlayer->CanInteract = false;
+					InteractTimer = 0.0f;
 				}
+				
 			}
 			else
 			{

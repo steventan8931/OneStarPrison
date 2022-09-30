@@ -50,7 +50,6 @@ void AChestChecker::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutL
 
 	DOREPLIFETIME(AChestChecker, ChestInserted);
 
-	DOREPLIFETIME(AChestChecker, CompleteSound);
 	DOREPLIFETIME(AChestChecker, OverlappingPlayer);
 
 }
@@ -60,7 +59,7 @@ void AChestChecker::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//If all books are inserted
+	//If the chest is already inserted
 	if (ChestInserted)
 	{
 		//Don't do the code after
@@ -75,7 +74,7 @@ void AChestChecker::Tick(float DeltaTime)
 		{
 			APickupableChest* chest = Cast<APickupableChest>(OverlappingPlayer->PickedUpItem);
 
-			//If the held item is a book
+			//If the held item is a chest
 			if (chest)
 			{
 				//Allow the player to interact
@@ -84,12 +83,12 @@ void AChestChecker::Tick(float DeltaTime)
 				//If the player clicked interact
 				if (OverlappingPlayer->IsInteracting)
 				{
-					//Attach the book to this actor
+					//Attach the chest to this actor
 					chest->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-
-
-					ChestInserted = true;
 					chest->SetActorLocation(ChestPosition->GetComponentLocation());
+
+					//Set the chest inserted to true
+					ChestInserted = true;
 
 					//Play the insert sound
 					if (InsertSound)
@@ -97,6 +96,7 @@ void AChestChecker::Tick(float DeltaTime)
 						UGameplayStatics::PlaySoundAtLocation(GetWorld(), InsertSound, GetActorLocation());
 					}
 
+					//Open the door
 					if (Door)
 					{
 						Door->IsOpen = true;
@@ -106,12 +106,11 @@ void AChestChecker::Tick(float DeltaTime)
 					//Make the player unable to continue interacting
 					OverlappingPlayer->CanInteract = false;
 					OverlappingPlayer->IsInteracting = false;
+
 					//Remove the item from the player
-					OverlappingPlayer->PickedUpItem = nullptr;
-					
+					OverlappingPlayer->PickedUpItem = nullptr;				
 					chest->Player = nullptr;
 					chest->OnDisplay = false;
-
 					OverlappingPlayer->IsHoldingHeavyItem = false;
 
 				}
