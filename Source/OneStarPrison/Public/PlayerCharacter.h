@@ -268,4 +268,7 @@ public:
 	bool CheckHeavyItem();
 	//Checks whether the player is holding an heavy item
 	bool IsHoldingHeavyItem = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool IsInCell = false;
 };
