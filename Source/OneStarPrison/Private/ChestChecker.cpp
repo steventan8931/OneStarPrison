@@ -109,7 +109,7 @@ void AChestChecker::Tick(float DeltaTime)
 
 					//Remove the item from the player
 					OverlappingPlayer->PickedUpItem = nullptr;				
-					chest->Player = nullptr;
+					//chest->Player = nullptr;
 					chest->OnDisplay = false;
 					OverlappingPlayer->IsHoldingHeavyItem = false;
 
