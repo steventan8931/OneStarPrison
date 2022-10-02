@@ -69,6 +69,9 @@ private:
 	//Whether this controller is the anchor
 	UPROPERTY(EditAnywhere, Replicated)
 		bool IsAnchor = false;
+
+	UPROPERTY(EditAnywhere, Replicated)
+		bool IsRowingRight = false;
 public:
 	//Whether the anchor has been removed
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
