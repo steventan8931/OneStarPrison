@@ -16,6 +16,17 @@ namespace BBKeys
 	TCHAR const * const PatrolRotation = TEXT("PatrolRotation");
 	TCHAR const * const IsAlert = TEXT("IsAlert");
 	TCHAR const * const  IsUnderSun = TEXT("IsUnderSun");
+	TCHAR const* const  PathPointWaitTime = TEXT("PathPointWaitTime");
+	TCHAR const* const  TargetLocationActor = TEXT("TargetLocationActor");
+	TCHAR const* const  IsInCautionState = TEXT("IsInCautionState");
+	TCHAR const* const  TeleportTimer = TEXT("TeleportTimer");
+	TCHAR const* const  AlarmLoc = TEXT("AlarmLoc");
+	TCHAR const* const  CatchedPlayer = TEXT("CatchedPlayer");
+	TCHAR const* const  IsInHearCaution = TEXT("IsInHearCaution");
+	TCHAR const* const  IsHearGuarding = TEXT("IsHearGuarding");
+	TCHAR const* const  IsPatroling = TEXT("IsPatroling");
+	TCHAR const* const InterestingLocation = TEXT("InterestingLocation");
+	
 	
 	
 	

@@ -32,6 +32,10 @@ private:
 	float PeripheralVisionAngleDegrees = 90.0f;
 	
 	float HearingRange = 3000.0f;
+	
+	bool CanHearPlayer;
+	bool CanHearRock;
+	bool CanHearBone;
 
 	class UAISenseConfig_Sight* SightConfig;
 

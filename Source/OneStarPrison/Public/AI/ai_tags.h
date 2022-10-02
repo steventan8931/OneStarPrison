@@ -2,5 +2,8 @@
 
 namespace tags
 {
-	TCHAR const * const NoiseTag = TEXT("Noise");
+	TCHAR const * const PlayerTag = TEXT("Player");
+	TCHAR const * const RockTag = TEXT("Rock");
+	TCHAR const * const BoneTag = TEXT("Bone");
+	TCHAR const * const NPCTag = TEXT("NPC");
 }
