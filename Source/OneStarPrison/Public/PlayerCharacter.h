@@ -11,7 +11,9 @@ enum EInteractType
 {
 	LeverPull     UMETA(DisplayName = "LeverPull"),
 	Punch      UMETA(DisplayName = "Punch"),
-	//Grab   UMETA(DisplayName = "Footwear"),
+	Insert   UMETA(DisplayName = "Insert"),
+	RowLeft   UMETA(DisplayName = "RowL"),
+	RowRight   UMETA(DisplayName = "RowR"),
 };
 
 UCLASS()
@@ -186,7 +188,7 @@ public:
 	
 	//Interaction
 	//Interact Type
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		TEnumAsByte<EInteractType> InteractType;
 	//Whetther the player is able to interact (Interact prompt shows up)
 	UPROPERTY(Replicated)

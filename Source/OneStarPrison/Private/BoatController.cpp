@@ -46,6 +46,9 @@ void ABoatController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& Ou
 
 	DOREPLIFETIME(ABoatController, IsAnchor);
 	DOREPLIFETIME(ABoatController, AnchorRemoved);
+
+	DOREPLIFETIME(ABoatController, IsRowingRight);
+	
 }
 
 // Called every frame
@@ -107,6 +110,14 @@ void ABoatController::Tick(float DeltaTime)
 				{
 					//Allow the player to interact
 					OverlappingPlayer->CanInteract = true;
+					if (IsRowingRight)
+					{
+						OverlappingPlayer->InteractType = EInteractType::RowRight;
+					}
+					else
+					{
+						OverlappingPlayer->InteractType = EInteractType::RowLeft;
+					}
 
 					//If the player is interacting
 					if (OverlappingPlayer->IsInteracting)
