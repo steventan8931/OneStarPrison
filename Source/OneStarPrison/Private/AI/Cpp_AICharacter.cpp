@@ -128,7 +128,7 @@ void ACpp_AICharacter::OnDistract()
 	{
 		FVector const Loc = GetActorLocation();
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), DistractionSound, Loc);
-		UAISense_Hearing::ReportNoiseEvent(GetWorld(), Loc, 1.0f, this, 0.0f, tags::NoiseTag);
+		UAISense_Hearing::ReportNoiseEvent(GetWorld(), Loc, 1.0f, this, 0.0f, tags::NPCTag);
 	}
 }
 

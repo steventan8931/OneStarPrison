@@ -157,12 +157,16 @@ APatrolPath* ANPC::GetPatrolPath()
 void ANPC::AlertStart_Implementation()
 {
 	IsAlert = true;
-	
+	FVector Mylocation = GetActorLocation();
+	UGameplayStatics::SpawnSoundAtLocation(this,SirenAudio, Mylocation);
 }
 
 void ANPC::AlertEnd_Implementation()
 {
 	IsAlert = false;
+	
+	FVector Mylocation = GetActorLocation();
+	UGameplayStatics::SpawnSoundAtLocation(this, RecoveryAudio, Mylocation);
 }
 
 

@@ -11,6 +11,7 @@
 #include "AI/blackboard_keys.h"
 #include "AI/ai_tags.h"
 #include "AI/NPC.h"
+#include "PlayerCharacter.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Bool.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
@@ -38,7 +39,9 @@ void ANPC_AIController::OnPossess(APawn* const CharacterPawn)
 		}
 
 			ItemInterested = NPC->ItemInterested;
-			
+			 CanHearPlayer = NPC->CanHearPlayer;
+			 CanHearRock = NPC->CanHearRock;
+			 CanHearBone = NPC->CanHearBone;
 		
 	}
 }
@@ -50,26 +53,72 @@ void ANPC_AIController::OnUpdated(TArray<AActor*> const& UpdatedActors)
 	{
 		FActorPerceptionBlueprintInfo Info;
 		GetPerceptionComponent()->GetActorsPerception(UpdatedActors[x], Info);
+
 		for (size_t k = 0; k < Info.LastSensedStimuli.Num(); ++k)
 		{
 			FAIStimulus const Stim = Info.LastSensedStimuli[k];
-			if ( ItemInterested ==UpdatedActors[x]->GetClass()) {
-				if (BlackboardComponent && Stim.Tag == tags::NoiseTag)
+			
+			if (BlackboardComponent && Stim.Type.Name == "Default__AISense_Hearing"){
+				if(CanHearPlayer){
+				if (BlackboardComponent && Stim.Tag == tags::PlayerTag)
 				{
-					BlackboardComponent->SetValueAsBool(BBKeys::IsInvestigating, Stim.WasSuccessfullySensed());
-					BlackboardComponent->SetValueAsVector(BBKeys::TargetLocation, Stim.StimulusLocation);
-					BlackboardComponent->SetValueAsObject(BBKeys::ItemInteresting, UpdatedActors[x]);
+					APlayerCharacter* player = Cast<APlayerCharacter>(UpdatedActors[x]);
+					if (player)
+					{
+						if (!(player->IsInCell))
+						{
+
+							BlackboardComponent->SetValueAsBool(BBKeys::IsInHearCaution, Stim.WasSuccessfullySensed());
+							BlackboardComponent->SetValueAsVector(BBKeys::TargetLocation, Stim.StimulusLocation);
+							BlackboardComponent->SetValueAsObject(BBKeys::TargetLocationActor, UpdatedActors[x]);
+						}
+					}
+					
 				}
-			else if (BlackboardComponent && Stim.Type.Name == "Default__AISense_Sight")
-				{
-				
-				
-					BlackboardComponent->SetValueAsBool(BBKeys::IsInvestigating, Stim.WasSuccessfullySensed());
-					BlackboardComponent->SetValueAsBool(BBKeys::CanSeePlayer, Stim.WasSuccessfullySensed());
-					BlackboardComponent->SetValueAsObject(BBKeys::ItemInteresting, UpdatedActors[x]);
 				}
-				
+				if (CanHearRock) {
+					if (BlackboardComponent && Stim.Tag == tags::RockTag)
+					{
+						BlackboardComponent->SetValueAsBool(BBKeys::IsInHearCaution, Stim.WasSuccessfullySensed());
+						BlackboardComponent->SetValueAsVector(BBKeys::TargetLocation, Stim.StimulusLocation);
+						BlackboardComponent->SetValueAsObject(BBKeys::TargetLocationActor, UpdatedActors[x]);
+					}
+				}
+				if (CanHearBone) {
+					if (BlackboardComponent && Stim.Tag == tags::BoneTag)
+					{
+						BlackboardComponent->SetValueAsBool(BBKeys::IsInHearCaution, Stim.WasSuccessfullySensed());
+						BlackboardComponent->SetValueAsVector(BBKeys::TargetLocation, Stim.StimulusLocation);
+						BlackboardComponent->SetValueAsObject(BBKeys::TargetLocationActor, UpdatedActors[x]);
+					}
+				}
 			}
+			
+				else if (BlackboardComponent && Stim.Type.Name == "Default__AISense_Sight")
+				{
+					if (ItemInterested == UpdatedActors[x]->GetClass()) 
+					{
+						APlayerCharacter* player = Cast<APlayerCharacter>(UpdatedActors[x]);
+						if (player)
+						{
+							if (!(player->IsInCell))
+							{
+								BlackboardComponent->SetValueAsBool(BBKeys::IsInvestigating, Stim.WasSuccessfullySensed());
+								BlackboardComponent->SetValueAsBool(BBKeys::CanSeePlayer, Stim.WasSuccessfullySensed());
+								BlackboardComponent->SetValueAsObject(BBKeys::ItemInteresting, UpdatedActors[x]);
+							}
+							
+						}
+						else {
+							BlackboardComponent->SetValueAsBool(BBKeys::IsInvestigating, Stim.WasSuccessfullySensed());
+							BlackboardComponent->SetValueAsBool(BBKeys::CanSeePlayer, Stim.WasSuccessfullySensed());
+							BlackboardComponent->SetValueAsObject(BBKeys::ItemInteresting, UpdatedActors[x]);
+						}
+						
+
+				    }
+				
+			    }
 			
 
 			
