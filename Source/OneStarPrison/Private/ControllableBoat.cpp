@@ -49,6 +49,7 @@ void AControllableBoat::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 
 	DOREPLIFETIME(AControllableBoat, OverlappingPlayer);
 	DOREPLIFETIME(AControllableBoat, OverlappingPlayer2);
+
 }
 
 // Called every frame
@@ -66,8 +67,12 @@ void AControllableBoat::Tick(float DeltaTime)
 			SetActorTransform(cacheTransform);
 
 			//Kill both players if one dies
-			OverlappingPlayer->IsDead;
-			OverlappingPlayer2->IsDead;
+			OverlappingPlayer->IsDead = true;;
+			OverlappingPlayer2->IsDead = true;;
+
+			//Reset interacting
+			OverlappingPlayer->IsInteracting = false;
+			OverlappingPlayer2->IsInteracting = false;
 
 			//Make the player refernce to null and stop the boat from moving
 			OverlappingPlayer = nullptr;
@@ -82,13 +87,16 @@ void AControllableBoat::Tick(float DeltaTime)
 		{
 			if (OverlappingPlayer->CanMove)
 			{
+				//OverlappingPlayer->CanMove = false;
 				OverlappingPlayer->SetActorLocation(LeftRowPosition->GetComponentLocation());
-				OverlappingPlayer2->SetActorLocation(RightRowPosition->GetComponentLocation());
-				OverlappingPlayer->CanMove = false;
-				OverlappingPlayer2->CanMove = false;
 			}
-			OverlappingPlayer->CanMove = false;
-			OverlappingPlayer2->CanMove = false;
+
+			if (OverlappingPlayer2->CanMove)
+			{
+				//OverlappingPlayer2->CanMove = false;
+				OverlappingPlayer2->SetActorLocation(RightRowPosition->GetComponentLocation());
+			}
+
 			FVector newPos = FMath::Lerp(GetActorLocation(), GetActorLocation() + (GetActorForwardVector() * Speed), DeltaTime);
 			SetActorLocation(newPos);
 			return;

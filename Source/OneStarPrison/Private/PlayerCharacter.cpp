@@ -810,6 +810,8 @@ void APlayerCharacter::CheckDeath(float _DeltaTime)
 
 			//Reset Variables
 			CanMove = true;
+			CanInteract = false;
+			IsInteracting = false;
 			IsHoldingHeavyItem = false;
 			DeathTimerCounter = 0.0f;
 			HitByWallCount = 0;

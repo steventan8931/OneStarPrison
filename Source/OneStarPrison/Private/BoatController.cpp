@@ -87,6 +87,8 @@ void ABoatController::Tick(float DeltaTime)
 
 							//Stop player from furthering interacting
 							OverlappingPlayer->CanInteract = false;
+
+							OverlappingPlayer->IsInteracting = false;
 							return;
 						}
 					}
@@ -142,7 +144,7 @@ void ABoatController::Tick(float DeltaTime)
 				else
 				{
 					//Don't allow the overlapping player to interact
-					OverlappingPlayer->IsInteracting = false;
+					//OverlappingPlayer->IsInteracting = false;
 					OverlappingPlayer->CanInteract = false;
 					RotatePaddle();
 				}
