@@ -5,7 +5,6 @@
 #include "Components/BoxComponent.h"
 #include "PickupableBook.h"
 #include "PlayerCharacter.h"
-
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
 // Sets default values
@@ -25,6 +24,11 @@ AControllableBoat::AControllableBoat()
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AControllableBoat::OnOverlapBegin);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &AControllableBoat::OnOverlapEnd);
+
+	LeftRowPosition = CreateDefaultSubobject<USceneComponent>(TEXT("LeftRowPosition"));
+	LeftRowPosition->SetupAttachment(RootComponent);
+	RightRowPosition = CreateDefaultSubobject<USceneComponent>(TEXT("RightRowPosition"));
+	RightRowPosition->SetupAttachment(RootComponent);
 
 }
 
@@ -61,24 +65,30 @@ void AControllableBoat::Tick(float DeltaTime)
 			//Reset the boat to its starting position
 			SetActorTransform(cacheTransform);
 
-			//Make the dead player refernce to null and stop the boat from moving
-			if (OverlappingPlayer->IsDead)
-			{
-				OverlappingPlayer = nullptr;
-				IsMoving = false;
-			}
+			//Kill both players if one dies
+			OverlappingPlayer->IsDead;
+			OverlappingPlayer2->IsDead;
 
-			if (OverlappingPlayer2->IsDead)
-			{
-				OverlappingPlayer2 = nullptr;
-				IsMoving = false;
-			}
+			//Make the player refernce to null and stop the boat from moving
+			OverlappingPlayer = nullptr;
+			OverlappingPlayer2 = nullptr;
+			IsMoving = false;
+
 			return;
 		}
 
 		//If the boat is moving, updates it position, making it go forward in its forward vector
 		if (IsMoving)
 		{
+			if (OverlappingPlayer->CanMove)
+			{
+				OverlappingPlayer->SetActorLocation(LeftRowPosition->GetComponentLocation());
+				OverlappingPlayer2->SetActorLocation(RightRowPosition->GetComponentLocation());
+				OverlappingPlayer->CanMove = false;
+				OverlappingPlayer2->CanMove = false;
+			}
+			OverlappingPlayer->CanMove = false;
+			OverlappingPlayer2->CanMove = false;
 			FVector newPos = FMath::Lerp(GetActorLocation(), GetActorLocation() + (GetActorForwardVector() * Speed), DeltaTime);
 			SetActorLocation(newPos);
 			return;
