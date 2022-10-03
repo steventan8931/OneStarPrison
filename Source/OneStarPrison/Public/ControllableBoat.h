@@ -50,6 +50,11 @@ private:
 	UPROPERTY(VisibleAnywhere, Replicated)
 		class APlayerCharacter* OverlappingPlayer2 = nullptr;
 
+	UPROPERTY(EditAnywhere, Replicated)
+		class USceneComponent* LeftRowPosition;
+	UPROPERTY(EditAnywhere, Replicated)
+		class USceneComponent* RightRowPosition;
+
 	//Sound that plays when the wheel is inserted
 	UPROPERTY(EditAnywhere)
 		USoundBase* InsertSound;
