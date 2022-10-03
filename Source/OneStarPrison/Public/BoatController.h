@@ -72,6 +72,17 @@ private:
 
 	UPROPERTY(EditAnywhere, Replicated)
 		bool IsRowingRight = false;
+
+	UPROPERTY(Replicated)
+		FRotator StartingRotation;
+
+	UPROPERTY(EditAnywhere, Replicated)
+		FRotator MoveRotation = FRotator(0.0f, 40.0f, 0.0f);
+
+
+
+	void RotatePaddle();
+
 public:
 	//Whether the anchor has been removed
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)

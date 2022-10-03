@@ -138,6 +138,7 @@ void ABoatController::Tick(float DeltaTime)
 				}
 				else
 				{
+					RotatePaddle();
 					//Don't allow the overlapping player to interact
 					OverlappingPlayer->IsInteracting = false;
 					OverlappingPlayer->CanInteract = false;
@@ -146,6 +147,11 @@ void ABoatController::Tick(float DeltaTime)
 		}
 	}
 
+}
+
+void ABoatController::RotatePaddle()
+{
+	AddActorWorldRotation(MoveRotation);
 }
 
 void ABoatController::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
