@@ -78,24 +78,23 @@ void AControllableBoat::Tick(float DeltaTime)
 			OverlappingPlayer = nullptr;
 			OverlappingPlayer2 = nullptr;
 			IsMoving = false;
-
 			return;
 		}
 
 		//If the boat is moving, updates it position, making it go forward in its forward vector
 		if (IsMoving)
 		{
-			if (OverlappingPlayer->CanMove)
-			{
-				//OverlappingPlayer->CanMove = false;
-				OverlappingPlayer->SetActorLocation(LeftRowPosition->GetComponentLocation());
-			}
+			//if (OverlappingPlayer->CanMove)
+			//{
+			//	//OverlappingPlayer->CanMove = false;
+			//	OverlappingPlayer->SetActorLocation(LeftRowPosition->GetComponentLocation());
+			//}
 
-			if (OverlappingPlayer2->CanMove)
-			{
-				//OverlappingPlayer2->CanMove = false;
-				OverlappingPlayer2->SetActorLocation(RightRowPosition->GetComponentLocation());
-			}
+			//if (OverlappingPlayer2->CanMove)
+			//{
+			//	//OverlappingPlayer2->CanMove = false;
+			//	OverlappingPlayer2->SetActorLocation(RightRowPosition->GetComponentLocation());
+			//}
 
 			FVector newPos = FMath::Lerp(GetActorLocation(), GetActorLocation() + (GetActorForwardVector() * Speed), DeltaTime);
 			SetActorLocation(newPos);

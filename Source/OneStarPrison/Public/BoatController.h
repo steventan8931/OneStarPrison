@@ -79,8 +79,6 @@ private:
 	UPROPERTY(EditAnywhere, Replicated)
 		FRotator MoveRotation = FRotator(0.0f, 40.0f, 0.0f);
 
-
-
 	void RotatePaddle();
 
 public:
