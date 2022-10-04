@@ -125,7 +125,6 @@ void ASecretBookshelf::Tick(float DeltaTime)
 
 					//Make the player unable to continue interacting
 					OverlappingPlayer->CanInteract = false;
-					OverlappingPlayer->IsInteracting = false;
 					//Remove the item from the player
 					OverlappingPlayer->PickedUpItem = nullptr;
 

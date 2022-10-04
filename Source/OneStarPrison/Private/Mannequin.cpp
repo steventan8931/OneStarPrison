@@ -169,7 +169,6 @@ void AMannequin::Tick(float DeltaTime)
 
 					//Stop the player from further interacting
 					OverlappingPlayer->CanInteract = false;
-					OverlappingPlayer->IsInteracting = false;
 					//Remove the item from the players hand
 					OverlappingPlayer->PickedUpItem = nullptr;
 				}
