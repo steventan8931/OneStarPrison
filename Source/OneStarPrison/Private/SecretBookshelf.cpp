@@ -88,6 +88,9 @@ void ASecretBookshelf::Tick(float DeltaTime)
 			//If the held item is a book
 			if (book)
 			{
+				//Change the players interact type to insert
+				OverlappingPlayer->InteractType = EInteractType::Insert;
+
 				//Allow the player to interact
 				OverlappingPlayer->CanInteract = true;
 

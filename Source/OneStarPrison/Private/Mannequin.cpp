@@ -282,6 +282,9 @@ void AMannequin::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 
 						//If the armor isn't already equipped, allow the player to interact
 						OverlappingPlayer->CanInteract = true;
+
+						//Change the players interact type to insert
+						OverlappingPlayer->InteractType = EInteractType::Insert;
 					}
 				}
 
@@ -293,6 +296,8 @@ void AMannequin::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 				if ((!CorrectArmor && MannequinEquiped))
 				{
 					OverlappingPlayer->CanInteract = true;
+					//Change the players interact type to insert
+					OverlappingPlayer->InteractType = EInteractType::Insert;
 				}
 			}
 		}
