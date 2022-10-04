@@ -265,6 +265,8 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, IsPushing);
 
 	DOREPLIFETIME(APlayerCharacter, InteractType);
+	DOREPLIFETIME(APlayerCharacter, IsHoldingHeavyItem);
+
 }
 
 // Called every frame

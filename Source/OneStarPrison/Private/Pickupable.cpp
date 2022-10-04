@@ -60,6 +60,8 @@ void APickupable::Tick(float DeltaTime)
 		if (Player)
 		{
 			TakenFromDisplay = true;
+			//Reset timer every time the player picks it up
+			Timer = 0.0f;
 		}
 		else
 		{

@@ -269,6 +269,7 @@ public:
 	//Returns whether the player is holding an heavy item
 	bool CheckHeavyItem();
 	//Checks whether the player is holding an heavy item
+	UPROPERTY(BlueprintReadWrite, Replicated)
 	bool IsHoldingHeavyItem = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
