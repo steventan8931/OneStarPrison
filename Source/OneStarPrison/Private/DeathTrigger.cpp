@@ -6,6 +6,8 @@
 #include "PlayerCharacter.h"
 #include "Pushable.h"
 
+#include "Pickupable.h"
+
 // Sets default values
 ADeathTrigger::ADeathTrigger()
 {
@@ -59,5 +61,14 @@ void ADeathTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 			pushable->Mesh->SetSimulatePhysics(true);
 		}
 		
+		//If the other actor is a pushable, reset its transform
+		APickupable* pickup = Cast<APickupable>(OtherActor);
+		if (pickup)
+		{
+			if (pickup->OnDisplay)
+			{
+				pickup->Timer = pickup->TimeBeforeItRespawns;
+			}
+		}
 	}
 }
