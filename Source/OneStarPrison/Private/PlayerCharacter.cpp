@@ -674,6 +674,7 @@ void APlayerCharacter::ShowProjectilePath(float _DeltaTime)
 		//Set Collision channels to get hit result
 		params.bTraceWithCollision = true;
 		params.bTraceWithChannel = true;
+		params.TraceChannel = ECollisionChannel::ECC_WorldDynamic;
 
 		//Set up the predict projectile path
 		FPredictProjectilePathResult result;
