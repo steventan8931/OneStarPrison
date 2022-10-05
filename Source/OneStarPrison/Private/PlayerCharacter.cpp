@@ -238,6 +238,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 
 	DOREPLIFETIME(APlayerCharacter, IsInteracting);
 	DOREPLIFETIME(APlayerCharacter, CanInteract);
+
 	DOREPLIFETIME(APlayerCharacter, PickedUpItem);
 	DOREPLIFETIME(APlayerCharacter, CurrentThrowWidget);
 	DOREPLIFETIME(APlayerCharacter, IsHoldingDownThrow);
@@ -264,6 +265,8 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& O
 	DOREPLIFETIME(APlayerCharacter, IsPushing);
 
 	DOREPLIFETIME(APlayerCharacter, InteractType);
+	DOREPLIFETIME(APlayerCharacter, IsHoldingHeavyItem);
+
 }
 
 // Called every frame
@@ -671,6 +674,7 @@ void APlayerCharacter::ShowProjectilePath(float _DeltaTime)
 		//Set Collision channels to get hit result
 		params.bTraceWithCollision = true;
 		params.bTraceWithChannel = true;
+		params.TraceChannel = ECollisionChannel::ECC_WorldDynamic;
 
 		//Set up the predict projectile path
 		FPredictProjectilePathResult result;
@@ -810,6 +814,8 @@ void APlayerCharacter::CheckDeath(float _DeltaTime)
 
 			//Reset Variables
 			CanMove = true;
+			CanInteract = false;
+			IsInteracting = false;
 			IsHoldingHeavyItem = false;
 			DeathTimerCounter = 0.0f;
 			HitByWallCount = 0;

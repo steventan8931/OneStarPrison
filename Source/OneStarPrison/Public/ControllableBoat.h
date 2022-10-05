@@ -44,17 +44,6 @@ private:
 	UPROPERTY(EditAnywhere)
 		float Speed = 100.0f;
 
-	//Player Interaction
-	UPROPERTY(VisibleAnywhere, Replicated)
-		class APlayerCharacter* OverlappingPlayer = nullptr;
-	UPROPERTY(VisibleAnywhere, Replicated)
-		class APlayerCharacter* OverlappingPlayer2 = nullptr;
-
-	UPROPERTY(EditAnywhere, Replicated)
-		class USceneComponent* LeftRowPosition;
-	UPROPERTY(EditAnywhere, Replicated)
-		class USceneComponent* RightRowPosition;
-
 	//Sound that plays when the wheel is inserted
 	UPROPERTY(EditAnywhere)
 		USoundBase* InsertSound;
@@ -73,4 +62,16 @@ public:
 	//Whether the item has been inserted to start the boat
 	UPROPERTY(Replicated)
 		bool ItemInserted = false;
+
+	//Player Interaction
+	UPROPERTY(VisibleAnywhere, Replicated)
+		class APlayerCharacter* OverlappingPlayer = nullptr;
+	UPROPERTY(VisibleAnywhere, Replicated)
+		class APlayerCharacter* OverlappingPlayer2 = nullptr;
+
+	//Position Snapping
+	UPROPERTY(EditAnywhere, Replicated)
+		class USceneComponent* LeftRowPosition;
+	UPROPERTY(EditAnywhere, Replicated)
+		class USceneComponent* RightRowPosition;
 };

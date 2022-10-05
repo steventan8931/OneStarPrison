@@ -146,6 +146,9 @@ void ADoubleDoorCastle::CheckKeyDoor_Implementation(APlayerCharacter* _Player)
 				_Player->CanInteract = true;
 			}
 
+			//Change the players interact type to insert
+			_Player->InteractType = EInteractType::Insert;
+
 			//If they are interacting
 			if (_Player->IsInteracting)
 			{
