@@ -135,8 +135,7 @@ void ABoatController::Tick(float DeltaTime)
 							Boat->SetActorRotation(newRot);
 						}
 
-						if (Boat->OverlappingPlayer && Boat->OverlappingPlayer2)
-						{
+
 							if (OverlappingPlayer == Boat->OverlappingPlayer)
 							{
 								if (OverlappingPlayer->CanMove)
@@ -152,7 +151,7 @@ void ABoatController::Tick(float DeltaTime)
 									OverlappingPlayer->SetActorLocation(Boat->RightRowPosition->GetComponentLocation());
 								}
 							}
-						}
+						
 
 						//Reset the interact timers
 						OverlappingPlayer->CanInteract = false;
@@ -198,7 +197,7 @@ void ABoatController::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
 		if (playerActor)
 		{
 			//If there isn't already an overlapping player
-			if (!OverlappingPlayer)
+			//if (!OverlappingPlayer)
 			{
 				//Set the current player to the overlapping player
 				OverlappingPlayer = playerActor;
