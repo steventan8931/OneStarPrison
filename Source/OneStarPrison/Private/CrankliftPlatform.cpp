@@ -59,8 +59,8 @@ void ACrankliftPlatform::Tick(float DeltaTime)
 		}
 	}
 
-	//If there is a player or a weight
-	if (OverlappingPlayer && OverlappingWeight)
+	//If there is a player and a weight
+	if (OverlappingPlayer)
 	{
 		//If the player is holding an item
 		if (OverlappingPlayer->PickedUpItem)
@@ -77,8 +77,11 @@ void ACrankliftPlatform::Tick(float DeltaTime)
 			}
 		}
 
-		CanMove = false;
-		return;
+		if (OverlappingWeight)
+		{
+			CanMove = false;
+			return;
+		}
 	}
 
 	//If the player has a item but it isn't the chest or doesn't have the item allow it to move
@@ -133,8 +136,8 @@ void ACrankliftPlatform::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 			}
 		}
 
-		//If the player has a item but it isn't the chest or doesn't have the item allow it to move
-		CanMove = true; 
+		////If the player has a item but it isn't the chest or doesn't have the item allow it to move
+		//CanMove = true; 
 	}
 }
 
@@ -171,10 +174,10 @@ void ACrankliftPlatform::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp,
 			}
 		}
 
-		//If only one of them are overlapping
-		if (!OverlappingPlayer || !OverlappingWeight)
-		{
-			CanMove = true;
-		}
+		////If only one of them are overlapping
+		//if (!OverlappingPlayer || !OverlappingWeight)
+		//{
+		//	CanMove = true;
+		//}
 	}
 }
