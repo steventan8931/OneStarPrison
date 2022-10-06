@@ -155,10 +155,10 @@ private:
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
 		float CrouchSpeedScale = 0.25f;
 	//Makes the player crouch
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 		void StartCrouching();
 	//Makes the player uncrouch
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 		void StopCrouching();
 
 	//The speed of the player when climbing
