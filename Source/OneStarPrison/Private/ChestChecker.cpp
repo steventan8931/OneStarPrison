@@ -77,12 +77,17 @@ void AChestChecker::Tick(float DeltaTime)
 			//If the held item is a chest
 			if (chest)
 			{
+				//Change the players interact type to insert
+				//OverlappingPlayer->InteractType = EInteractType::Insert;
+
 				//Allow the player to interact
 				OverlappingPlayer->CanInteract = true;
 
 				//If the player clicked interact
 				if (OverlappingPlayer->IsInteracting)
 				{
+					chest->OnDisplay = false;
+
 					//Attach the chest to this actor
 					chest->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 					chest->SetActorLocation(ChestPosition->GetComponentLocation());
@@ -105,13 +110,11 @@ void AChestChecker::Tick(float DeltaTime)
 
 					//Make the player unable to continue interacting
 					OverlappingPlayer->CanInteract = false;
-					OverlappingPlayer->IsInteracting = false;
+					//OverlappingPlayer->IsInteracting = false;
 
 					//Remove the item from the player
-					OverlappingPlayer->PickedUpItem = nullptr;				
-					//chest->Player = nullptr;
-					chest->OnDisplay = false;
 					OverlappingPlayer->IsHoldingHeavyItem = false;
+					//OverlappingPlayer->PickedUpItem = nullptr;				
 
 				}
 

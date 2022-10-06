@@ -47,10 +47,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		class USceneComponent* ChestPosition;
 
-	//Checks whether the chest hav been inserted
-	UPROPERTY(Replicated)
-		bool ChestInserted = false;
-
 	//Door To Open
 	UPROPERTY(EditAnywhere, Replicated)
 		class ADoor* Door;
@@ -58,5 +54,9 @@ private:
 	//Player Interaction
 	UPROPERTY(Replicated)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
+public:
 
+	//Checks whether the chest has been inserted
+	UPROPERTY(Replicated, BlueprintReadWrite)
+		bool ChestInserted = false;
 };

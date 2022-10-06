@@ -66,7 +66,7 @@ public:
 	void PlayPickupSound();
 
 	//To check whether the armor piece should teleport back when dropped
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		bool OnDisplay = false;
 
 	//Time before it is reset
