@@ -19,23 +19,27 @@ void APickupableChest::Tick(float DeltaTime)
 	//If the chest is being held by a player, make the player's holding heavy item to true
 	if (Player)
 	{
-		Player->IsHoldingHeavyItem = true;
-
-		if (Player->IsDead)
+		if (OnDisplay)
 		{
-			TakenFromDisplay = true;
-			DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			Player->IsHoldingHeavyItem = true;
 
-			//Deatch the pickupable and reset its variables
-			DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-			//Make it ignore only the player
-			Mesh->SetCollisionProfileName("IgnoreOnlyPawn");
-			//Re-enable collision of query and physics
-			Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-			//Remove the pointer reference from the item
-			Player = nullptr;
+			if (Player->IsDead)
+			{
+				TakenFromDisplay = true;
+				DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
-			Timer = TimeBeforeItRespawns;
+				//Deatch the pickupable and reset its variables
+				DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+				//Make it ignore only the player
+				Mesh->SetCollisionProfileName("IgnoreOnlyPawn");
+				//Re-enable collision of query and physics
+				Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+				//Remove the pointer reference from the item
+				Player = nullptr;
+
+				Timer = TimeBeforeItRespawns;
+			}
 		}
+
 	}
 }
