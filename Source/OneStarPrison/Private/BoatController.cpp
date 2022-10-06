@@ -197,7 +197,7 @@ void ABoatController::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
 		if (playerActor)
 		{
 			//If there isn't already an overlapping player
-			//if (!OverlappingPlayer)
+			if (!OverlappingPlayer)
 			{
 				//Set the current player to the overlapping player
 				OverlappingPlayer = playerActor;
