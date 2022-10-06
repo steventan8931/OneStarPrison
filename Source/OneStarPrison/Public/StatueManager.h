@@ -45,10 +45,6 @@ private:
 	UPROPERTY(Replicated)
 		AStatue* CurrentStatue = nullptr;
 
-	//Times the player has been completed each statue set
-	UPROPERTY(Replicated)
-	int TimesCompleted = 0;
-
 	//Chooses steps based on the statue
 	UFUNCTION(Server, Reliable)
 	void ChooseSteps();
@@ -94,6 +90,10 @@ public:
 		class UStaticMeshComponent* MidLightMesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		class UStaticMeshComponent* RightLightMesh;
+
+	//Times the player has been completed each statue set
+	UPROPERTY(Replicated, BlueprintReadWrite)
+		int TimesCompleted = 0;
 
 	//Whether the puzzle has been completed
 	UPROPERTY(Replicated)
