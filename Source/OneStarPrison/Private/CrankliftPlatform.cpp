@@ -41,6 +41,10 @@ void ACrankliftPlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >&
 	DOREPLIFETIME(ACrankliftPlatform, IsWeightDependent);
 	DOREPLIFETIME(ACrankliftPlatform, IsSideToSide);
 	DOREPLIFETIME(ACrankliftPlatform, CanMove);
+
+	DOREPLIFETIME(ACrankliftPlatform, OverlappingPlayer);
+	DOREPLIFETIME(ACrankliftPlatform, OverlappingWeight);
+	
 }
 
 // Called every frame
@@ -98,46 +102,40 @@ void ACrankliftPlatform::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 
 	if (OtherActor && (OtherActor != this))
 	{
-		if (OverlappingPlayer == nullptr)
+		APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+
+		//If the overlapping actor is a player
+		if (playerActor)
 		{
-			APlayerCharacter* playerActor = Cast<APlayerCharacter>(OtherActor);
+			//Set the overlapping player to this player
+			OverlappingPlayer = playerActor;
 
-			//If the overlapping actor is a player
-			if (playerActor)
+			//If the player is holding an item
+			if (playerActor->PickedUpItem)
 			{
-				//Set the overlapping player to this player
-				OverlappingPlayer = playerActor;
+				APickupableChest* chest = Cast<APickupableChest>(playerActor->PickedUpItem);
 
-				//If the player is holding an item
-				if (playerActor->PickedUpItem)
+				//If the item is a chest
+				if (chest)
 				{
-					APickupableChest* chest = Cast<APickupableChest>(playerActor->PickedUpItem);
-
-					//If the item is a chest
-					if (chest)
-					{
-						OverlappingWeight = chest;
-						//Dont allow the platform to be moved
-						CanMove = false;
-						return;
-					}
+					OverlappingWeight = chest;
+					//Dont allow the platform to be moved
+					CanMove = false;
+					return;
 				}
-			}
-
-
-			APickupableChest* chest = Cast<APickupableChest>(OtherActor);
-			
-			//If the overlapping actor is a chest
-			if (chest)
-			{
-				//Set the overlapping weight to the chest
-				OverlappingWeight = chest; 
-				return;
 			}
 		}
 
-		////If the player has a item but it isn't the chest or doesn't have the item allow it to move
-		//CanMove = true; 
+
+		APickupableChest* chest = Cast<APickupableChest>(OtherActor);
+
+		//If the overlapping actor is a chest
+		if (chest)
+		{
+			//Set the overlapping weight to the chest
+			OverlappingWeight = chest;
+			return;
+		}
 	}
 }
 
@@ -174,10 +172,5 @@ void ACrankliftPlatform::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp,
 			}
 		}
 
-		////If only one of them are overlapping
-		//if (!OverlappingPlayer || !OverlappingWeight)
-		//{
-		//	CanMove = true;
-		//}
 	}
 }

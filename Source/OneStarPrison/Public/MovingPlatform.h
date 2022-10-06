@@ -81,6 +81,15 @@ private:
 
 	bool FirstFrame = true;
 
+	//Sound the platform is unable to move
+	UPROPERTY(EditAnywhere)
+		USoundBase* FailSound;
+
+	UPROPERTY(Replicated)
+	bool cacheInteract = false;
+
+	UPROPERTY(Replicated)
+		FVector cacheOpenPos;
 public:
 	//The speed of which the platform moves
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)

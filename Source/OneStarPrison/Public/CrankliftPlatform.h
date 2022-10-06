@@ -36,11 +36,11 @@ private:
 		class UBoxComponent* BoxCollision;
 
 	//Player Interaction
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
 
 	//Reference to the weighted object
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Replicated)
 		class APickupable* OverlappingWeight = nullptr;
 
 	//Whether the object should move side to side
