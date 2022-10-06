@@ -48,8 +48,12 @@ void AMovingPlatform::BeginPlay()
 				AudioComponent->SetPaused(true);
 			}
 
+			//cache for fail movement
+			cacheOpenPos = Platform->GetActorLocation() + FVector(0, 0, 50.0f);
 		}
 	}
+
+
 
 }
 
@@ -67,6 +71,7 @@ void AMovingPlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& Ou
 	DOREPLIFETIME(AMovingPlatform, MoveSpeed);
 	
 	DOREPLIFETIME(AMovingPlatform, AudioComponent);
+	DOREPLIFETIME(AMovingPlatform, cacheInteract);
 }
 
 // Called every frame
@@ -93,9 +98,25 @@ void AMovingPlatform::Tick(float DeltaTime)
 
 				//Move the platform to its open position
 				IsOpen = true;
+
+				//If the player is interacting and the platform is unable to move
+				if (!Platform->CanMove)
+				{
+					if (cacheInteract == false)
+					{
+						//Play the return sound
+						if (FailSound)
+						{
+							UGameplayStatics::PlaySoundAtLocation(GetWorld(), FailSound, GetActorLocation());
+						}
+						cacheInteract = true;
+					}
+
+				}
 			}
 			else
 			{
+				cacheInteract = false;
 				//Move the platform to its closed position
 				IsOpen = false;
 			}
@@ -134,6 +155,17 @@ void AMovingPlatform::Tick(float DeltaTime)
 				{
 					//If the platform is at its open position stop playing the audio
 					ServerPlaySound(true);
+				}
+			}
+			else
+			{
+				//Move the platform to its open position over time
+				if (Platform->GetActorLocation() != cacheOpenPos)
+				{
+					//Update the handle to its open rotation over time
+					MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
+					FVector newPos = FMath::Lerp(Platform->GetActorLocation(), cacheOpenPos, DeltaTime * MoveSpeed * 2);
+					Platform->SetActorLocation(newPos);
 				}
 			}
 		}
