@@ -135,27 +135,29 @@ void ABoatController::Tick(float DeltaTime)
 							Boat->SetActorRotation(newRot);
 						}
 
-
-							if (OverlappingPlayer == Boat->OverlappingPlayer)
+						if (OverlappingPlayer == Boat->OverlappingPlayer)
+						{
+							if (OverlappingPlayer->CanMove)
 							{
-								if (OverlappingPlayer->CanMove)
-								{
-									OverlappingPlayer->SetActorLocation(Boat->LeftRowPosition->GetComponentLocation());
-								}
+								OverlappingPlayer->SetActorLocation(Boat->LeftRowPosition->GetComponentLocation());
 							}
+						}
 
-							if (OverlappingPlayer == Boat->OverlappingPlayer2)
+						if (OverlappingPlayer == Boat->OverlappingPlayer2)
+						{
+							if (OverlappingPlayer->CanMove)
 							{
-								if (OverlappingPlayer->CanMove)
-								{
-									OverlappingPlayer->SetActorLocation(Boat->RightRowPosition->GetComponentLocation());
-								}
+								OverlappingPlayer->SetActorLocation(Boat->RightRowPosition->GetComponentLocation());
 							}
-						
+						}
 
-						//Reset the interact timers
-						OverlappingPlayer->CanInteract = false;
-						InteractTimer = 0.0f;
+						if (OverlappingPlayer)
+						{
+							//Reset the interact timers
+							OverlappingPlayer->CanInteract = false;
+							InteractTimer = 0.0f;
+						}
+
 					}
 
 				}
