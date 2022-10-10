@@ -126,8 +126,6 @@ void APickupable::OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 		//If the mesh hits a player that isn't the player
 		if (!player)
 		{
-			GEngine->AddOnScreenDebugMessage(-1,1,FColor::Red, TEXT("lol"));
-
 			//Set its physics to true and disables its projectile movement
 			IsInAir = false;
 			Mesh->SetSimulatePhysics(true);

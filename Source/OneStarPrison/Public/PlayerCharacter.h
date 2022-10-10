@@ -94,11 +94,15 @@ private:
 		class UUserWidget* CurrentInteractWidget;
 
 	//When the player presses the interact button on the server
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Client, Reliable)
 		void Interact();
-	//When the player releases the interact button on the server
 	UFUNCTION(Server, Reliable)
+		void ServerInteract();
+	//When the player releases the interact button on the server
+	UFUNCTION(Client, Reliable)
 		void StopInteract();
+	UFUNCTION(Server, Reliable)
+		void ServerStopInteract();
 
 	//Interact UI
 	//Have the server to check for the interact

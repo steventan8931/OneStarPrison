@@ -319,10 +319,32 @@ void APlayerCharacter::Interact_Implementation()
 		//Set Is Interacting to true
 		IsInteracting = true;
 	}
+
+	ServerInteract();
+}
+
+//When the player presses the interact button
+void APlayerCharacter::ServerInteract_Implementation()
+{
+	//If the player presses the interact button and is able to interact
+	if (CanInteract)
+	{
+		//Set Is Interacting to true
+		IsInteracting = true;
+	}
 }
 
 //When the player releases the interact button
 void APlayerCharacter::StopInteract_Implementation()
+{
+	//Set Is Interacting to false
+	IsInteracting = false;
+
+	ServerStopInteract();
+}
+
+//When the player presses the interact button
+void APlayerCharacter::ServerStopInteract_Implementation()
 {
 	//Set Is Interacting to false
 	IsInteracting = false;
