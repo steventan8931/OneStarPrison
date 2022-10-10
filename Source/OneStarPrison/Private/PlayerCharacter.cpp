@@ -777,7 +777,19 @@ void APlayerCharacter::StartCrouching_Implementation()
 	IsCrouching = true;
 	//Use the character movement component's crouch function
 	Crouch(true);
+
+	ServerStartCrouching();
 }
+
+//When the player presses the crouch button Makes the player crouch on the server
+void APlayerCharacter::ServerStartCrouching_Implementation()
+{
+	//Sets crouching to true
+	IsCrouching = true;
+	//Use the character movement component's crouch function
+	Crouch(true);
+}
+
 
 //When the player releases the crouch button makes the player uncrouch
 void APlayerCharacter::StopCrouching_Implementation()
@@ -786,8 +798,18 @@ void APlayerCharacter::StopCrouching_Implementation()
 	IsCrouching = false;
 	//Use the character movement component's crouch function
 	UnCrouch(true);
+
+	ServerStopCrouching();
 }
 
+//When the player releases the crouch button makes the player uncrouch
+void APlayerCharacter::ServerStopCrouching_Implementation()
+{
+	//Sets crouching to false
+	IsCrouching = false;
+	//Use the character movement component's crouch function
+	UnCrouch(true);
+}
 
 void APlayerCharacter::CheckDeath(float _DeltaTime)
 {

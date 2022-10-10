@@ -157,9 +157,15 @@ private:
 	//Makes the player crouch
 	UFUNCTION(NetMulticast, Reliable)
 		void StartCrouching();
+	//On the server
+	UFUNCTION(Server, Reliable)
+		void ServerStartCrouching();
 	//Makes the player uncrouch
 	UFUNCTION(NetMulticast, Reliable)
 		void StopCrouching();
+	//On the server
+	UFUNCTION(Server, Reliable)
+		void ServerStopCrouching();
 
 	//The speed of the player when climbing
 	UPROPERTY(EditAnywhere, Replicated)
