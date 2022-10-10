@@ -151,6 +151,9 @@ private:
 	//Renders the projectile path of the throwing item
 	void ShowProjectilePath(float _DeltaTime);
 
+	UFUNCTION(Server, Reliable)
+		void ShowProjectileEnd(FVector _Location);
+
 	//The scale of normal speed vs crouch speed
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
 		float CrouchSpeedScale = 0.25f;

@@ -680,24 +680,7 @@ void APlayerCharacter::ShowProjectilePath(float _DeltaTime)
 		FPredictProjectilePathResult result;
 		UGameplayStatics::PredictProjectilePath(GetWorld(), params, result);
 
-		if (ThrowEndActorType)
-		{
-			if (!cacheThrowEndActor)
-			{
-				FTransform transform = FTransform(FRotator(0, 0, 0), result.HitResult.ImpactPoint, FVector(1, 1, 1));
-				cacheThrowEndActor = GetWorld()->SpawnActor<AActor>(ThrowEndActorType, transform);
-			}
-			else
-			{
-				if (result.HitResult.ImpactPoint != FVector(0, 0, 0))
-				{
-					cacheThrowEndActor->SetActorLocation(result.HitResult.ImpactPoint);
-					
-					//cacheThrowEndActor->SetActorRotation(result.HitResult.ImpactNormal);
-					cacheThrowEndActor->SetActorHiddenInGame(false);
-				}
-			}
-		}
+		ShowProjectileEnd(result.HitResult.ImpactPoint);
 
 		//Iterate through the predicted path and set up spline points at each point of the path
 		for (int i = 0; i < result.PathData.Num(); i++)
@@ -767,6 +750,28 @@ void APlayerCharacter::ShowProjectilePath(float _DeltaTime)
 		//Empty the array
 		SplineComponentArray.Empty();
 
+	}
+}
+
+void APlayerCharacter::ShowProjectileEnd_Implementation(FVector _Location)
+{
+	if (ThrowEndActorType)
+	{
+		if (!cacheThrowEndActor)
+		{
+			FTransform transform = FTransform(FRotator(0, 0, 0), _Location, FVector(1, 1, 1));
+			cacheThrowEndActor = GetWorld()->SpawnActor<AActor>(ThrowEndActorType, transform);
+		}
+		else
+		{
+			if (_Location != FVector(0, 0, 0))
+			{
+				cacheThrowEndActor->SetActorLocation(_Location);
+
+				//cacheThrowEndActor->SetActorRotation(result.HitResult.ImpactNormal);
+				cacheThrowEndActor->SetActorHiddenInGame(false);
+			}
+		}
 	}
 }
 
