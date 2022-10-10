@@ -94,12 +94,12 @@ private:
 		class UUserWidget* CurrentInteractWidget;
 
 	//When the player presses the interact button on the server
-	UFUNCTION(Client, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 		void Interact();
 	UFUNCTION(Server, Reliable)
 		void ServerInteract();
 	//When the player releases the interact button on the server
-	UFUNCTION(Client, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 		void StopInteract();
 	UFUNCTION(Server, Reliable)
 		void ServerStopInteract();
