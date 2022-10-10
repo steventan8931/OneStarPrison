@@ -115,14 +115,18 @@ void ABoatController::Tick(float DeltaTime)
 					SetActorRotation(StartingRotation);
 					//Allow the player to interact
 					OverlappingPlayer->CanInteract = true;
-					if (IsRowingRight)
-					{
-						OverlappingPlayer->InteractType = EInteractType::RowRight;
+					if (OverlappingPlayer)
+					{ 
+						if (IsRowingRight)
+						{
+							OverlappingPlayer->InteractType = EInteractType::RowRight;
+						}
+						else
+						{
+							OverlappingPlayer->InteractType = EInteractType::RowLeft;
+						}
 					}
-					else
-					{
-						OverlappingPlayer->InteractType = EInteractType::RowLeft;
-					}
+
 
 					//If the player is interacting
 					if (OverlappingPlayer->IsInteracting)
