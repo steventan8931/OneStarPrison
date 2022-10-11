@@ -106,6 +106,6 @@ public:
 
 	//The speed of which the platform moves
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
-		USceneComponent* HoldPosition;
+		class USceneComponent* HoldPosition;
 
 };
