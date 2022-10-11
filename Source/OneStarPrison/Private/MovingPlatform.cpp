@@ -30,7 +30,7 @@ AMovingPlatform::AMovingPlatform()
 	MovableMesh->SetupAttachment(Mesh);
 
 	HoldPosition = CreateDefaultSubobject<USceneComponent>(TEXT("HoldPosition"));
-	HoldPosition->SetupAttachment(RootComponent);
+	HoldPosition->SetupAttachment(Mesh);
 }
 
 // Called when the game starts or when spawned
@@ -55,9 +55,6 @@ void AMovingPlatform::BeginPlay()
 			cacheOpenPos = Platform->GetActorLocation() + FVector(0, 0, 50.0f);
 		}
 	}
-
-
-
 }
 
 void AMovingPlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -182,7 +179,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 					//Update the handle to its open rotation over time
 					if (HandleStartTimer >= HandleStartDelay)
 					{
-						MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime * HandleRotateSpeed))
+						MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime * HandleRotateSpeed));
 					}
 					FVector newPos = FMath::Lerp(Platform->GetActorLocation(), cacheOpenPos, DeltaTime * MoveSpeed * 2);
 					Platform->SetActorLocation(newPos);
