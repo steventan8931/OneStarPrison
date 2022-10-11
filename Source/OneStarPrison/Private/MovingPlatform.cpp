@@ -28,6 +28,9 @@ AMovingPlatform::AMovingPlatform()
 
 	MovableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Handle"));
 	MovableMesh->SetupAttachment(Mesh);
+
+	HoldPosition = CreateDefaultSubobject<USceneComponent>(TEXT("HoldPosition"));
+	HoldPosition->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -72,6 +75,11 @@ void AMovingPlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& Ou
 	
 	DOREPLIFETIME(AMovingPlatform, AudioComponent);
 	DOREPLIFETIME(AMovingPlatform, cacheInteract);
+
+	DOREPLIFETIME(AMovingPlatform, HandleRotateSpeed);
+	DOREPLIFETIME(AMovingPlatform, HoldPosition);
+	DOREPLIFETIME(AMovingPlatform, HandleStartDelay);
+	DOREPLIFETIME(AMovingPlatform, HandleStartTimer);
 }
 
 // Called every frame
@@ -88,6 +96,9 @@ void AMovingPlatform::Tick(float DeltaTime)
 			//If there is a player holding interacting
 			if (OverlappingPlayer->IsInteracting)
 			{
+				OverlappingPlayer->SetActorLocation(HoldPosition->GetComponentLocation());
+				OverlappingPlayer->SetActorRotation(HoldPosition->GetComponentRotation());
+
 				if (AudioComponent)
 				{
 					if(!AudioComponent->IsPlaying())
@@ -131,13 +142,19 @@ void AMovingPlatform::Tick(float DeltaTime)
 		//If the lever is pulled held
 		if (IsOpen)
 		{
+			HandleStartTimer += DeltaTime;
+
 			if (Platform->CanMove)
 			{
 				//Move the platform to its open position over time
 				if (Platform->GetActorLocation() != OpenPosition)
 				{
 					//Update the handle to its open rotation over time
-					MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
+					if (HandleStartTimer >= HandleStartDelay)
+					{
+						MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime * HandleRotateSpeed));
+					}
+
 					FVector newPos = FMath::Lerp(Platform->GetActorLocation(), OpenPosition, DeltaTime * MoveSpeed);
 					Platform->SetActorLocation(newPos);
 
@@ -163,7 +180,10 @@ void AMovingPlatform::Tick(float DeltaTime)
 				if (Platform->GetActorLocation() != cacheOpenPos)
 				{
 					//Update the handle to its open rotation over time
-					MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
+					if (HandleStartTimer >= HandleStartDelay)
+					{
+						MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime * HandleRotateSpeed))
+					}
 					FVector newPos = FMath::Lerp(Platform->GetActorLocation(), cacheOpenPos, DeltaTime * MoveSpeed * 2);
 					Platform->SetActorLocation(newPos);
 				}
@@ -171,6 +191,8 @@ void AMovingPlatform::Tick(float DeltaTime)
 		}
 		else
 		{
+			HandleStartTimer = 0.0f;
+
 			//Move the platform to its closed position over time
 			if (Platform->GetActorLocation() != ClosedPosition)
 			{

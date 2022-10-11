@@ -95,6 +95,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		float MoveSpeed = 20.0f;
 
+	//The speed of which the platform moves
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
+		float HandleRotateSpeed = 1.7f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
+		float HandleStartDelay = 1.7f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
+		float HandleStartTimer = 0.0f;
+
+	//The speed of which the platform moves
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
+		USceneComponent* HoldPosition;
 
 };
