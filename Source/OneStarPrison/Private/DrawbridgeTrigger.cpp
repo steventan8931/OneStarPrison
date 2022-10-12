@@ -30,6 +30,9 @@ ADrawbridgeTrigger::ADrawbridgeTrigger()
 
 	MovableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Handle"));
 	MovableMesh->SetupAttachment(Mesh);
+
+	HoldPosition = CreateDefaultSubobject<USceneComponent>(TEXT("HoldPosition"));
+	HoldPosition->SetupAttachment(Mesh);
 }
 
 // Called when the game starts or when spawned
@@ -47,6 +50,11 @@ void ADrawbridgeTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >&
 	DOREPLIFETIME(ADrawbridgeTrigger, HandleClosedRotation);
 
 	DOREPLIFETIME(ADrawbridgeTrigger, Platform);
+
+	DOREPLIFETIME(ADrawbridgeTrigger, HandleRotateSpeed);
+	DOREPLIFETIME(ADrawbridgeTrigger, HoldPosition);
+	DOREPLIFETIME(ADrawbridgeTrigger, HandleStartDelay);
+	DOREPLIFETIME(ADrawbridgeTrigger, HandleStartTimer);
 }
 
 
@@ -66,26 +74,39 @@ void ADrawbridgeTrigger::Tick(float DeltaTime)
 				//If the overlapping player is interacting
 				if (OverlappingPlayer->IsInteracting)
 				{
-					//Open the platform and play the open sound
-					Platform->IsOpen = true;
-					if (OpenSound)
-					{
-						UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
-					}
+					HandleStartTimer += DeltaTime;
 
-					//Update the position of the handle 
-					MovableMesh->SetRelativeRotation(HandleOpenRotation);
-					//Dont let the player interact again
-					//OverlappingPlayer->CanInteract = false;
-					//OverlappingPlayer->IsInteracting = false;
-					OverlappingPlayer->CanMove = true;
+					//Snap to location
+					OverlappingPlayer->SetActorLocation(HoldPosition->GetComponentLocation());
+					OverlappingPlayer->SetActorRotation(HoldPosition->GetComponentRotation());
+
+					//Move the handle to the open position over time
+					if (HandleStartTimer >= HandleStartDelay)
+					{
+						//Open the platform and play the open sound
+						Platform->IsOpen = true;
+						if (OpenSound)
+						{
+							UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+						}
+
+						//Dont let the player interact again
+						//OverlappingPlayer->CanInteract = false;
+						//OverlappingPlayer->IsInteracting = false;
+						OverlappingPlayer->CanMove = true;
+					}
+				}
+				else
+				{
+					HandleStartTimer = 0;
 				}
 			}
 		}
 		else
 		{
+			MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime * HandleRotateSpeed));
 			//Update the position of the handle
-			MovableMesh->SetRelativeRotation(HandleClosedRotation);
+			//MovableMesh->SetRelativeRotation(HandleClosedRotation);
 		}
 
 	}
