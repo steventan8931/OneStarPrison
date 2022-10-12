@@ -93,6 +93,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 			//If there is a player holding interacting
 			if (OverlappingPlayer->IsInteracting)
 			{
+				//Snap to location
 				OverlappingPlayer->SetActorLocation(HoldPosition->GetComponentLocation());
 				OverlappingPlayer->SetActorRotation(HoldPosition->GetComponentRotation());
 

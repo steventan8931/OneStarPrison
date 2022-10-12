@@ -95,16 +95,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		float MoveSpeed = 20.0f;
 
-	//The speed of which the platform moves
+	//The speed of which the handle moves
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		float HandleRotateSpeed = 1.7f;
 
+	//Delay and timer before the handle starts move
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
-		float HandleStartDelay = 1.7f;
+		float HandleStartDelay = 0.5f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		float HandleStartTimer = 0.0f;
 
-	//The speed of which the platform moves
+	//The position to snap the player to when interacting
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		class USceneComponent* HoldPosition;
 
