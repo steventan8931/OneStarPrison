@@ -34,9 +34,6 @@ private:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	//Components
-	UPROPERTY(VisibleAnywhere)
-		class UStaticMeshComponent* Mesh;
 	UPROPERTY(VisibleAnywhere, Replicated)
 		class UBoxComponent* BoxCollision;
 
@@ -51,4 +48,9 @@ private:
 	//The speed at which the object updates it height
 	UPROPERTY(EditAnywhere, Replicated)
 		float MoveSpeed = 5.0f;
+
+public:
+	//Components
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UStaticMeshComponent* Mesh;
 };
