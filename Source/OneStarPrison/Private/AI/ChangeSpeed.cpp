@@ -4,6 +4,8 @@
 #include "AI/ChangeSpeed.h"
 #include "AI/NPC.h"
 #include "AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 UChangeSpeed::UChangeSpeed()
@@ -15,12 +17,20 @@ UChangeSpeed::UChangeSpeed()
 void UChangeSpeed::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::OnBecomeRelevant(OwnerComp, NodeMemory);
-	
+	float const NPCSpeed = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(GetSelectedBlackboardKey());
 	if (auto const Cont = OwnerComp.GetAIOwner())
 	{
 		if (ANPC* const NPC = Cast<ANPC>(Cont->GetPawn()))
 		{
+			if (UseBlackBoard) 
+			{
+				
+				NPC->GetCharacterMovement()->MaxWalkSpeed = NPCSpeed;
+			}
+			else 
+			{
 			NPC->GetCharacterMovement()->MaxWalkSpeed = Speed;
+			}
 		}
 	}
 }

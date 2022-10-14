@@ -54,6 +54,9 @@ public:
 	float GetLoseSightRadius();
 	float GetPeripheralVisionAngleDegrees();
 	float GetHearingRange();
+
+	float GetChaseSpeed();
+	float GetWalkSpeed();
 	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
@@ -71,6 +74,11 @@ public:
 		bool CanHearRock;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 		bool CanHearBone;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
+		float WalkSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
+		float ChaseSpeed;
 
 
 

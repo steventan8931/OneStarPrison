@@ -26,6 +26,8 @@ namespace BBKeys
 	TCHAR const* const  IsHearGuarding = TEXT("IsHearGuarding");
 	TCHAR const* const  IsPatroling = TEXT("IsPatroling");
 	TCHAR const* const InterestingLocation = TEXT("InterestingLocation");
+	TCHAR const* const WalkSpeed = TEXT("WalkSpeed"); 
+	TCHAR const* const ChaseSpeed = TEXT("ChaseSpeed");
 	
 	
 	
