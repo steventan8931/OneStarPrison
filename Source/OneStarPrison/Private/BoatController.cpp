@@ -155,13 +155,14 @@ void ABoatController::Tick(float DeltaTime)
 									OverlappingPlayer->SetActorRotation(Boat->LeftRowPosition->GetComponentRotation());
 								}
 							}
-						}
-
-						if (OverlappingPlayer)
-						{
-							//Reset the interact timers
 							OverlappingPlayer->CanInteract = false;
 							InteractTimer = 0.0f;
+						}
+
+						//if (OverlappingPlayer)
+						{
+							//Reset the interact timers
+
 						}
 
 					}
@@ -172,7 +173,6 @@ void ABoatController::Tick(float DeltaTime)
 					//Don't allow the overlapping player to interact
 					//OverlappingPlayer->IsInteracting = false;
 					OverlappingPlayer->CanInteract = false;
-					RotatePaddle();
 				}
 			}
 			else
@@ -182,11 +182,6 @@ void ABoatController::Tick(float DeltaTime)
 		}
 	}
 
-}
-
-void ABoatController::RotatePaddle()
-{
-	AddActorWorldRotation(MoveRotation);
 }
 
 void ABoatController::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
