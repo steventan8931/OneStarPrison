@@ -86,6 +86,14 @@ void AControllableBoat::Tick(float DeltaTime)
 		{
 			FVector newPos = FMath::Lerp(GetActorLocation(), GetActorLocation() + (GetActorForwardVector() * Speed), DeltaTime);
 			SetActorLocation(newPos);
+
+			if (HasAuthority())
+			{
+				//Move the object side to side
+				FVector loc = FVector(0, 0, cos(GetGameTimeSinceCreation()) * 0.5f);
+				Mesh->AddRelativeLocation(loc);
+			}
+
 			return;
 		}
 	}

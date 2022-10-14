@@ -144,9 +144,6 @@ void ABoatController::Tick(float DeltaTime)
 						{
 							if (OverlappingPlayer->CanMove)
 							{
-								OverlappingPlayer->CanInteract = false;
-								InteractTimer = 0.0f;
-
 								if (IsRowingRight)
 								{
 									OverlappingPlayer->SetActorLocation(Boat->RightRowPosition->GetComponentLocation());
@@ -159,9 +156,11 @@ void ABoatController::Tick(float DeltaTime)
 								}
 							}
 
-							return;
 						}
 
+						OverlappingPlayer->CanInteract = false;
+						InteractTimer = 0.0f;
+						return;
 					}
 
 				}
