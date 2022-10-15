@@ -65,9 +65,6 @@ private:
 	UPROPERTY(EditAnywhere, Replicated)
 		bool IsAnchor = false;
 
-	UPROPERTY(Replicated)
-		FRotator StartingRotation;
-
 	void RotatePaddle();
 
 public:

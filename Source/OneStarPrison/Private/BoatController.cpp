@@ -34,7 +34,6 @@ void ABoatController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	StartingRotation = GetActorRotation();
 }
 
 void ABoatController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -112,7 +111,6 @@ void ABoatController::Tick(float DeltaTime)
 				//If the player's last interact has been longer than the interact delay
 				if (InteractTimer >= InteractDelay)
 				{
-					SetActorRotation(StartingRotation);
 					//Allow the player to interact
 					OverlappingPlayer->CanInteract = true;
 					if (OverlappingPlayer)
@@ -158,7 +156,7 @@ void ABoatController::Tick(float DeltaTime)
 
 						}
 
-						OverlappingPlayer->CanInteract = false;
+						//OverlappingPlayer->CanInteract = false;
 						InteractTimer = 0.0f;
 						return;
 					}
@@ -168,12 +166,8 @@ void ABoatController::Tick(float DeltaTime)
 				{
 					//Don't allow the overlapping player to interact
 					//OverlappingPlayer->IsInteracting = false;
-					OverlappingPlayer->CanInteract = false;
+					//OverlappingPlayer->CanInteract = false;
 				}
-			}
-			else
-			{
-				SetActorRotation(StartingRotation);
 			}
 		}
 	}
