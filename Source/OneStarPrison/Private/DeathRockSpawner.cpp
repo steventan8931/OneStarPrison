@@ -39,6 +39,11 @@ void ADeathRockSpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (!IsActive)
+	{
+		return;
+	}
+
 	SpawnTimer += DeltaTime;
 
 	//If the timer has been longer than the spawn delay
