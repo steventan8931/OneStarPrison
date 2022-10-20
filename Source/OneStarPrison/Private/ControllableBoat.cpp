@@ -38,6 +38,8 @@ void AControllableBoat::BeginPlay()
 	Super::BeginPlay();
 
 	cacheTransform = GetActorTransform();
+
+	StartSpeed = Speed;
 }
 
 void AControllableBoat::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -49,6 +51,10 @@ void AControllableBoat::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 
 	DOREPLIFETIME(AControllableBoat, OverlappingPlayer);
 	DOREPLIFETIME(AControllableBoat, OverlappingPlayer2);
+
+	DOREPLIFETIME(AControllableBoat, Speed);
+	DOREPLIFETIME(AControllableBoat, StartSpeed);
+	DOREPLIFETIME(AControllableBoat, MaxSpeed);
 
 }
 
@@ -79,6 +85,15 @@ void AControllableBoat::Tick(float DeltaTime)
 			OverlappingPlayer2 = nullptr;
 			IsMoving = false;
 			return;
+		}
+
+		if (OverlappingPlayer->IsInteracting && OverlappingPlayer2->IsInteracting)
+		{
+			Speed = MaxSpeed;
+		}
+		else
+		{
+			Speed = StartSpeed;
 		}
 
 		//If the boat is moving, updates it position, making it go forward in its forward vector

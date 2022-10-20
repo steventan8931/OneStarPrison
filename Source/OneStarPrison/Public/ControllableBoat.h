@@ -41,8 +41,14 @@ private:
 		class UBoxComponent* BoxCollision;
 
 	//The speed the boat moves in
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 		float Speed = 100.0f;
+	//The start speed 
+	UPROPERTY(Replicated)
+		float StartSpeed = 100.0f;
+	//The start speed 
+	UPROPERTY(EditAnywhere, Replicated)
+		float MaxSpeed = 200.0f;
 
 	//Sound that plays when the wheel is inserted
 	UPROPERTY(EditAnywhere)
