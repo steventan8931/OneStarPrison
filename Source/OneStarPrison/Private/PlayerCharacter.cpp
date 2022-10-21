@@ -657,13 +657,16 @@ void APlayerCharacter::ShowProjectilePath(float _DeltaTime)
 			//Increment the throw power for each second while holding it down
 			ThrowPowerScale += (_DeltaTime * MaxThrowPower);
 		}
+
 		//Get rotation of the camera so it is behind the player
-		FRotator rot = FRotator(0, GetControlRotation().Yaw, 0);
+		// 
+		ServerUpdateRotation();
+		//FRotator rot = FRotator(0, GetControlRotation().Yaw, 0);
 		//Update the rotation of the actor only if it is the server
-		if (HasAuthority())
-		{
-			SetActorRotation(rot, ETeleportType::ResetPhysics);
-		}
+		//if (HasAuthority())
+		//{
+			//SetActorRotation(rot, ETeleportType::ResetPhysics);
+		//}
 
 		//Create Parameters for the
 		FPredictProjectilePathParams params;
@@ -795,6 +798,21 @@ void APlayerCharacter::ShowProjectileEnd_Implementation(FVector _Location)
 			}
 		}
 	}
+}
+
+//Update Camera so it is behind the player
+void APlayerCharacter::UpdateRotation_Implementation(FRotator _rot)
+{
+	//ServerUpdateRotation();
+	SetActorRotation(_rot, ETeleportType::ResetPhysics);
+}
+
+//Update Camera so it is behind the player
+void APlayerCharacter::ServerUpdateRotation_Implementation()
+{
+	FRotator rot = FRotator(0, GetControlRotation().Yaw, 0);
+
+	UpdateRotation(rot);
 }
 
 //When the player presses the crouch button Makes the player crouch

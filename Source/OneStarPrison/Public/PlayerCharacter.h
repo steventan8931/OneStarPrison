@@ -154,6 +154,10 @@ private:
 
 	//Renders the projectile path of the throwing item
 	void ShowProjectilePath(float _DeltaTime);
+	UFUNCTION(NetMulticast, Unreliable)
+		void UpdateRotation(FRotator _rot);
+	UFUNCTION(Server, Unreliable)
+		void ServerUpdateRotation();
 
 	UFUNCTION(Server, Reliable)
 		void ShowProjectileEnd(FVector _Location);
