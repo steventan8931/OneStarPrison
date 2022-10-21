@@ -658,15 +658,9 @@ void APlayerCharacter::ShowProjectilePath(float _DeltaTime)
 			ThrowPowerScale += (_DeltaTime * MaxThrowPower);
 		}
 
-		//Get rotation of the camera so it is behind the player
-		// 
+		//Get rotation of the camera so it is behind the player* 
 		ServerUpdateRotation();
-		//FRotator rot = FRotator(0, GetControlRotation().Yaw, 0);
-		//Update the rotation of the actor only if it is the server
-		//if (HasAuthority())
-		//{
-			//SetActorRotation(rot, ETeleportType::ResetPhysics);
-		//}
+
 
 		//Create Parameters for the
 		FPredictProjectilePathParams params;
@@ -795,6 +789,10 @@ void APlayerCharacter::ShowProjectileEnd_Implementation(FVector _Location)
 
 				//cacheThrowEndActor->SetActorRotation(result.HitResult.ImpactNormal);
 				cacheThrowEndActor->SetActorHiddenInGame(false);
+			}
+			else
+			{
+				cacheThrowEndActor->SetActorHiddenInGame(true);
 			}
 		}
 	}
