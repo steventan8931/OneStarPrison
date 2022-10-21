@@ -34,6 +34,10 @@ private:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//Opening Sound
+	UPROPERTY(EditAnywhere)
+		USoundBase* BloopSound;
+
 	UPROPERTY(VisibleAnywhere, Replicated)
 		class UBoxComponent* BoxCollision;
 
