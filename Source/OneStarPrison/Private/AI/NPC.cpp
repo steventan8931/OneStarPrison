@@ -112,6 +112,16 @@ float ANPC::GetHearingRange()
 	return HearingRange;
 }
 
+float ANPC::GetChaseSpeed()
+{
+	return ChaseSpeed;
+}
+
+float ANPC::GetWalkSpeed()
+{
+	return WalkSpeed;
+}
+
 
 
 void ANPC::OnAttackOverlapBegin(

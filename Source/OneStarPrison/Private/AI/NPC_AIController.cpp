@@ -37,7 +37,16 @@ void ANPC_AIController::OnPossess(APawn* const CharacterPawn)
 			BlackboardComponent->SetValueAsBool(BBKeys::GetPatrolPath, true);
 			
 		}
+		if (NPC->GetWalkSpeed())
+		{
+			BlackboardComponent->SetValueAsFloat(BBKeys::WalkSpeed, NPC->GetWalkSpeed());
 
+		}		
+		if (NPC->GetChaseSpeed())
+		{
+			BlackboardComponent->SetValueAsFloat(BBKeys::ChaseSpeed, NPC->GetChaseSpeed());
+
+		}
 			ItemInterested = NPC->ItemInterested;
 			 CanHearPlayer = NPC->CanHearPlayer;
 			 CanHearRock = NPC->CanHearRock;

@@ -319,10 +319,32 @@ void APlayerCharacter::Interact_Implementation()
 		//Set Is Interacting to true
 		IsInteracting = true;
 	}
+
+	ServerInteract();
+}
+
+//When the player presses the interact button
+void APlayerCharacter::ServerInteract_Implementation()
+{
+	//If the player presses the interact button and is able to interact
+	if (CanInteract)
+	{
+		//Set Is Interacting to true
+		IsInteracting = true;
+	}
 }
 
 //When the player releases the interact button
 void APlayerCharacter::StopInteract_Implementation()
+{
+	//Set Is Interacting to false
+	IsInteracting = false;
+
+	ServerStopInteract();
+}
+
+//When the player presses the interact button
+void APlayerCharacter::ServerStopInteract_Implementation()
 {
 	//Set Is Interacting to false
 	IsInteracting = false;
@@ -635,13 +657,10 @@ void APlayerCharacter::ShowProjectilePath(float _DeltaTime)
 			//Increment the throw power for each second while holding it down
 			ThrowPowerScale += (_DeltaTime * MaxThrowPower);
 		}
-		//Get rotation of the camera so it is behind the player
-		FRotator rot = FRotator(0, GetControlRotation().Yaw, 0);
-		//Update the rotation of the actor only if it is the server
-		if (HasAuthority())
-		{
-			SetActorRotation(rot, ETeleportType::ResetPhysics);
-		}
+
+		//Get rotation of the camera so it is behind the player* 
+		ServerUpdateRotation();
+
 
 		//Create Parameters for the
 		FPredictProjectilePathParams params;
@@ -680,24 +699,7 @@ void APlayerCharacter::ShowProjectilePath(float _DeltaTime)
 		FPredictProjectilePathResult result;
 		UGameplayStatics::PredictProjectilePath(GetWorld(), params, result);
 
-		if (ThrowEndActorType)
-		{
-			if (!cacheThrowEndActor)
-			{
-				FTransform transform = FTransform(FRotator(0, 0, 0), result.HitResult.ImpactPoint, FVector(1, 1, 1));
-				cacheThrowEndActor = GetWorld()->SpawnActor<AActor>(ThrowEndActorType, transform);
-			}
-			else
-			{
-				if (result.HitResult.ImpactPoint != FVector(0, 0, 0))
-				{
-					cacheThrowEndActor->SetActorLocation(result.HitResult.ImpactPoint);
-					
-					//cacheThrowEndActor->SetActorRotation(result.HitResult.ImpactNormal);
-					cacheThrowEndActor->SetActorHiddenInGame(false);
-				}
-			}
-		}
+		ShowProjectileEnd(result.HitResult.ImpactPoint);
 
 		//Iterate through the predicted path and set up spline points at each point of the path
 		for (int i = 0; i < result.PathData.Num(); i++)
@@ -770,6 +772,47 @@ void APlayerCharacter::ShowProjectilePath(float _DeltaTime)
 	}
 }
 
+void APlayerCharacter::ShowProjectileEnd_Implementation(FVector _Location)
+{
+	if (ThrowEndActorType)
+	{
+		if (!cacheThrowEndActor)
+		{
+			FTransform transform = FTransform(FRotator(0, 0, 0), _Location, FVector(1, 1, 1));
+			cacheThrowEndActor = GetWorld()->SpawnActor<AActor>(ThrowEndActorType, transform);
+		}
+		else
+		{
+			if (_Location != FVector(0, 0, 0))
+			{
+				cacheThrowEndActor->SetActorLocation(_Location);
+
+				//cacheThrowEndActor->SetActorRotation(result.HitResult.ImpactNormal);
+				cacheThrowEndActor->SetActorHiddenInGame(false);
+			}
+			else
+			{
+				cacheThrowEndActor->SetActorHiddenInGame(true);
+			}
+		}
+	}
+}
+
+//Update Camera so it is behind the player
+void APlayerCharacter::UpdateRotation_Implementation(FRotator _rot)
+{
+	//ServerUpdateRotation();
+	SetActorRotation(_rot, ETeleportType::ResetPhysics);
+}
+
+//Update Camera so it is behind the player
+void APlayerCharacter::ServerUpdateRotation_Implementation()
+{
+	FRotator rot = FRotator(0, GetControlRotation().Yaw, 0);
+
+	UpdateRotation(rot);
+}
+
 //When the player presses the crouch button Makes the player crouch
 void APlayerCharacter::StartCrouching_Implementation()
 {
@@ -777,7 +820,19 @@ void APlayerCharacter::StartCrouching_Implementation()
 	IsCrouching = true;
 	//Use the character movement component's crouch function
 	Crouch(true);
+
+	ServerStartCrouching();
 }
+
+//When the player presses the crouch button Makes the player crouch on the server
+void APlayerCharacter::ServerStartCrouching_Implementation()
+{
+	//Sets crouching to true
+	IsCrouching = true;
+	//Use the character movement component's crouch function
+	Crouch(true);
+}
+
 
 //When the player releases the crouch button makes the player uncrouch
 void APlayerCharacter::StopCrouching_Implementation()
@@ -786,8 +841,18 @@ void APlayerCharacter::StopCrouching_Implementation()
 	IsCrouching = false;
 	//Use the character movement component's crouch function
 	UnCrouch(true);
+
+	ServerStopCrouching();
 }
 
+//When the player releases the crouch button makes the player uncrouch
+void APlayerCharacter::ServerStopCrouching_Implementation()
+{
+	//Sets crouching to false
+	IsCrouching = false;
+	//Use the character movement component's crouch function
+	UnCrouch(true);
+}
 
 void APlayerCharacter::CheckDeath(float _DeltaTime)
 {

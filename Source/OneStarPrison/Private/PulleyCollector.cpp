@@ -129,6 +129,10 @@ void APulleyCollector::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 			//Disables it projectile movement
 			pickupable->ProjectileMovement->Deactivate();
 
+
+			pickupable->Mesh->SetPhysicsLinearVelocity(FVector(0, 0, 0));
+			pickupable->Mesh->SetPhysicsAngularVelocityInDegrees(FVector(0, 0, 0));
+
 			//If the platform is valid
 			if (Platform)
 			{
@@ -144,6 +148,7 @@ void APulleyCollector::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp,
 
 void APulleyCollector::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+
 	if (OtherActor && (OtherActor != this))
 	{
 		APickupable* pickupable = Cast<APickupable>(OtherActor);

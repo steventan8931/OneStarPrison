@@ -80,5 +80,19 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		class APlayerCharacter* OverlappingPlayer = nullptr;
 
+	//The speed of which the handle moves
+	UPROPERTY(EditAnywhere, Replicated)
+		float HandleRotateSpeed = 1.7f;
+
+	//Delay and timer before the handle starts move
+	UPROPERTY(EditAnywhere, Replicated)
+		float HandleStartDelay = 0.5f;
+	UPROPERTY(EditAnywhere, Replicated)
+		float HandleStartTimer = 0.0f;
+
+	//The position to snap the player to when interacting
+	UPROPERTY(EditAnywhere, Replicated)
+		class USceneComponent* HoldPosition;
+public:
 
 };

@@ -94,11 +94,15 @@ private:
 		class UUserWidget* CurrentInteractWidget;
 
 	//When the player presses the interact button on the server
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 		void Interact();
-	//When the player releases the interact button on the server
 	UFUNCTION(Server, Reliable)
+		void ServerInteract();
+	//When the player releases the interact button on the server
+	UFUNCTION(NetMulticast, Reliable)
 		void StopInteract();
+	UFUNCTION(Server, Reliable)
+		void ServerStopInteract();
 
 	//Interact UI
 	//Have the server to check for the interact
@@ -150,6 +154,13 @@ private:
 
 	//Renders the projectile path of the throwing item
 	void ShowProjectilePath(float _DeltaTime);
+	UFUNCTION(NetMulticast, Reliable)
+		void UpdateRotation(FRotator _rot);
+	UFUNCTION(Server, Reliable)
+		void ServerUpdateRotation();
+
+	UFUNCTION(Server, Reliable)
+		void ShowProjectileEnd(FVector _Location);
 
 	//The scale of normal speed vs crouch speed
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
@@ -157,9 +168,15 @@ private:
 	//Makes the player crouch
 	UFUNCTION(NetMulticast, Reliable)
 		void StartCrouching();
+	//On the server
+	UFUNCTION(Server, Reliable)
+		void ServerStartCrouching();
 	//Makes the player uncrouch
 	UFUNCTION(NetMulticast, Reliable)
 		void StopCrouching();
+	//On the server
+	UFUNCTION(Server, Reliable)
+		void ServerStopCrouching();
 
 	//The speed of the player when climbing
 	UPROPERTY(EditAnywhere, Replicated)

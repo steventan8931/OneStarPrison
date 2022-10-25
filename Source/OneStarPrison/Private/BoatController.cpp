@@ -34,7 +34,6 @@ void ABoatController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	StartingRotation = GetActorRotation();
 }
 
 void ABoatController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -112,17 +111,20 @@ void ABoatController::Tick(float DeltaTime)
 				//If the player's last interact has been longer than the interact delay
 				if (InteractTimer >= InteractDelay)
 				{
-					SetActorRotation(StartingRotation);
 					//Allow the player to interact
 					OverlappingPlayer->CanInteract = true;
-					if (IsRowingRight)
-					{
-						OverlappingPlayer->InteractType = EInteractType::RowRight;
+					if (OverlappingPlayer)
+					{ 
+						if (IsRowingRight)
+						{
+							OverlappingPlayer->InteractType = EInteractType::RowRight;
+						}
+						else
+						{
+							OverlappingPlayer->InteractType = EInteractType::RowLeft;
+						}
 					}
-					else
-					{
-						OverlappingPlayer->InteractType = EInteractType::RowLeft;
-					}
+
 
 					//If the player is interacting
 					if (OverlappingPlayer->IsInteracting)
@@ -135,29 +137,28 @@ void ABoatController::Tick(float DeltaTime)
 							Boat->SetActorRotation(newRot);
 						}
 
-						if (OverlappingPlayer == Boat->OverlappingPlayer)
-						{
-							if (OverlappingPlayer->CanMove)
-							{
-								OverlappingPlayer->SetActorLocation(Boat->LeftRowPosition->GetComponentLocation());
-							}
-						}
-
-						if (OverlappingPlayer == Boat->OverlappingPlayer2)
-						{
-							if (OverlappingPlayer->CanMove)
-							{
-								OverlappingPlayer->SetActorLocation(Boat->RightRowPosition->GetComponentLocation());
-							}
-						}
-
+						//If the player is overlapping
 						if (OverlappingPlayer)
 						{
-							//Reset the interact timers
-							OverlappingPlayer->CanInteract = false;
-							InteractTimer = 0.0f;
+							if (OverlappingPlayer->CanMove)
+							{
+								if (IsRowingRight)
+								{
+									OverlappingPlayer->SetActorLocation(Boat->RightRowPosition->GetComponentLocation());
+									OverlappingPlayer->SetActorRotation(Boat->RightRowPosition->GetComponentRotation());
+								}
+								else
+								{
+									OverlappingPlayer->SetActorLocation(Boat->LeftRowPosition->GetComponentLocation());
+									OverlappingPlayer->SetActorRotation(Boat->LeftRowPosition->GetComponentRotation());
+								}
+							}
+
 						}
 
+						//OverlappingPlayer->CanInteract = false;
+						InteractTimer = 0.0f;
+						return;
 					}
 
 				}
@@ -165,22 +166,12 @@ void ABoatController::Tick(float DeltaTime)
 				{
 					//Don't allow the overlapping player to interact
 					//OverlappingPlayer->IsInteracting = false;
-					OverlappingPlayer->CanInteract = false;
-					RotatePaddle();
+					//OverlappingPlayer->CanInteract = false;
 				}
-			}
-			else
-			{
-				SetActorRotation(StartingRotation);
 			}
 		}
 	}
 
-}
-
-void ABoatController::RotatePaddle()
-{
-	AddActorWorldRotation(MoveRotation);
 }
 
 void ABoatController::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

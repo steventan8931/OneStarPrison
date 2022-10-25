@@ -17,10 +17,15 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) override;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 public:
 	//Code to match with the key door
 	UPROPERTY(EditAnywhere)
 		int KeyCode = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool OwnedByGuard = false;
 };

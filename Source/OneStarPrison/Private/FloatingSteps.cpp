@@ -6,6 +6,7 @@
 #include "PlayerCharacter.h"
 
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+#include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 
 // Sets default values
 AFloatingSteps::AFloatingSteps()
@@ -66,6 +67,11 @@ void AFloatingSteps::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 			{
 				//Set the overlapping player to the overlapping actor
 				OverlappingPlayer = playerActor;
+			}
+
+			if (BloopSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), BloopSound, GetActorLocation());
 			}
 		}
 	}

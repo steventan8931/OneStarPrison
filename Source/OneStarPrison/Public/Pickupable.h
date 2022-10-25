@@ -27,7 +27,7 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-		void OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	virtual void OnCompHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	//Sound to play when picked up
 	UPROPERTY(EditAnywhere)

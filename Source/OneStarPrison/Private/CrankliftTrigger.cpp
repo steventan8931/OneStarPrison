@@ -29,6 +29,9 @@ ACrankliftTrigger::ACrankliftTrigger()
 
 	MovableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Handle"));
 	MovableMesh->SetupAttachment(Mesh);
+
+	HoldPosition = CreateDefaultSubobject<USceneComponent>(TEXT("HoldPosition"));
+	HoldPosition->SetupAttachment(Mesh);
 }
 
 // Called when the game starts or when spawned
@@ -65,6 +68,11 @@ void ACrankliftTrigger::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 	DOREPLIFETIME(ACrankliftTrigger, MinHeight);
 	DOREPLIFETIME(ACrankliftTrigger, IsMovingUp);
 	DOREPLIFETIME(ACrankliftTrigger, Platform);
+
+	DOREPLIFETIME(ACrankliftTrigger, HandleRotateSpeed);
+	DOREPLIFETIME(ACrankliftTrigger, HoldPosition);
+	DOREPLIFETIME(ACrankliftTrigger, HandleStartDelay);
+	DOREPLIFETIME(ACrankliftTrigger, HandleStartTimer);
 }
 
 // Called every frame
@@ -80,6 +88,10 @@ void ACrankliftTrigger::Tick(float DeltaTime)
 			//If Overlapping player is holding down the lever
 			if (OverlappingPlayer->IsInteracting)
 			{
+				//Snap to location
+				OverlappingPlayer->SetActorLocation(HoldPosition->GetComponentLocation());
+				OverlappingPlayer->SetActorRotation(HoldPosition->GetComponentRotation());
+
 				if (AudioComponent)
 				{
 					if (!AudioComponent->IsPlaying())
@@ -107,11 +119,17 @@ void ACrankliftTrigger::Tick(float DeltaTime)
 		//If the platform is moving up
 		if (IsMovingUp)
 		{
+			HandleStartTimer += DeltaTime;
+
 			//If the platform has not reached its max hegiht
 			if (Platform->GetActorLocation().Z <= MaxHeight)
 			{
 				//Move the handle to the open position over time
-				MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
+				if (HandleStartTimer >= HandleStartDelay)
+				{
+					MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime * HandleRotateSpeed));
+				}
+
 				//Keep moving the platform up over time
 				Platform->SetActorLocation(FVector(Platform->GetActorLocation().X, Platform->GetActorLocation().Y, Platform->GetActorLocation().Z + DeltaTime * MoveSpeed));
 
@@ -133,6 +151,8 @@ void ACrankliftTrigger::Tick(float DeltaTime)
 		}
 		else
 		{
+			HandleStartTimer = 0;
+
 			//If the platform has not reached its minimum height
 			if (Platform->GetActorLocation().Z >= MinHeight)
 			{

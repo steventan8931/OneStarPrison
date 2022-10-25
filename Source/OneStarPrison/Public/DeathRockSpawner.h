@@ -43,4 +43,7 @@ private:
 
 	//Spawns the actor to spawn
 	AActor* SpawnActor();
+
+	UPROPERTY(EditAnywhere)
+	bool IsActive = true;
 };

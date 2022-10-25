@@ -30,6 +30,9 @@ AInteractiveStepsButton::AInteractiveStepsButton()
 
 	MovableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Handle"));
 	MovableMesh->SetupAttachment(Mesh);
+
+	HoldPosition = CreateDefaultSubobject<USceneComponent>(TEXT("HoldPosition"));
+	HoldPosition->SetupAttachment(Mesh);
 }
 
 // Called when the game starts or when spawned
@@ -52,6 +55,12 @@ void AInteractiveStepsButton::GetLifetimeReplicatedProps(TArray< FLifetimeProper
 	DOREPLIFETIME(AInteractiveStepsButton, OverlappingPlayer);
 
 	DOREPLIFETIME(AInteractiveStepsButton, BoxCollision);
+
+
+	DOREPLIFETIME(AInteractiveStepsButton, HandleRotateSpeed);
+	DOREPLIFETIME(AInteractiveStepsButton, HoldPosition);
+	DOREPLIFETIME(AInteractiveStepsButton, HandleStartDelay);
+	DOREPLIFETIME(AInteractiveStepsButton, HandleStartTimer);
 }
 
 // Called every frame
@@ -70,8 +79,17 @@ void AInteractiveStepsButton::Tick(float DeltaTime)
 				//If the player is interacting
 				if (OverlappingPlayer->IsInteracting)
 				{
-					//Update the mesh rotation to its open rotation
-					MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime));
+					HandleStartTimer += DeltaTime;
+
+					//Snap to location
+					OverlappingPlayer->SetActorLocation(HoldPosition->GetComponentLocation());
+					OverlappingPlayer->SetActorRotation(HoldPosition->GetComponentRotation());
+
+					//Move the handle to the open position over time
+					if (HandleStartTimer >= HandleStartDelay)
+					{
+						MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleOpenRotation, DeltaTime * HandleRotateSpeed));
+					}
 
 					//Tell the steps manager to open these steps
 					StepsManager->IsStepOpen = true;
@@ -99,6 +117,8 @@ void AInteractiveStepsButton::Tick(float DeltaTime)
 				}
 				else //When the player stops interacting (holding down)
 				{
+					HandleStartTimer = 0;
+
 					//Update the mesh rotation to its closed rotation
 					MovableMesh->SetRelativeRotation(FMath::Lerp(MovableMesh->GetRelativeRotation(), HandleClosedRotation, DeltaTime));
 					//Tell the steps manager to close these steps

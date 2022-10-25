@@ -36,8 +36,6 @@ private:
 
 	//Components
 	UPROPERTY(VisibleAnywhere)
-		class UStaticMeshComponent* Mesh;
-	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
 
 	//Sound that plays when the wheel is inserted
@@ -48,9 +46,6 @@ private:
 	UPROPERTY(EditAnywhere, Replicated)
 		bool IsMoving = false;
 
-	//Player Interaction
-	UPROPERTY(VisibleAnywhere)
-		class APlayerCharacter* OverlappingPlayer = nullptr;
 
 	//Thethe boat to control
 	UPROPERTY(EditAnywhere)
@@ -70,18 +65,21 @@ private:
 	UPROPERTY(EditAnywhere, Replicated)
 		bool IsAnchor = false;
 
-	UPROPERTY(EditAnywhere, Replicated)
-		bool IsRowingRight = false;
-
-	UPROPERTY(Replicated)
-		FRotator StartingRotation;
-
-	UPROPERTY(EditAnywhere, Replicated)
-		FRotator MoveRotation = FRotator(0.0f, 40.0f, 0.0f);
-
 	void RotatePaddle();
 
 public:
+	//Mesh
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		class UStaticMeshComponent* Mesh;
+
+	//Player Interaction
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		class APlayerCharacter* OverlappingPlayer = nullptr;
+
+	//Checks what way the player should row
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly)
+		bool IsRowingRight = false;
+
 	//Whether the anchor has been removed
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite)
 		bool AnchorRemoved = false;
