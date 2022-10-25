@@ -11,6 +11,8 @@
 #include "Kismet/GameplayStatics.h"
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
 
+#include "PickupableChest.h"
+
 // Sets default values
 APulleyDouble::APulleyDouble()
 {
@@ -120,10 +122,10 @@ void APulleyDouble::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		APushable* pushable = Cast<APushable>(OtherActor);
+		APickupableChest* barrel = Cast<APickupableChest>(OtherActor);
 
 		//If the overlappign actor is a pushable
-		if (pushable)
+		if (barrel)
 		{
 			if (OtherPlatform)
 			{
@@ -135,9 +137,8 @@ void APulleyDouble::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 				}
 
 				//Increment the rock count by the weightage of the pushable
-				RockCount += pushable->PulleyWeightage;
+				RockCount += 7;
 			}
-
 		}
 
 	}
@@ -147,10 +148,10 @@ void APulleyDouble::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, clas
 {
 	if (OtherActor && (OtherActor != this))
 	{
-		APushable* pushable = Cast<APushable>(OtherActor);
+		APickupableChest* barrel = Cast<APickupableChest>(OtherActor);
 
 		//If the overlappign actor is a pushable
-		if (pushable)
+		if (barrel)
 		{
 			if (OtherPlatform)
 			{
@@ -162,7 +163,7 @@ void APulleyDouble::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, clas
 				}
 				
 				//Decrement the rock count by the weightage of the pushable
-				RockCount -= pushable->PulleyWeightage;
+				RockCount -= 7;
 			}
 
 		}
