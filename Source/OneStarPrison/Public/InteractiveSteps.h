@@ -44,13 +44,24 @@ private:
 	//The timer to count up to the delay
 	UPROPERTY(VisibleAnywhere, Replicated)
 		float CloseTimer = 0.0f;
+
 public:
 	//Checks whether the steps should be going to their closed or open positions
 	UPROPERTY(VisibleAnywhere, Replicated)
 		bool IsOpen = false;
 
+	UPROPERTY(Replicated)
+		bool cacheOpen = false;
+
 	//Delay before it startings closing in again (Set by the manager)
 	UPROPERTY(VisibleAnywhere, Replicated)
 		float CloseDelay = 0.0f;
 
+	//Opening Sound
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		USoundBase* OpenSound;
+
+	//Play open sound once
+	UFUNCTION(BlueprintCallable)
+		void PlaySound();
 };
