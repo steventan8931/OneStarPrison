@@ -45,6 +45,11 @@ void ADeathTrigger::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cl
 		if (playerActor)
 		{
 			playerActor->IsDead = true;
+
+			if (DeathSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), DeathSound, GetActorLocation());
+			}
 		}
 
 		//If the other actor is a pushable, reset its transform

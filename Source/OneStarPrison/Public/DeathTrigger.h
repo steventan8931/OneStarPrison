@@ -29,4 +29,9 @@ private:
 	//Components
 	UPROPERTY(VisibleAnywhere)
 		class UBoxComponent* BoxCollision;
+
+	//Death Sound
+	UPROPERTY(EditAnywhere)
+		USoundBase* DeathSound;
+
 };
