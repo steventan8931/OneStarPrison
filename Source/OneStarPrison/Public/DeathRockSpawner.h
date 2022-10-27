@@ -37,6 +37,17 @@ private:
 	UPROPERTY(EditAnywhere, Replicated)
 		float SpawnRate = 5.0f;
 
+	//Pre-spawn Sound
+	UPROPERTY(EditAnywhere)
+		USoundBase* PreSpawnSound;
+	//Pre spawn timer
+	UPROPERTY(Replicated)
+		float SoundPlayTimer = 1.0f;
+	//Only play sound once before spawning
+	UPROPERTY(Replicated)
+		bool SoundPlayed = false;
+
+
 	//Death rock to spawn
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<class AActor>ActorToSpawn;

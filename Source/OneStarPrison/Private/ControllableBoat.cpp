@@ -84,6 +84,13 @@ void AControllableBoat::Tick(float DeltaTime)
 			OverlappingPlayer = nullptr;
 			OverlappingPlayer2 = nullptr;
 			IsMoving = false;
+
+			//Play the insert sound
+			if (CrashSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), CrashSound, GetActorLocation());
+			}
+
 			return;
 		}
 

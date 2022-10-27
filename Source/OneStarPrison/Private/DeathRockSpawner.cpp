@@ -4,6 +4,7 @@
 #include "DeathRockSpawner.h"
 #include "DeathRock.h"
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+#include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 
 // Sets default values
 ADeathRockSpawner::ADeathRockSpawner()
@@ -46,6 +47,20 @@ void ADeathRockSpawner::Tick(float DeltaTime)
 
 	SpawnTimer += DeltaTime;
 
+	if (SpawnTimer >= SoundPlayTimer)
+	{
+		if (!SoundPlayed)
+		{
+			if (PreSpawnSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), PreSpawnSound, GetActorLocation());
+			}
+			//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("playg"));
+		}
+
+		SoundPlayed = true;
+	}
+
 	//If the timer has been longer than the spawn delay
 	if (SpawnTimer >= SpawnRate)
 	{
@@ -59,6 +74,9 @@ void ADeathRockSpawner::Tick(float DeltaTime)
 				rock->EndPosition = EndPosition;
 				rock->DeathTimer = SpawnRate;
 			}
+
+			SoundPlayed = false;
+
 			//Reset the spawn timer
 			SpawnTimer = 0.0f;
 		}
