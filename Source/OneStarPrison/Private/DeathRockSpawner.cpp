@@ -55,7 +55,7 @@ void ADeathRockSpawner::Tick(float DeltaTime)
 			{
 				UGameplayStatics::PlaySoundAtLocation(GetWorld(), PreSpawnSound, GetActorLocation());
 			}
-			GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("playg"));
+			//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, TEXT("playg"));
 		}
 
 		SoundPlayed = true;
