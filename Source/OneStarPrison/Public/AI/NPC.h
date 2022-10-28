@@ -36,6 +36,8 @@ public:
 		void AlertStart();
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 		void AlertEnd();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+		void PlayCautionAudio();
 
 	UFUNCTION(BlueprintCallable,BlueprintImplementableEvent)
 		void SetCameraParameters(UMaterialInstanceDynamic* Mat);
@@ -89,12 +91,14 @@ private:
 	class UWidgetComponent* WidgetComponent;
 	float const MaxHealth = 100.0f;
 	float Health;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess= "true"))
 	    APatrolPath* PatrolPath;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 	    UAnimMontage* Montage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+		USoundBase* CautionAudio;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 		USoundBase* SirenAudio;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
