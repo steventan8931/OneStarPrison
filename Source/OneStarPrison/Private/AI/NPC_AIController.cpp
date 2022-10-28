@@ -27,7 +27,7 @@ void ANPC_AIController::OnPossess(APawn* const CharacterPawn)
 	Super::OnPossess(CharacterPawn);
 	if (auto const NPC = Cast<ANPC>(CharacterPawn))
 	{
-		NPCObject = NPC;
+		NPCobj = NPC;
 		if (UBehaviorTree* const Tree = NPC->GetBehaviorTree())
 		{
 			UseBlackboard(Tree->BlackboardAsset, BlackboardComponent);
@@ -94,8 +94,10 @@ void ANPC_AIController::OnUpdated(TArray<AActor*> const& UpdatedActors)
 						BlackboardComponent->SetValueAsBool(BBKeys::IsInHearCaution, Stim.WasSuccessfullySensed());
 						BlackboardComponent->SetValueAsVector(BBKeys::TargetLocation, Stim.StimulusLocation);
 						BlackboardComponent->SetValueAsObject(BBKeys::TargetLocationActor, UpdatedActors[x]);
-						NPCObject->PlayCautionAudio();
-						
+						if (NPCobj != nullptr)
+						{
+							NPCobj->PlayCautionAudio();
+						}
 					}
 				}
 				if (CanHearBone) {
@@ -104,7 +106,11 @@ void ANPC_AIController::OnUpdated(TArray<AActor*> const& UpdatedActors)
 						BlackboardComponent->SetValueAsBool(BBKeys::IsInHearCaution, Stim.WasSuccessfullySensed());
 						BlackboardComponent->SetValueAsVector(BBKeys::TargetLocation, Stim.StimulusLocation);
 						BlackboardComponent->SetValueAsObject(BBKeys::TargetLocationActor, UpdatedActors[x]);
-						NPCObject->PlayCautionAudio();
+						if (NPCobj != nullptr)
+						{
+							NPCobj->PlayCautionAudio();
+						}
+
 					}
 				}
 			}

@@ -118,6 +118,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 						{
 							UGameplayStatics::PlaySoundAtLocation(GetWorld(), FailSound, GetActorLocation());
 						}
+						GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Blue, TEXT("fail sound"));
 						cacheInteract = true;
 					}
 

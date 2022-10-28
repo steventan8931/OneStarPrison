@@ -65,5 +65,6 @@ public:
 		FRotator ClosedRotation = FRotator(0, 0, 0);
 
 	//Play open sound once
+	UFUNCTION(BlueprintCallable)
 	void PlaySound();
 };

@@ -47,5 +47,5 @@ private:
 	void SetupPerceptionSystem();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
-	class ANPC* NPCObject;
+	class ANPC* NPCobj;
 };
