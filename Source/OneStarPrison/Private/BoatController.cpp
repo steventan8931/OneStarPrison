@@ -103,8 +103,6 @@ void ABoatController::Tick(float DeltaTime)
 				return;
 			}
 
-			InteractTimer += DeltaTime;
-
 			//If the player is overlapping
 			if (OverlappingPlayer)
 			{
@@ -156,17 +154,25 @@ void ABoatController::Tick(float DeltaTime)
 
 						}
 
+						cacheInteract = OverlappingPlayer->IsInteracting;
+						
 						//OverlappingPlayer->CanInteract = false;
-						InteractTimer = 0.0f;
 						return;
 					}
-
+					else
+					{
+						if (cacheInteract != OverlappingPlayer->IsInteracting)
+						{
+							InteractTimer = 0.0f;
+							cacheInteract = OverlappingPlayer->IsInteracting;
+						}
+						InteractTimer += DeltaTime;
+					}
 				}
 				else
 				{
-					//Don't allow the overlapping player to interact
-					//OverlappingPlayer->IsInteracting = false;
-					//OverlappingPlayer->CanInteract = false;
+					InteractTimer += DeltaTime;
+					OverlappingPlayer->CanInteract = false;
 				}
 			}
 		}
@@ -189,6 +195,7 @@ void ABoatController::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, 
 		//If the overlapping actor is a player
 		if (playerActor)
 		{
+			InteractTimer = InteractDelay;
 			//If there isn't already an overlapping player
 			if (!OverlappingPlayer)
 			{
