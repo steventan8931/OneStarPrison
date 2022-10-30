@@ -26,7 +26,7 @@ EBTNodeResult::Type UTask_EnterCautionState::ExecuteTask(UBehaviorTreeComponent&
 		{
 			
 			OwnerComp.GetBlackboardComponent()->SetValueAsBool(BBKeys::IsInCautionState, true);
-			
+			//NPC->PlayCautionAudio();
 		}
 
 		

@@ -54,6 +54,9 @@ private:
 	UPROPERTY(EditAnywhere)
 		USoundBase* InsertSound;
 
+	UPROPERTY(EditAnywhere)
+		USoundBase* CrashSound;
+
 	//Starting Area
 	FTransform cacheTransform;
 public:

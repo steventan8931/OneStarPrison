@@ -32,6 +32,8 @@ ANPC::ANPC() :
 
 
 
+
+
 void ANPC::MulticastElim(bool bPlayerLeftGame)
 {
 }
@@ -179,7 +181,18 @@ void ANPC::AlertEnd_Implementation()
 	UGameplayStatics::SpawnSoundAtLocation(this, RecoveryAudio, Mylocation);
 }
 
+/*void ANPC::PlayCautionAudio()
+{
+	FVector Mylocation = GetActorLocation();
+	UGameplayStatics::SpawnSoundAtLocation(this, CautionAudio, Mylocation);
+}
+*/
 
+void ANPC::PlayCautionAudio_Implementation()
+{
+	FVector Mylocation = GetActorLocation();
+	UGameplayStatics::SpawnSoundAtLocation(this, CautionAudio, Mylocation);
+}
 
 
 void ANPC::MeleeAttack_Implementation()

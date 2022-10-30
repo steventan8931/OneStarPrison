@@ -45,5 +45,7 @@ private:
 	void OnUpdated(TArray<AActor*> const& UpdatedActors);
 
 	void SetupPerceptionSystem();
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
+	class ANPC* NPCobj;
 };

@@ -171,7 +171,7 @@ void APlayerCharacter::MoveForward(float Value)
 		}
 
 		//Walking VS Crouching
-		if (IsCrouching)
+		if (IsCrouching || IsHoldingDownThrow)
 		{
 			//Have the player move slower when they are crouching
 			AddMovementInput(Direction, Value * CrouchSpeedScale);
@@ -204,7 +204,7 @@ void APlayerCharacter::MoveRight(float Value)
 		// add movement in that direction
 
 		//Walking VS Crouching
-		if (IsCrouching)
+		if (IsCrouching || IsHoldingDownThrow)
 		{
 			//Have the player move slower when they are crouching
 			AddMovementInput(Direction, Value * CrouchSpeedScale);

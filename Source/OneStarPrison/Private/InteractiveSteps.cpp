@@ -3,6 +3,7 @@
 
 #include "InteractiveSteps.h"
 #include <Runtime/Engine/Public/Net/UnrealNetwork.h>
+#include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 
 // Sets default values
 AInteractiveSteps::AInteractiveSteps()
@@ -48,6 +49,26 @@ void AInteractiveSteps::Tick(float DeltaTime)
 	{
 		CloseDoor(DeltaTime);
 	}
+
+	if (cacheOpen != IsOpen)
+	{
+		if (IsOpen)
+		{
+			PlaySound();
+			cacheOpen = IsOpen;
+		}
+		else
+		{
+			//If the close timer has reached the close delay time
+			if (CloseTimer >= CloseDelay)
+			{
+				PlaySound();
+				cacheOpen = IsOpen;
+			}
+		}
+
+
+	}
 }
 
 void AInteractiveSteps::OpenDoor(float _DeltaTime)
@@ -80,4 +101,13 @@ void AInteractiveSteps::CloseDoor(float _DeltaTime)
 		}
 	}
 
+}
+
+//Allows other functions to play the sound once when opening/closing the door
+void AInteractiveSteps::PlaySound()
+{
+	if (OpenSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+	}
 }

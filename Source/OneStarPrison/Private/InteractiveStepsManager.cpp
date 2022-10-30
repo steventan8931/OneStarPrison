@@ -77,7 +77,10 @@ void AInteractiveStepsManager::OpenStep(float _DeltaTime)
 	//Iterate through the current steps are set them to open
 	for (int i = 0; i < CurrentSteps.Num(); i++)
 	{
-		CurrentSteps[i]->IsOpen = true;
+		if (CurrentSteps[i])
+		{
+			CurrentSteps[i]->IsOpen = true;
+		}
 	}
 }
 

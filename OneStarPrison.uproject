@@ -44,6 +44,10 @@
 			"Enabled": true
 		},
 		{
+			"Name": "Water",
+			"Enabled": true
+		},
+		{
 			"Name": "Bridge",
 			"Enabled": true,
 			"SupportedTargetPlatforms": [
@@ -51,10 +55,6 @@
 				"Mac",
 				"Linux"
 			]
-		},
-		{
-			"Name": "Water",
-			"Enabled": true
 		}
 	]
 }
