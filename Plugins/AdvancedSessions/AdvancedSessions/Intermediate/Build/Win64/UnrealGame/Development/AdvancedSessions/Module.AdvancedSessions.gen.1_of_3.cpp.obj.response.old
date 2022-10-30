@@ -1,6 +1,6 @@
-"H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Module.AdvancedSessions.gen.1_of_3.cpp"
+C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Module.AdvancedSessions.gen.1_of_3.cpp
 /I .
-/I "H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Private"
+/I C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Private
 /I ..\Plugins\Online\OnlineSubsystem\Intermediate\Build\Win64\UnrealGame\Inc\OnlineSubsystem
 /I ..\Plugins\Online\OnlineSubsystem
 /I ..\Plugins\Online\OnlineSubsystem\Source
@@ -109,24 +109,24 @@
 /I Runtime\TypedElementFramework\Public
 /I ..\Intermediate\Build\Win64\UnrealGame\Inc\TypedElementRuntime
 /I Runtime\TypedElementRuntime\Public
-/I "H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Inc\AdvancedSessions"
-/I "H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source"
-/I "H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes"
+/I C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Inc\AdvancedSessions
+/I C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source
+/I C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Source\AdvancedSessions\Classes
 /I ThirdParty\mimalloc\include
 /I ThirdParty\LibTiff\Source\Win64
 /I ThirdParty\LibTiff\Source
-/I F:\VS2019\VC\Tools\MSVC\14.29.30133\INCLUDE
-/I "C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"
-/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt"
-/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared"
-/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um"
-/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt"
-/FI"H:\Year 3 UE Proj\OneStarPrison\Intermediate\Build\Win64\OneStarPrison\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
-/FI"H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Definitions.AdvancedSessions.h"
-/Yu"H:\Year 3 UE Proj\OneStarPrison\Intermediate\Build\Win64\OneStarPrison\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
-/Fp"H:\Year 3 UE Proj\OneStarPrison\Intermediate\Build\Win64\OneStarPrison\Development\Engine\SharedPCH.Engine.ShadowErrors.h.pch"
-/Fo"H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Module.AdvancedSessions.gen.1_of_3.cpp.obj"
-/sourceDependencies "H:\Year 3 UE Proj\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Module.AdvancedSessions.gen.1_of_3.cpp.json"
+/I "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\INCLUDE"
+/I "C:\Program Files (x86)\Windows Kits\NETFXSDK\4.7.2\include\um"
+/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt"
+/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared"
+/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um"
+/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\winrt"
+/FI"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Intermediate\Build\Win64\OneStarPrison\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
+/FI"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Definitions.AdvancedSessions.h"
+/Yu"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Intermediate\Build\Win64\OneStarPrison\Development\Engine\SharedPCH.Engine.ShadowErrors.h"
+/Fp"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Intermediate\Build\Win64\OneStarPrison\Development\Engine\SharedPCH.Engine.ShadowErrors.h.pch"
+/Fo"C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Module.AdvancedSessions.gen.1_of_3.cpp.obj"
+/sourceDependencies C:\Users\Alexander\Documents\GitHub\OneStarPrison\Plugins\AdvancedSessions\AdvancedSessions\Intermediate\Build\Win64\UnrealGame\Development\AdvancedSessions\Module.AdvancedSessions.gen.1_of_3.cpp.json
 /Zc:inline
 /nologo
 /Oi

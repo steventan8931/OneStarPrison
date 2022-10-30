@@ -46,7 +46,6 @@ private:
 	UPROPERTY(EditAnywhere, Replicated)
 		bool IsMoving = false;
 
-
 	//Thethe boat to control
 	UPROPERTY(EditAnywhere)
 		class AControllableBoat* Boat;
@@ -57,6 +56,9 @@ private:
 	UPROPERTY(Replicated)
 		float InteractTimer = 0.0f;
 
+	UPROPERTY(Replicated)
+		bool cacheInteract = false;
+
 	//The scale to rotate the boat by for each interaction
 	UPROPERTY(EditAnywhere, Replicated)
 		float RotationScale = 15.0f;
@@ -64,8 +66,6 @@ private:
 	//Whether this controller is the anchor
 	UPROPERTY(EditAnywhere, Replicated)
 		bool IsAnchor = false;
-
-	void RotatePaddle();
 
 public:
 	//Mesh
