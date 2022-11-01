@@ -28,7 +28,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	APatrolPath* GetPatrolPath();
-	
+
+
 	
 	UFUNCTION(NetMulticast, Reliable)
 	    void MeleeAttack();
@@ -38,6 +39,8 @@ public:
 		void AlertEnd();
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 		void PlayCautionAudio();
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
+		void SetCautionVisibility(bool visible);
 
 	UFUNCTION(BlueprintCallable,BlueprintImplementableEvent)
 		void SetCameraParameters(UMaterialInstanceDynamic* Mat);
@@ -82,6 +85,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 		float ChaseSpeed;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
+		UStaticMeshComponent* CautionMaterial = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CautionObject"));
+	  
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
+		UStaticMeshComponent* AlertMaterial = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AlertObject"));
 
 
 protected:
