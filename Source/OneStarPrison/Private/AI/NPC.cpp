@@ -26,8 +26,8 @@ ANPC::ANPC() :
 	bUseControllerRotationYaw = false;
 	//GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-
-
+	CautionMaterial->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
+	AlertMaterial->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 
@@ -82,6 +82,7 @@ void ANPC::BeginPlay()
 		RightFistCollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ANPC::OnAttackOverlapBegin);
 		RightFistCollisionBox->OnComponentEndOverlap.AddDynamic(this, &ANPC::OnAttackOverlapEnd);
 	}
+	
 }
 
 UBehaviorTree* ANPC::GetBehaviorTree() const
@@ -171,6 +172,15 @@ void ANPC::AlertStart_Implementation()
 	IsAlert = true;
 	FVector Mylocation = GetActorLocation();
 	UGameplayStatics::SpawnSoundAtLocation(this,SirenAudio, Mylocation);
+
+	if (AlertMaterial != nullptr )
+	{
+		AlertMaterial->SetVisibility(true, true);
+		if (CautionMaterial != nullptr)
+		{
+			CautionMaterial->SetVisibility(false, true);
+		}
+	}
 }
 
 void ANPC::AlertEnd_Implementation()
@@ -179,6 +189,15 @@ void ANPC::AlertEnd_Implementation()
 	
 	FVector Mylocation = GetActorLocation();
 	UGameplayStatics::SpawnSoundAtLocation(this, RecoveryAudio, Mylocation);
+
+	if (AlertMaterial != nullptr)
+	{
+		AlertMaterial->SetVisibility(false, true);
+		if (CautionMaterial != nullptr)
+		{
+			CautionMaterial->SetVisibility(false, true);
+		}
+	}
 }
 
 /*void ANPC::PlayCautionAudio()
@@ -192,8 +211,31 @@ void ANPC::PlayCautionAudio_Implementation()
 {
 	FVector Mylocation = GetActorLocation();
 	UGameplayStatics::SpawnSoundAtLocation(this, CautionAudio, Mylocation);
+	if (CautionMaterial != nullptr)
+	{
+		CautionMaterial->SetVisibility(true, true);
+	}
 }
 
+void ANPC::SetCautionVisibility_Implementation(bool visible)
+{
+	if (CautionMaterial != nullptr)
+	{
+		CautionMaterial->SetVisibility(visible, true);
+
+	}
+
+}
+
+/*void ANPC::SetCautionVisibility_Implementation()
+{
+	if (CautionMaterial != nullptr)
+	{
+		CautionMaterial->SetVisibility(visible, true);
+
+	}
+}
+*/
 
 void ANPC::MeleeAttack_Implementation()
 {
@@ -215,4 +257,7 @@ void ANPC::MeleeAttack_Implementation()
 
 	}
 }
+
+
+
 
