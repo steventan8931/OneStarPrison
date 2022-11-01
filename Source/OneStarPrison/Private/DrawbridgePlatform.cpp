@@ -27,6 +27,7 @@ void ADrawbridgePlatform::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ADrawbridgePlatform, OpenRotation);
+	DOREPLIFETIME(ADrawbridgePlatform, IsTree);
 }
 
 // Called every frame
@@ -42,6 +43,16 @@ void ADrawbridgePlatform::Tick(float DeltaTime)
 		{
 			FRotator newRot = FMath::Lerp(GetActorRotation(), OpenRotation, DeltaTime * 2.0f);
 			SetActorRotation(newRot);
+		}
+	}
+	else
+	{
+		if (IsTree)
+		{
+			if (HasAuthority())
+			{
+				AddActorWorldRotation(FRotator(cos(GetGameTimeSinceCreation()) * WiggleScale, 0, 0));
+			}
 		}
 	}
 }

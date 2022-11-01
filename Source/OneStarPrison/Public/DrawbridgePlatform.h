@@ -33,9 +33,14 @@ private:
 	UPROPERTY(EditAnywhere, Replicated)
 		FRotator OpenRotation = FRotator(0, 0, 0);
 
+	UPROPERTY(EditAnywhere, Replicated)
+		bool IsTree = false;
+
+	UPROPERTY(EditAnywhere, Replicated)
+		float WiggleScale = 1.0f;
 public:
 	//Checks whether the platform should be updating to its open rotation
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool IsOpen = false;
 	
 };
