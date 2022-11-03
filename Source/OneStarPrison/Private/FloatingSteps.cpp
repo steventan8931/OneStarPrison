@@ -38,6 +38,7 @@ void AFloatingSteps::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& Out
 	DOREPLIFETIME(AFloatingSteps, BoxCollision);
 
 	DOREPLIFETIME(AFloatingSteps, MoveSpeed);
+	DOREPLIFETIME(AFloatingSteps, Offset);
 }
 
 // Called every frame
@@ -48,7 +49,7 @@ void AFloatingSteps::Tick(float DeltaTime)
 	if (HasAuthority())
 	{
 		//Move the object side to side
-		FVector loc = FVector(0, cos(GetGameTimeSinceCreation()) * MoveSpeed, 0);
+		FVector loc = FVector(0, cos(GetGameTimeSinceCreation() + Offset) * MoveSpeed, 0);
 		Mesh->AddRelativeLocation(loc);
 	}
 }

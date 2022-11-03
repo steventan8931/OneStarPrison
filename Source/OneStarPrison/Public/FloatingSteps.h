@@ -53,6 +53,10 @@ private:
 	UPROPERTY(EditAnywhere, Replicated)
 		float MoveSpeed = 5.0f;
 
+	UPROPERTY(EditAnywhere, Replicated)
+		float Offset = 0.0f;
+
+
 public:
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
