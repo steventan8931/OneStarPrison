@@ -20,6 +20,7 @@ EBTNodeResult::Type UMeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp,
 		// test to see if the NPC class supports the ICombatInterface interface
 		if (ANPC* const NPC = Cast<ANPC>(Cont->GetPawn()))
 		{
+			NPC->SetCautionVisibility(false);
 			// if the montage has finished playing, play it again - stops "jittering"
 			if (MontageHasFinished(NPC))
 			{

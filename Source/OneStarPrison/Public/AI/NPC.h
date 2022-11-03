@@ -112,6 +112,8 @@ private:
 		USoundBase* SirenAudio;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
 		USoundBase* RecoveryAudio;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta = (AllowPrivateAccess = "true"))
+		USoundBase* AttackAudio;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess="true"))
 	UBehaviorTree* BehaviorTree;
 	
