@@ -56,6 +56,8 @@ void AControllableBoat::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 	DOREPLIFETIME(AControllableBoat, StartSpeed);
 	DOREPLIFETIME(AControllableBoat, MaxSpeed);
 
+	DOREPLIFETIME(AControllableBoat, BuoyancyScale);
+	DOREPLIFETIME(AControllableBoat, BuoyancyHeightScale);
 }
 
 // Called every frame
@@ -108,6 +110,18 @@ void AControllableBoat::Tick(float DeltaTime)
 		{
 			FVector newPos = FMath::Lerp(GetActorLocation(), GetActorLocation() + (GetActorForwardVector() * Speed), DeltaTime);
 			SetActorLocation(newPos);
+
+			if (HasAuthority())
+			{
+				FVector loc = FVector(0, cos(GetGameTimeSinceCreation() + 2) * BuoyancyHeightScale, 0);
+				Mesh->AddRelativeLocation(loc);
+
+				FRotator rot = FRotator(cos(GetGameTimeSinceCreation()) * BuoyancyScale.Pitch,
+					cos(GetGameTimeSinceCreation()) * BuoyancyScale.Yaw,
+					cos(GetGameTimeSinceCreation()) * BuoyancyScale.Roll);
+				Mesh->AddRelativeRotation(rot);
+			}
+
 			return;
 		}
 	}

@@ -59,6 +59,13 @@ private:
 
 	//Starting Area
 	FTransform cacheTransform;
+
+	UPROPERTY(EditAnywhere, Replicated)
+		FRotator BuoyancyScale = FRotator(-0.05f, -0.05f, 0.05f);
+
+	UPROPERTY(EditAnywhere, Replicated)
+		float BuoyancyHeightScale = 0.05f;
+
 public:
 	//Whether the boat is moving
 	UPROPERTY(EditAnywhere, Replicated)
