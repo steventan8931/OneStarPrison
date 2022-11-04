@@ -250,9 +250,9 @@ void ANPC::MeleeAttack_Implementation()
 		AActor* AimActor = AI->GetInterestedItem();	
 		if (AimActor) 
 		    {
-			//FVector Mylocation = GetActorLocation();
+			
 			UGameplayStatics::ApplyDamage(AimActor, 10.0f, MyController, NULL, NULL);
-			//UGameplayStatics::SpawnSoundAtLocation(this, AttackAudio, Mylocation);
+			
 		    }
 
 		}
