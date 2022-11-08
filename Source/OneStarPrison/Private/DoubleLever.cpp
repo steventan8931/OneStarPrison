@@ -117,6 +117,23 @@ void ADoubleLever::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 
 			}
 		}
+
+		//On item throw
+		APickupable* pickupable = Cast<APickupable>(OtherActor);
+		//If the overlapping player is a pickupable
+		if (pickupable)
+		{
+			//and the lever isn't already opened
+			if (!IsOpen)
+			{
+				//Set the lever to its open state
+				IsOpen = true;
+				if (OpenSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), OpenSound, GetActorLocation());
+				}
+			}
+		}
 	}
 }
 
