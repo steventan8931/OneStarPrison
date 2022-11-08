@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Door.h"
 #include "ChestChecker.generated.h"
 
 UCLASS()
@@ -49,7 +50,7 @@ private:
 
 	//Door To Open
 	UPROPERTY(EditAnywhere, Replicated)
-		class ADoor* Door;
+		TArray<ADoor*> Door;
 
 	//Player Interaction
 	UPROPERTY(Replicated)

@@ -101,12 +101,17 @@ void AChestChecker::Tick(float DeltaTime)
 						UGameplayStatics::PlaySoundAtLocation(GetWorld(), InsertSound, GetActorLocation());
 					}
 
-					//Open the door
-					if (Door)
+					//Iterate through the doors
+					for (int i = 0; i < Door.Num(); i++)
 					{
-						Door->IsOpen = true;
-						Door->PlaySound();
+						//Open the doors
+						if (Door[i])
+						{
+							Door[i]->IsOpen = true;
+							Door[i]->PlaySound();
+						}
 					}
+
 
 					//Make the player unable to continue interacting
 					OverlappingPlayer->CanInteract = false;
